@@ -20,6 +20,7 @@ function formatoARS(valor) {
    1. GESTIÓN DE SESIÓN Y PERFIL DE USUARIO ACCESIBLE (PRODUCTOR RURAL)
    ============================================================================= */
 let usuarioActivo = null;
+let reservaPendiente = false;
 
 function abrirModalLogin() {
     const modal = document.getElementById("modal-login");
@@ -35,12 +36,49 @@ function cerrarModalLogin() {
         modal.style.display = "none";
         document.body.style.overflow = "";
     }
+    // Si cancela sin loguearse, resetear alerta de reserva pendiente
+    const notice = document.getElementById("login-modal-notice");
+    if (notice) notice.style.display = "none";
+}
+
+function cerrarSesion() {
+    usuarioActivo = null;
+    reservaPendiente = false;
+    try {
+        localStorage.removeItem("monai_usuario_activo");
+    } catch (e) {}
+
+    // Resetear valores de formularios a ejemplos neutrales
+    const inputComprador = document.getElementById("calc-comprador");
+    const inputDestino = document.getElementById("calc-destino");
+    const inputEmpresa = document.getElementById("pub-empresa");
+    const inputLocalidad = document.getElementById("pub-localidad");
+    const inputTransportista = document.getElementById("cam-transportista");
+
+    if (inputComprador) inputComprador.value = "Granja Avícola San Isidro SRL";
+    if (inputDestino) inputDestino.value = "Goya, Corrientes";
+    if (inputEmpresa) inputEmpresa.value = "Molino Arrocero San Lorenzo SRL";
+    if (inputLocalidad) inputLocalidad.value = "Saladas";
+    if (inputTransportista) inputTransportista.value = "Transporte Don Horacio";
+
+    aplicarDatosSesionEnUI();
+    cambiarVistaRol("vista-inicio");
 }
 
 function identificarseComoRol(rol, nombre, organizacion, localidad) {
     usuarioActivo = { rol, nombre, organizacion, localidad };
     guardarYActualizarSesion();
     cerrarModalLogin();
+
+    // Si había una reserva en curso en el cotizador, ejecutarla inmediatamente
+    if (reservaPendiente) {
+        reservaPendiente = false;
+        cambiarVistaRol("vista-comprador");
+        setTimeout(() => {
+            confirmarReservaConGarantia();
+        }, 160);
+        return;
+    }
 
     // Navegar directamente a la vista de su rol para máxima conveniencia
     if (rol === "comprador") cambiarVistaRol("vista-comprador");
@@ -62,6 +100,15 @@ function guardarIdentificacionManual(event) {
     };
     guardarYActualizarSesion();
     cerrarModalLogin();
+
+    if (reservaPendiente) {
+        reservaPendiente = false;
+        cambiarVistaRol("vista-comprador");
+        setTimeout(() => {
+            confirmarReservaConGarantia();
+        }, 160);
+        return;
+    }
 
     if (rol === "comprador") cambiarVistaRol("vista-comprador");
     else if (rol === "vendedor") cambiarVistaRol("vista-vendedor");
@@ -96,6 +143,13 @@ function aplicarDatosSesionEnUI() {
     const label = document.getElementById("session-user-label");
     const pill = document.getElementById("session-role-pill");
     const tabLabel = document.getElementById("nav-login-tab-label");
+    const btnLogout = document.getElementById("btn-logout");
+
+    // Contenedores privados y de acceso restringido para no logueados
+    const vendedorGated = document.getElementById("vendedor-gated-view");
+    const vendedorPrivate = document.getElementById("vendedor-private-view");
+    const logisticaGated = document.getElementById("logistica-gated-view");
+    const logisticaPrivate = document.getElementById("logistica-private-view");
 
     const rolMap = {
         comprador: "Comprador",
@@ -107,11 +161,19 @@ function aplicarDatosSesionEnUI() {
         if (label) label.textContent = "Iniciar Sesión";
         if (pill) pill.textContent = "Ingresar";
         if (tabLabel) tabLabel.textContent = "Iniciar Sesión";
+        if (btnLogout) btnLogout.style.display = "none";
+
+        // Gating para usuarios no identificados: mostrar tarjetas de bienvenida/bloqueo
+        if (vendedorGated) vendedorGated.style.display = "block";
+        if (vendedorPrivate) vendedorPrivate.style.display = "none";
+        if (logisticaGated) logisticaGated.style.display = "block";
+        if (logisticaPrivate) logisticaPrivate.style.display = "none";
         return;
     }
 
+    // Usuario con sesión iniciada
     if (label) {
-        label.textContent = usuarioActivo.nombre || "Iniciar Sesión";
+        label.textContent = usuarioActivo.nombre || "Mi Cuenta";
     }
     if (pill) {
         pill.textContent = rolMap[usuarioActivo.rol] || "Usuario";
@@ -119,6 +181,15 @@ function aplicarDatosSesionEnUI() {
     if (tabLabel) {
         tabLabel.textContent = `Mi Perfil (${rolMap[usuarioActivo.rol] || "Usuario"})`;
     }
+    if (btnLogout) {
+        btnLogout.style.display = "inline-flex";
+    }
+
+    // Desbloquear paneles privados
+    if (vendedorGated) vendedorGated.style.display = "none";
+    if (vendedorPrivate) vendedorPrivate.style.display = "block";
+    if (logisticaGated) logisticaGated.style.display = "none";
+    if (logisticaPrivate) logisticaPrivate.style.display = "block";
 
     // Prefill de campos según el usuario activo
     const inputComprador = document.getElementById("calc-comprador");
@@ -459,16 +530,35 @@ async function recalcularCotizacionEnVivo() {
 let ultimoCertificadoEmitido = null;
 
 async function confirmarReservaConGarantia() {
+    // Si el usuario no inició sesión, interceptar, guardar intención y abrir modal de acceso
+    if (!usuarioActivo) {
+        reservaPendiente = true;
+        const notice = document.getElementById("login-modal-notice");
+        if (notice) {
+            notice.style.display = "block";
+            notice.innerHTML = `
+                <div class="login-notice-banner">
+                    <strong>🔒 Identificate para resguardar tu reserva</strong>
+                    <p>Para emitir el comprobante de pago en custodia (Escrow) y el remito oficial a tu nombre, elegí tu establecimiento o ingresá tus datos.</p>
+                </div>
+            `;
+        }
+        abrirModalLogin();
+        return;
+    }
+
     const loteId = document.getElementById("calc-lote-id")?.value;
     const camionId = document.getElementById("calc-camion-id")?.value;
     const distanciaKm = document.getElementById("calc-distancia-km")?.value || 160;
     const toneladas = document.getElementById("calc-toneladas")?.value || 14;
-    const compradorNombre = document.getElementById("calc-comprador")?.value || usuarioActivo.organizacion || "Granja Avícola San Isidro";
-    const destino = document.getElementById("calc-destino")?.value || usuarioActivo.localidad || "Goya, Corrientes";
+    const compradorNombre = document.getElementById("calc-comprador")?.value || (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "Granja Avícola San Isidro SRL");
+    const destino = document.getElementById("calc-destino")?.value || (usuarioActivo ? usuarioActivo.localidad : "Goya, Corrientes");
 
     const btn = document.getElementById("btn-confirmar-reserva");
-    btn.disabled = true;
-    btn.textContent = "Resguardando Fondos en Garantía y Sellando Hedera...";
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Resguardando Fondos en Garantía y Sellando Hedera...";
+    }
 
     try {
         const res = await fetch("/api/reservar/", {
@@ -488,12 +578,16 @@ async function confirmarReservaConGarantia() {
             ultimoCertificadoEmitido = data.certificado;
             actualizarCertificadoEnPortalVendedor(data.certificado);
             mostrarModalVoucherReserva(data.certificado);
+        } else {
+            alert(data.mensaje || "No se pudo procesar la reserva.");
         }
     } catch (err) {
         alert("No se pudo procesar la reserva. Verificá la conexión.");
     } finally {
-        btn.disabled = false;
-        btn.textContent = "Reservar Lote con Pago en Garantía (Escrow) →";
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "Reservar Lote con Pago en Garantía (Escrow) →";
+        }
     }
 }
 

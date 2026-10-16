@@ -21,63 +21,80 @@
     }
 
     /* =========================================================================
-       PALETA MODO CLARO (Crema Pergamino, Verde Monte y Rojo Tierra Colorada)
-       Diseñada para alta legibilidad bajo luz solar directa en el campo (WCAG AAA)
+       PALETA MODO CLARO (Editorial Crema Pergamino, Verde Monte y Rojo Tierra)
+       Calma, contraste visual limpio y descanso para la vista en el campo
        ========================================================================= */
-    --bg-pagina: #FAF6ED;
-    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(22, 66, 40, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(154, 52, 18, 0.06), transparent 60%);
+    --bg-pagina: #FBF8F2;
+    --bg-gradiente: radial-gradient(1100px 550px at 50% -10%, rgba(24, 78, 46, 0.05), transparent 70%);
     --bg-tarjeta: #FFFFFF;
-    --bg-tarjeta-hover: #F8F4EA;
-    --bg-bloque-suave: #F0E8D7;
-    --bg-elevado: #E5DBCA;
-    --bg-glass: rgba(255, 255, 255, 0.90);
-    --bg-header: rgba(250, 246, 237, 0.92);
+    --bg-tarjeta-hover: #FAF7F0;
+    --bg-bloque-suave: #F3EFE6;
+    --bg-elevado: #EAE4D6;
+    --bg-glass: rgba(255, 255, 255, 0.92);
+    --bg-header: rgba(251, 248, 242, 0.94);
 
     /* Colores Institucionales y de Marca */
-    --color-primario: #164228;           /* Verde Monte Profundo */
-    --color-primario-hover: #0F2E1C;
-    --color-primario-suave: rgba(22, 66, 40, 0.10);
-    --color-secundario: #1F5A38;
+    --color-primario: #184E2E;           /* Verde Monte Profundo */
+    --color-primario-hover: #123C23;
+    --color-primario-suave: rgba(24, 78, 46, 0.08);
+    --color-secundario: #2D7248;
     --color-acento: #9A3412;             /* Terracota / Tierra Colorada */
     --color-acento-hover: #7C2D12;
-    --color-acento-bg: rgba(154, 52, 18, 0.10);
+    --color-acento-bg: rgba(154, 52, 18, 0.08);
     --color-crema-dorado: #C4AD85;
 
     /* Rentabilidad Logística */
-    --color-exito: #146C36;              /* Verde Rentable Flete Calzado */
-    --color-exito-bg: #E3F5EB;
-    --color-exito-borde: #5CB883;
+    --color-exito: #15803D;              /* Verde Rentabilidad Flete Calzado */
+    --color-exito-bg: #EDF9F1;
+    --color-exito-borde: #A7F3D0;
 
-    --color-peligro: #BA1A1A;            /* Rojo Tierra Alerta Flete Tradicional */
-    --color-peligro-bg: #FDE8E8;
-    --color-peligro-borde: #F08080;
+    --color-peligro: #DC2626;            /* Rojo Alerta Flete Tradicional */
+    --color-peligro-bg: #FEF2F2;
+    --color-peligro-borde: #FECACA;
 
     /* Trazabilidad y Blockchain */
-    --color-blockchain: #164228;
-    --color-blockchain-bg: #E5F0E9;
-    --color-blockchain-borde: #70BD92;
+    --color-blockchain: #184E2E;
+    --color-blockchain-bg: #EAF4EE;
+    --color-blockchain-borde: #86EFAC;
 
     /* Jerarquía Tipográfica y Contraste */
-    --texto-principal: #121E15;          /* Contraste 13.8:1 sobre fondo crema */
-    --texto-secundario: #2D3D32;         /* Contraste 8.2:1 */
-    --texto-suave: #4A5B4F;              /* Contraste 4.9:1 */
-    --texto-sobre-primario: #FAF6ED;
+    --texto-principal: #111814;          /* Contraste 15:1 */
+    --texto-secundario: #4B554F;         /* Contraste 7:1 */
+    --texto-suave: #6E7A73;              /* Contraste 4.5:1 */
+    --texto-sobre-primario: #FFFFFF;
 
-    /* Bordes y Sombras Táctiles */
-    --borde-color: #D6C8AC;
-    --borde-fuerte: #BFAFA0;
+    /* Bordes y Sombras Sutiles */
+    --borde-color: rgba(0, 0, 0, 0.08);
+    --borde-fuerte: rgba(0, 0, 0, 0.16);
     --radio-xs: 6px;
     --radio-sm: 10px;
     --radio-md: 14px;
     --radio-lg: 20px;
     --radio-xl: 26px;
-    --sombra-suave: 0 4px 18px -2px rgba(18, 30, 21, 0.07), 0 2px 6px -1px rgba(18, 30, 21, 0.04);
-    --sombra-destacada: 0 16px 36px -8px rgba(22, 66, 40, 0.16), 0 4px 12px -2px rgba(18, 30, 21, 0.06);
+    --sombra-suave: 0 2px 8px -1px rgba(17, 24, 20, 0.05), 0 1px 3px rgba(17, 24, 20, 0.03);
+    --sombra-destacada: 0 12px 28px -6px rgba(24, 78, 46, 0.12), 0 4px 10px -2px rgba(17, 24, 20, 0.04);
 
     /* Modales y Superposiciones */
-    --modal-backdrop: rgba(15, 25, 18, 0.70);
+    --modal-backdrop: rgba(17, 24, 20, 0.65);
     --modal-bg: #FFFFFF;
-    --modal-border: #D6C8AC;
+    --modal-border: rgba(0, 0, 0, 0.12);
+
+    /* Badges de Categoría y Modalidad Semánticos (Modo Claro) */
+    --badge-arroz-bg: rgba(24, 78, 46, 0.08);
+    --badge-arroz-text: #184E2E;
+    --badge-arroz-borde: rgba(24, 78, 46, 0.22);
+
+    --badge-madera-bg: rgba(180, 83, 9, 0.08);
+    --badge-madera-text: #B45309;
+    --badge-madera-borde: rgba(180, 83, 9, 0.22);
+
+    --badge-citrus-bg: rgba(217, 119, 6, 0.08);
+    --badge-citrus-text: #C2410C;
+    --badge-citrus-borde: rgba(217, 119, 6, 0.22);
+
+    --badge-compartido-bg: rgba(99, 102, 241, 0.08);
+    --badge-compartido-text: #4F46E5;
+    --badge-compartido-borde: rgba(99, 102, 241, 0.22);
 
     /* Familias Tipográficas */
     --fuente-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -86,55 +103,72 @@
 }
 
 /* =============================================================================
-   PALETA MODO OSCURO ([data-theme="dark"] — Noche de Monte y Crema Luminoso)
-   Diseñada para uso descansado en cabina de camión o noche rural
+   PALETA MODO OSCURO ([data-theme="dark"] — Obsidian Slate Profesional)
+   Contraste limpio, descanso ocular y acentos esmeralda/ámbar equilibrados
    ============================================================================= */
 :root:has(> head > meta[name="color-scheme"][content="dark"]),
 :root[data-theme="dark"],
 [data-theme="dark"] {
-    --bg-pagina: #0C140E;
-    --bg-gradiente: radial-gradient(1100px 550px at 15% -10%, rgba(46, 139, 82, 0.16), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(185, 28, 28, 0.10), transparent 60%);
-    --bg-tarjeta: #132017;
-    --bg-tarjeta-hover: #192A1F;
-    --bg-bloque-suave: #1A2B20;
-    --bg-elevado: #22372A;
-    --bg-glass: rgba(19, 32, 23, 0.90);
-    --bg-header: rgba(12, 20, 14, 0.92);
+    --bg-pagina: #0B0F12;
+    --bg-gradiente: radial-gradient(900px 450px at 50% -10%, rgba(16, 185, 129, 0.06), transparent 70%);
+    --bg-tarjeta: #13181D;
+    --bg-tarjeta-hover: #192026;
+    --bg-bloque-suave: #1A2228;
+    --bg-elevado: #242E36;
+    --bg-glass: rgba(19, 24, 29, 0.92);
+    --bg-header: rgba(11, 15, 18, 0.94);
 
-    --color-primario: #34A861;
-    --color-primario-hover: #46C075;
-    --color-primario-suave: rgba(52, 168, 97, 0.20);
-    --color-secundario: #22C55E;
-    --color-acento: #EA580C;
+    --color-primario: #10B981;           /* Esmeralda nítido de alta visibilidad */
+    --color-primario-hover: #34D399;
+    --color-primario-suave: rgba(16, 185, 129, 0.12);
+    --color-secundario: #34D399;
+    --color-acento: #FB923C;
     --color-acento-hover: #F97316;
-    --color-acento-bg: rgba(234, 88, 12, 0.18);
-    --color-crema-dorado: #3D5344;
+    --color-acento-bg: rgba(251, 146, 60, 0.12);
+    --color-crema-dorado: #475569;
 
-    --color-exito: #4ADE80;
-    --color-exito-bg: rgba(34, 197, 94, 0.16);
-    --color-exito-borde: rgba(74, 222, 128, 0.45);
+    --color-exito: #34D399;
+    --color-exito-bg: rgba(16, 185, 129, 0.12);
+    --color-exito-borde: rgba(52, 211, 153, 0.30);
 
     --color-peligro: #F87171;
-    --color-peligro-bg: rgba(239, 68, 68, 0.18);
-    --color-peligro-borde: rgba(248, 113, 113, 0.45);
+    --color-peligro-bg: rgba(239, 68, 68, 0.12);
+    --color-peligro-borde: rgba(248, 113, 113, 0.30);
 
-    --color-blockchain: #86EFAC;
-    --color-blockchain-bg: rgba(34, 197, 94, 0.14);
-    --color-blockchain-borde: rgba(134, 239, 172, 0.38);
+    --color-blockchain: #34D399;
+    --color-blockchain-bg: rgba(16, 185, 129, 0.10);
+    --color-blockchain-borde: rgba(52, 211, 153, 0.25);
 
-    --texto-principal: #F6EFE2;          /* Crema luminoso */
-    --texto-secundario: #C8BFAB;
-    --texto-suave: #9A9280;
-    --texto-sobre-primario: #0C140E;
+    --texto-principal: #F1F5F9;          /* Blanco nítido slate */
+    --texto-secundario: #94A3B8;         /* Gris pizarra equilibrado */
+    --texto-suave: #64748B;              /* Pizarra medio para metadatos */
+    --texto-sobre-primario: #0B0F12;
 
-    --borde-color: #243729;
-    --borde-fuerte: #324B39;
-    --sombra-suave: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
-    --sombra-destacada: 0 20px 45px -10px rgba(0, 0, 0, 0.7);
+    --borde-color: rgba(255, 255, 255, 0.09);
+    --borde-fuerte: rgba(255, 255, 255, 0.16);
+    --sombra-suave: 0 4px 16px rgba(0, 0, 0, 0.45);
+    --sombra-destacada: 0 16px 36px rgba(0, 0, 0, 0.65);
 
-    --modal-backdrop: rgba(0, 0, 0, 0.82);
-    --modal-bg: #132017;
-    --modal-border: #324B39;
+    --modal-backdrop: rgba(0, 0, 0, 0.80);
+    --modal-bg: #13181D;
+    --modal-border: rgba(255, 255, 255, 0.12);
+
+    /* Badges de Categoría y Modalidad Semánticos (Modo Oscuro) */
+    --badge-arroz-bg: rgba(16, 185, 129, 0.14);
+    --badge-arroz-text: #6EE7B7;
+    --badge-arroz-borde: rgba(52, 211, 153, 0.28);
+
+    --badge-madera-bg: rgba(245, 158, 11, 0.14);
+    --badge-madera-text: #FCD34D;
+    --badge-madera-borde: rgba(251, 191, 36, 0.28);
+
+    --badge-citrus-bg: rgba(251, 146, 60, 0.14);
+    --badge-citrus-text: #FDBA74;
+    --badge-citrus-borde: rgba(251, 146, 60, 0.28);
+
+    --badge-compartido-bg: rgba(129, 140, 248, 0.14);
+    --badge-compartido-text: #C7D2FE;
+    --badge-compartido-borde: rgba(129, 140, 248, 0.28);
 }
 
 /* =============================================================================
@@ -143,42 +177,55 @@
 :root:has(> head > meta[name="color-scheme"][content="light"]),
 :root[data-theme="light"],
 [data-theme="light"] {
-    --bg-pagina: #FAF6ED;
-    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(22, 66, 40, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(154, 52, 18, 0.06), transparent 60%);
+    --bg-pagina: #FBF8F2;
+    --bg-gradiente: radial-gradient(1100px 550px at 50% -10%, rgba(24, 78, 46, 0.05), transparent 70%);
     --bg-tarjeta: #FFFFFF;
-    --bg-tarjeta-hover: #F8F4EA;
-    --bg-bloque-suave: #F0E8D7;
-    --bg-elevado: #E5DBCA;
-    --bg-glass: rgba(255, 255, 255, 0.90);
-    --bg-header: rgba(250, 246, 237, 0.92);
-    --color-primario: #164228;
-    --color-primario-hover: #0F2E1C;
-    --color-primario-suave: rgba(22, 66, 40, 0.10);
-    --color-secundario: #1F5A38;
+    --bg-tarjeta-hover: #FAF7F0;
+    --bg-bloque-suave: #F3EFE6;
+    --bg-elevado: #EAE4D6;
+    --bg-glass: rgba(255, 255, 255, 0.92);
+    --bg-header: rgba(251, 248, 242, 0.94);
+    --color-primario: #184E2E;
+    --color-primario-hover: #123C23;
+    --color-primario-suave: rgba(24, 78, 46, 0.08);
+    --color-secundario: #2D7248;
     --color-acento: #9A3412;
     --color-acento-hover: #7C2D12;
-    --color-acento-bg: rgba(154, 52, 18, 0.10);
+    --color-acento-bg: rgba(154, 52, 18, 0.08);
     --color-crema-dorado: #C4AD85;
-    --color-exito: #146C36;
-    --color-exito-bg: #E3F5EB;
-    --color-exito-borde: #5CB883;
-    --color-peligro: #BA1A1A;
-    --color-peligro-bg: #FDE8E8;
-    --color-peligro-borde: #F08080;
-    --color-blockchain: #164228;
-    --color-blockchain-bg: #E5F0E9;
-    --color-blockchain-borde: #70BD92;
-    --texto-principal: #121E15;
-    --texto-secundario: #2D3D32;
-    --texto-suave: #4A5B4F;
-    --texto-sobre-primario: #FAF6ED;
-    --borde-color: #D6C8AC;
-    --borde-fuerte: #BFAFA0;
-    --sombra-suave: 0 4px 18px -2px rgba(18, 30, 21, 0.07), 0 2px 6px -1px rgba(18, 30, 21, 0.04);
-    --sombra-destacada: 0 16px 36px -8px rgba(22, 66, 40, 0.16), 0 4px 12px -2px rgba(18, 30, 21, 0.06);
-    --modal-backdrop: rgba(15, 25, 18, 0.70);
+    --color-exito: #15803D;
+    --color-exito-bg: #EDF9F1;
+    --color-exito-borde: #A7F3D0;
+    --color-peligro: #DC2626;
+    --color-peligro-bg: #FEF2F2;
+    --color-peligro-borde: #FECACA;
+    --color-blockchain: #184E2E;
+    --color-blockchain-bg: #EAF4EE;
+    --color-blockchain-borde: #86EFAC;
+    --texto-principal: #111814;
+    --texto-secundario: #4B554F;
+    --texto-suave: #6E7A73;
+    --texto-sobre-primario: #FFFFFF;
+    --borde-color: rgba(0, 0, 0, 0.08);
+    --borde-fuerte: rgba(0, 0, 0, 0.16);
+    --sombra-suave: 0 2px 8px -1px rgba(17, 24, 20, 0.05), 0 1px 3px rgba(17, 24, 20, 0.03);
+    --sombra-destacada: 0 12px 28px -6px rgba(24, 78, 46, 0.12), 0 4px 10px -2px rgba(17, 24, 20, 0.04);
+    --modal-backdrop: rgba(17, 24, 20, 0.65);
     --modal-bg: #FFFFFF;
-    --modal-border: #D6C8AC;
+    --modal-border: rgba(0, 0, 0, 0.12);
+
+    --badge-arroz-bg: rgba(24, 78, 46, 0.08);
+    --badge-arroz-text: #184E2E;
+    --badge-arroz-borde: rgba(24, 78, 46, 0.22);
+    --badge-madera-bg: rgba(180, 83, 9, 0.08);
+    --badge-madera-text: #B45309;
+    --badge-madera-borde: rgba(180, 83, 9, 0.22);
+    --badge-citrus-bg: rgba(217, 119, 6, 0.08);
+    --badge-citrus-text: #C2410C;
+    --badge-citrus-borde: rgba(217, 119, 6, 0.22);
+    --badge-compartido-bg: rgba(99, 102, 241, 0.08);
+    --badge-compartido-text: #4F46E5;
+    --badge-compartido-borde: rgba(99, 102, 241, 0.22);
 }
 
 /* =============================================================================
@@ -192,8 +239,8 @@
         --texto-principal: #000000 !important;
         --texto-secundario: #222222 !important;
         --texto-suave: #444444 !important;
-        --color-primario: #164228 !important;
-        --color-exito: #146C36 !important;
+        --color-primario: #184E2E !important;
+        --color-exito: #15803D !important;
         --color-peligro: #000000 !important;
         --borde-color: #333333 !important;
         --borde-fuerte: #000000 !important;

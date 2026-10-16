@@ -135,6 +135,16 @@
                     <span class="session-badge-pill" id="session-role-pill">Ingresar</span>
                 </button>
 
+                <!-- Botón de Cerrar Sesión (Visible solo con sesión activa) -->
+                <button type="button" id="btn-logout" class="btn-logout-navbar" onclick="cerrarSesion()" style="display:none;" aria-label="Cerrar Sesión Activa">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Cerrar Sesión</span>
+                </button>
+
                 <span class="db-pill">{{ db_mode_label }}</span>
 
                 <button type="button" id="theme-toggle" class="theme-toggle" onclick="alternarTema()" aria-label="Cambiar entre modo claro y oscuro">
@@ -191,57 +201,50 @@
                             <span class="corredor-tag">RN 14 (Virasoro ⇄ Alvear)</span>
                         </div>
 
-                                                <!-- Banner Directo de Iniciar Sesión / Identificación -->
-                        <div class="hero-login-callout" onclick="abrirModalLogin()" role="button" tabindex="0">
-                            <div class="login-callout-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="login-callout-text">
-                                <div class="callout-heading">Iniciar Sesión / Identificarme en Moñái</div>
-                                <div class="callout-desc">Elegí si sos Comprador, Vendedor o Fletero en 1 clic para personalizar tus fletes, distancias y cotizaciones.</div>
-                            </div>
-                            <button type="button" class="btn-primary" style="width:auto; padding:0.5rem 1.15rem; min-height:40px; font-size:0.88rem; flex-shrink:0;">
-                                Iniciar Sesión →
+                        <!-- Acciones Principales y Salto Directo a Demo -->
+                        <div class="hero-actions-row">
+                            <button type="button" class="btn-primary" onclick="cambiarVistaRol('vista-comprador')">
+                                Explorar Lotes para mi Campo →
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="document.querySelector('.live-demo-stage').scrollIntoView({behavior:'smooth', block:'start'})">
+                                Probar Simulador en Vivo ↓
                             </button>
                         </div>
 
-                        <div class="role-entry-label">¿Cómo vas a operar en Moñái? Seleccioná tu perfil:</div>
+                        <div class="role-entry-label">¿Cómo vas a operar en Moñái? Elegí tu perfil:</div>
 
                         <!-- Las 3 Puertas de Entrada Táctiles por Rol -->
                         <div class="role-entry-cards">
                             <button type="button" class="role-card role-buyer" onclick="cambiarVistaRol('vista-comprador')">
                                 <div class="role-card-top">
-                                    <span class="role-tag">PERFIL 01 · COMPRADOR</span>
+                                    <span class="role-tag">01 · COMPRADOR</span>
                                     <span class="role-arrow">Ingresar →</span>
                                 </div>
                                 <div class="role-card-title">Productor Agropecuario</div>
                                 <p class="role-card-desc">
-                                    Avícolas, feedlots y calderas de biomasa. Encontrá cama de pollo o fibra cercana y cotizala puesta en tu tranquera a mitad de flete.
+                                    Avícolas, feedlots y calderas. Encontrá subproductos cercanos y cotizalos puestos en tranquera a mitad de flete.
                                 </p>
                             </button>
 
                             <button type="button" class="role-card role-seller" onclick="cambiarVistaRol('vista-vendedor')">
                                 <div class="role-card-top">
-                                    <span class="role-tag">PERFIL 02 · VENDEDOR</span>
+                                    <span class="role-tag">02 · VENDEDOR</span>
                                     <span class="role-arrow">Ingresar →</span>
                                 </div>
                                 <div class="role-card-title">Industria Generadora</div>
                                 <p class="role-card-desc">
-                                    Molinos arroceros, aserraderos y citrícolas. Vaciá galpones colapsados en 48 hs definiendo quién paga el flete y emití tu Certificado Ambiental.
+                                    Molinos, aserraderos y citrícolas. Vaciá galpones colapsados en 48 hs y emití tu Certificado Ambiental.
                                 </p>
                             </button>
 
                             <button type="button" class="role-card role-carrier" onclick="cambiarVistaRol('vista-logistica')">
                                 <div class="role-card-top">
-                                    <span class="role-tag">PERFIL 03 · LOGÍSTICA</span>
+                                    <span class="role-tag">03 · LOGÍSTICA</span>
                                     <span class="role-arrow">Ingresar →</span>
                                 </div>
                                 <div class="role-card-title">Transporte y Fleteros</div>
                                 <p class="role-card-desc">
-                                    Camiones con retorno vacío. Monetizá tus kilómetros de vuelta cargando subproductos compatibles con cobro garantizado al descargar.
+                                    Camiones con retorno vacío. Monetizá tus kilómetros de vuelta con cobro garantizado al descargar.
                                 </p>
                             </button>
                         </div>
@@ -700,7 +703,36 @@
         <!-- =================================================================== -->
         <section id="vista-vendedor" class="user-view-panel app-tab-panel" role="tabpanel" aria-labelledby="nav-btn-vendedor">
 
-            <div class="role-workspace-header">
+            <!-- PANTALLA DE ACCESO RESTRINGIDO (CUANDO NO HAY SESIÓN INICIADA) -->
+            <div id="vendedor-gated-view" class="auth-gated-view" style="display:none;">
+                <div class="auth-gated-card">
+                    <div class="auth-gated-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 21h18"></path>
+                            <path d="M19 21v-4"></path>
+                            <path d="M19 13V7l-6 4-6-4v14"></path>
+                            <path d="M9 21v-8"></path>
+                        </svg>
+                    </div>
+                    <span class="role-badge-pill">ESPACIO AGROINDUSTRIAL EXCLUSIVO</span>
+                    <h2 class="auth-gated-title">Portal de Gestión para Agroindustrias del NEA</h2>
+                    <p class="auth-gated-desc">
+                        Para publicar nuevos lotes de cascarilla, aserrín o citrus, definir quién absorbe el flete para evacuación urgente en 48 hs y descargar tus Remitos Circulares oficiales con trazabilidad Hedera HCS, identificá tu empresa.
+                    </p>
+                    <div class="auth-gated-actions">
+                        <button type="button" class="btn-primary" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo SRL', 'Saladas, Corrientes')">
+                            Ingresar como Molino San Lorenzo (Saladas) →
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="abrirModalLogin()">
+                            Identificarme con otros datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENIDO PRIVADO (VISIBLE CUANDO HAY SESIÓN INICIADA) -->
+            <div id="vendedor-private-view" class="auth-private-view">
+                <div class="role-workspace-header">
                 <div>
                     <span class="role-badge-pill">PORTAL AGROINDUSTRIA VENDEDORA</span>
                     <h2 class="workspace-title">Salida de Planta y Certificados de Trazabilidad Ambiental</h2>
@@ -920,7 +952,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
@@ -929,7 +960,36 @@
         <!-- =================================================================== -->
         <section id="vista-logistica" class="user-view-panel app-tab-panel" role="tabpanel" aria-labelledby="nav-btn-logistica">
 
-            <div class="role-workspace-header">
+            <!-- PANTALLA DE ACCESO RESTRINGIDO (CUANDO NO HAY SESIÓN INICIADA) -->
+            <div id="logistica-gated-view" class="auth-gated-view" style="display:none;">
+                <div class="auth-gated-card">
+                    <div class="auth-gated-icon-box">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                    </div>
+                    <span class="role-badge-pill">BOLSA DE RETORNOS REGIONAL</span>
+                    <h2 class="auth-gated-title">Acceso Exclusivo para Transportistas y Fleteros</h2>
+                    <p class="auth-gated-desc">
+                        Para ver las asignaciones de cargas compatibles en tus corredores habituales (RN 12, RN 14, RN 118) y registrar camiones con retorno disponible para cobrar en garantía al descargar sin demoras en planta, identificá tu unidad o empresa.
+                    </p>
+                    <div class="auth-gated-actions">
+                        <button type="button" class="btn-primary" onclick="identificarseComoRol('logistica', 'Horacio Giménez', 'Transporte Don Horacio', 'Corrientes Capital')">
+                            Ingresar como Transporte Don Horacio →
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="abrirModalLogin()">
+                            Identificarme con otros datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENIDO PRIVADO (VISIBLE CUANDO HAY SESIÓN INICIADA) -->
+            <div id="logistica-private-view" class="auth-private-view">
+                <div class="role-workspace-header">
                 <div>
                     <span class="role-badge-pill">PORTAL TRANSPORTE Y FLOTAS REGIONALES</span>
                     <h2 class="workspace-title">Bolsa de Retornos Vacíos y Cargas Compatibles</h2>
@@ -1067,6 +1127,7 @@
                 </aside>
 
             </div>
+            </div>
         </section>
 
     </main>
@@ -1090,6 +1151,9 @@
             </div>
 
             <div class="modal-body">
+                <!-- Alerta contextual cuando el usuario es redirigido desde una acción privada (ej. reservar lote) -->
+                <div id="login-modal-notice" style="display:none;"></div>
+
                 <!-- Selector Rápido de Rol en 1 Clic -->
                 <div class="login-roles-grid">
                     <button type="button" class="login-role-option" onclick="identificarseComoRol('comprador', 'Don Aníbal Gómez', 'Granja Avícola San Isidro', 'Goya, Corrientes')">
