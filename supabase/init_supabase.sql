@@ -1,39 +1,40 @@
 -- =============================================================================
 -- SCRIPT DE INICIALIZACIÓN PARA SUPABASE (SQL EDITOR)
 -- Proyecto: SubRuta — Ideathon NEA Tech 2026 (Corrientes)
--- Nota: Si conectan Django vía DATABASE_URL y corren `python manage.py migrate`
--- y `python manage.py seed_nea`, Django crea y puebla sus tablas solo.
--- Este script es para quien quiera crear y ver las 3 tablas directo en Supabase SQL Editor.
 -- =============================================================================
 
+DROP TABLE IF EXISTS mercado_operaciontrazabilidad CASCADE;
+DROP TABLE IF EXISTS mercado_camionretorno CASCADE;
+DROP TABLE IF EXISTS mercado_lotesubproducto CASCADE;
+
 -- 1. Tabla de Lotes de Subproductos (Oferta Agroindustrial del NEA)
-CREATE TABLE IF NOT EXISTS mercado_lotesubproducto (
+CREATE TABLE mercado_lotesubproducto (
     id BIGSERIAL PRIMARY KEY,
-    titulo VARCHAR(140) NOT NULL,
-    categoria VARCHAR(40) NOT NULL,
-    empresa_vendedora VARCHAR(120) NOT NULL,
-    localidad_origen VARCHAR(100) NOT NULL,
-    provincia VARCHAR(60) NOT NULL DEFAULT 'Corrientes',
+    titulo VARCHAR(160) NOT NULL,
+    categoria VARCHAR(60) NOT NULL,
+    empresa_vendedora VARCHAR(140) NOT NULL,
+    localidad_origen VARCHAR(120) NOT NULL,
+    provincia VARCHAR(80) NOT NULL DEFAULT 'Corrientes',
     toneladas_disponibles NUMERIC(8,2) NOT NULL,
     densidad_kg_m3 INTEGER NOT NULL,
     precio_tonelada_ars NUMERIC(12,2) NOT NULL,
-    humedad_estado VARCHAR(40) NOT NULL DEFAULT 'Seco / A granel',
-    carroceria_requerida VARCHAR(60) NOT NULL DEFAULT 'Batea / Semirremolque',
-    usos_recomendados VARCHAR(220) NOT NULL,
-    perfiles_comprador VARCHAR(120) NOT NULL,
-    modalidad_flete VARCHAR(30) NOT NULL DEFAULT 'COMPRADOR',
+    humedad_estado VARCHAR(120) NOT NULL DEFAULT 'Seco / A granel',
+    carroceria_requerida VARCHAR(120) NOT NULL DEFAULT 'Batea / Semirremolque',
+    usos_recomendados VARCHAR(255) NOT NULL,
+    perfiles_comprador VARCHAR(140) NOT NULL,
+    modalidad_flete VARCHAR(60) NOT NULL DEFAULT 'COMPRADOR',
     creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- 2. Tabla de Camiones de Retorno ("Flete Calzado")
-CREATE TABLE IF NOT EXISTS mercado_camionretorno (
+CREATE TABLE mercado_camionretorno (
     id BIGSERIAL PRIMARY KEY,
-    transportista VARCHAR(120) NOT NULL,
-    origen_viaje VARCHAR(100) NOT NULL,
-    destino_viaje VARCHAR(100) NOT NULL,
-    pasa_por VARCHAR(180) NOT NULL,
-    fecha_disponible VARCHAR(60) NOT NULL,
-    tipo_carroceria VARCHAR(60) NOT NULL,
+    transportista VARCHAR(140) NOT NULL,
+    origen_viaje VARCHAR(120) NOT NULL,
+    destino_viaje VARCHAR(120) NOT NULL,
+    pasa_por VARCHAR(220) NOT NULL,
+    fecha_disponible VARCHAR(100) NOT NULL,
+    tipo_carroceria VARCHAR(120) NOT NULL,
     capacidad_max_tn NUMERIC(6,2) NOT NULL DEFAULT 30.00,
     capacidad_max_m3 NUMERIC(6,2) NOT NULL DEFAULT 85.00,
     descuento_retorno_pct NUMERIC(5,2) NOT NULL DEFAULT 45.00,
@@ -41,12 +42,12 @@ CREATE TABLE IF NOT EXISTS mercado_camionretorno (
 );
 
 -- 3. Tabla de Operaciones Cerradas y Trazabilidad ("Blockchain Invisible")
-CREATE TABLE IF NOT EXISTS mercado_operaciontrazabilidad (
+CREATE TABLE mercado_operaciontrazabilidad (
     id BIGSERIAL PRIMARY KEY,
     lote_id BIGINT REFERENCES mercado_lotesubproducto(id) ON DELETE CASCADE,
     camion_id BIGINT REFERENCES mercado_camionretorno(id) ON DELETE SET NULL,
-    comprador_nombre VARCHAR(120) NOT NULL,
-    localidad_destino VARCHAR(100) NOT NULL,
+    comprador_nombre VARCHAR(140) NOT NULL,
+    localidad_destino VARCHAR(120) NOT NULL,
     distancia_km INTEGER NOT NULL,
     volumen_m3_calculado NUMERIC(8,2) NOT NULL,
     subtotal_subproducto_ars NUMERIC(14,2) NOT NULL,
@@ -54,9 +55,9 @@ CREATE TABLE IF NOT EXISTS mercado_operaciontrazabilidad (
     flete_calzado_ars NUMERIC(14,2) NOT NULL,
     ahorro_logistico_ars NUMERIC(14,2) NOT NULL,
     comision_plataforma_ars NUMERIC(14,2) NOT NULL,
-    estado_garantia VARCHAR(40) NOT NULL DEFAULT 'RETENIDO_EN_GARANTIA',
-    red_blockchain VARCHAR(40) NOT NULL DEFAULT 'Hedera Testnet (HCS)',
-    hash_certificado VARCHAR(120) NOT NULL,
+    estado_garantia VARCHAR(80) NOT NULL DEFAULT 'RETENIDO_EN_GARANTIA',
+    red_blockchain VARCHAR(80) NOT NULL DEFAULT 'Hedera Testnet (HCS)',
+    hash_certificado VARCHAR(140) NOT NULL,
     creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

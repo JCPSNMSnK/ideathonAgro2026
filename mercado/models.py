@@ -20,26 +20,26 @@ class LoteSubproducto(models.Model):
         ("COMPARTIDO_50_50", "50% Vendedor / 50% Comprador (Flete Compartido)"),
     ]
 
-    titulo = models.CharField(max_length=140)
-    categoria = models.CharField(max_length=40, choices=CATEGORIAS, default="ARROZ")
-    empresa_vendedora = models.CharField(max_length=120)
-    localidad_origen = models.CharField(max_length=100, default="Saladas")
-    provincia = models.CharField(max_length=60, default="Corrientes")
+    titulo = models.CharField(max_length=160)
+    categoria = models.CharField(max_length=60, choices=CATEGORIAS, default="ARROZ")
+    empresa_vendedora = models.CharField(max_length=140)
+    localidad_origen = models.CharField(max_length=120, default="Saladas")
+    provincia = models.CharField(max_length=80, default="Corrientes")
     toneladas_disponibles = models.DecimalField(max_digits=8, decimal_places=2)
     densidad_kg_m3 = models.IntegerField(
         help_text="Kilos que entran en 1 metro cúbico (ej: Cascarilla=165, Aserrín=210, Citrus=650)"
     )
     precio_tonelada_ars = models.DecimalField(max_digits=12, decimal_places=2)
-    humedad_estado = models.CharField(max_length=40, default="Seco / A granel")
-    carroceria_requerida = models.CharField(max_length=60, default="Batea / Semirremolque")
-    usos_recomendados = models.CharField(max_length=220)
+    humedad_estado = models.CharField(max_length=120, default="Seco / A granel")
+    carroceria_requerida = models.CharField(max_length=120, default="Batea / Semirremolque")
+    usos_recomendados = models.CharField(max_length=255)
     perfiles_comprador = models.CharField(
-        max_length=120,
+        max_length=140,
         default="AVICOLA,GANADERO,BIOMASA",
         help_text="Perfiles separados por coma: AVICOLA, GANADERO, BIOMASA, VIVERO",
     )
     modalidad_flete = models.CharField(
-        max_length=30, choices=MODALIDADES_FLETE, default="COMPRADOR"
+        max_length=60, choices=MODALIDADES_FLETE, default="COMPRADOR"
     )
     creado_en = models.DateTimeField(auto_now_add=True)
 
@@ -66,12 +66,12 @@ class CamionRetorno(models.Model):
     """
     Tabla 2: Bolsa de camiones que regresan vacíos ('Flete Calzado').
     """
-    transportista = models.CharField(max_length=120)
-    origen_viaje = models.CharField(max_length=100)
-    destino_viaje = models.CharField(max_length=100)
-    pasa_por = models.CharField(max_length=180)
-    fecha_disponible = models.CharField(max_length=60)
-    tipo_carroceria = models.CharField(max_length=60)
+    transportista = models.CharField(max_length=140)
+    origen_viaje = models.CharField(max_length=120)
+    destino_viaje = models.CharField(max_length=120)
+    pasa_por = models.CharField(max_length=220)
+    fecha_disponible = models.CharField(max_length=100)
+    tipo_carroceria = models.CharField(max_length=120)
     capacidad_max_tn = models.DecimalField(max_digits=6, decimal_places=2, default=30.00)
     capacidad_max_m3 = models.DecimalField(max_digits=6, decimal_places=2, default=85.00)
     descuento_retorno_pct = models.DecimalField(max_digits=5, decimal_places=2, default=45.00)
@@ -88,8 +88,8 @@ class OperacionTrazabilidad(models.Model):
     """
     lote = models.ForeignKey(LoteSubproducto, on_delete=models.CASCADE)
     camion = models.ForeignKey(CamionRetorno, on_delete=models.SET_NULL, null=True, blank=True)
-    comprador_nombre = models.CharField(max_length=120)
-    localidad_destino = models.CharField(max_length=100)
+    comprador_nombre = models.CharField(max_length=140)
+    localidad_destino = models.CharField(max_length=120)
     distancia_km = models.IntegerField()
     volumen_m3_calculado = models.DecimalField(max_digits=8, decimal_places=2)
     subtotal_subproducto_ars = models.DecimalField(max_digits=14, decimal_places=2)
@@ -97,9 +97,9 @@ class OperacionTrazabilidad(models.Model):
     flete_calzado_ars = models.DecimalField(max_digits=14, decimal_places=2)
     ahorro_logistico_ars = models.DecimalField(max_digits=14, decimal_places=2)
     comision_plataforma_ars = models.DecimalField(max_digits=14, decimal_places=2)
-    estado_garantia = models.CharField(max_length=40, default="RETENIDO_EN_GARANTIA")
-    red_blockchain = models.CharField(max_length=40, default="Hedera Testnet (HCS)")
-    hash_certificado = models.CharField(max_length=120)
+    estado_garantia = models.CharField(max_length=80, default="RETENIDO_EN_GARANTIA")
+    red_blockchain = models.CharField(max_length=80, default="Hedera Testnet (HCS)")
+    hash_certificado = models.CharField(max_length=140)
     creado_en = models.DateTimeField(auto_now_add=True)
 
     class Meta:
