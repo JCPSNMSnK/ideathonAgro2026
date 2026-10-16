@@ -28,12 +28,12 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
 
 ---
 
-## 4. Índice del Repositorio
-- [`/01-problema/problema.md`](./01-problema/problema.md) — Actor, dolor, resolución actual, datos auditados (BCCBA, FADEEAC 2026) y supuestos validados.
-- [`/02-solucion/solucion.md`](./02-solucion/solucion.md) — Idea elegida, ideas descartadas, alerta de sobreingeniería, flujo de la demo en 4 pasos y validación.
-- [`/03-costos-y-ganancias/costos-y-ganancias.md`](./03-costos-y-ganancias/costos-y-ganancias.md) — Estructura de costos, terceros necesarios, flexibilidad del flete y cuenta estimada.
-- [`/04-blockchain/blockchain.md`](./04-blockchain/blockchain.md) — Criterio de uso de Blockchain Invisible, tabla On-Chain vs. Off-Chain y estrategia de implementación.
-- [`/05-producto/producto.md`](./05-producto/producto.md) — Pitch de 1 minuto, 5 preguntas difíciles del jurado, gestión de riesgos y hoja de ruta.
+## 4. Índice del Repositorio (`documentacion/`)
+- [`/documentacion/01-problema/problema.md`](./documentacion/01-problema/problema.md) — Actor, dolor, resolución actual, datos auditados (BCCBA, FADEEAC 2026) y supuestos validados.
+- [`/documentacion/02-solucion/solucion.md`](./documentacion/02-solucion/solucion.md) — Idea elegida, ideas descartadas, alerta de sobreingeniería, flujo de la demo en 4 pasos y validación.
+- [`/documentacion/03-costos-y-ganancias/costos-y-ganancias.md`](./documentacion/03-costos-y-ganancias/costos-y-ganancias.md) — Estructura de costos, terceros necesarios, flexibilidad del flete y cuenta estimada.
+- [`/documentacion/04-blockchain/blockchain.md`](./documentacion/04-blockchain/blockchain.md) — Criterio de uso de Blockchain Invisible, tabla On-Chain vs. Off-Chain y estrategia de implementación.
+- [`/documentacion/05-producto/producto.md`](./documentacion/05-producto/producto.md) — Pitch de 1 minuto, 5 preguntas difíciles del jurado, gestión de riesgos y hoja de ruta.
 
 ---
 
