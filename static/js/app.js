@@ -19,12 +19,7 @@ function formatoARS(valor) {
 /* =============================================================================
    1. GESTIÓN DE SESIÓN Y PERFIL DE USUARIO ACCESIBLE (PRODUCTOR RURAL)
    ============================================================================= */
-let usuarioActivo = {
-    rol: "comprador",
-    nombre: "Don Aníbal Gómez",
-    organizacion: "Granja Avícola San Isidro SRL",
-    localidad: "Goya, Corrientes",
-};
+let usuarioActivo = null;
 
 function abrirModalLogin() {
     const modal = document.getElementById("modal-login");
@@ -75,7 +70,11 @@ function guardarIdentificacionManual(event) {
 
 function guardarYActualizarSesion() {
     try {
-        localStorage.setItem("monai_usuario_activo", JSON.stringify(usuarioActivo));
+        if (usuarioActivo) {
+            localStorage.setItem("monai_usuario_activo", JSON.stringify(usuarioActivo));
+        } else {
+            localStorage.removeItem("monai_usuario_activo");
+        }
     } catch (e) {}
     aplicarDatosSesionEnUI();
 }
@@ -96,17 +95,29 @@ function restaurarSesionGuardada() {
 function aplicarDatosSesionEnUI() {
     const label = document.getElementById("session-user-label");
     const pill = document.getElementById("session-role-pill");
+    const tabLabel = document.getElementById("nav-login-tab-label");
+
+    const rolMap = {
+        comprador: "Comprador",
+        vendedor: "Vendedor",
+        logistica: "Logística",
+    };
+
+    if (!usuarioActivo) {
+        if (label) label.textContent = "Iniciar Sesión";
+        if (pill) pill.textContent = "Ingresar";
+        if (tabLabel) tabLabel.textContent = "Iniciar Sesión";
+        return;
+    }
 
     if (label) {
-        label.textContent = usuarioActivo.nombre || "Identificarme";
+        label.textContent = usuarioActivo.nombre || "Iniciar Sesión";
     }
     if (pill) {
-        const rolMap = {
-            comprador: "Comprador",
-            vendedor: "Vendedor",
-            logistica: "Logística",
-        };
         pill.textContent = rolMap[usuarioActivo.rol] || "Usuario";
+    }
+    if (tabLabel) {
+        tabLabel.textContent = `Mi Perfil (${rolMap[usuarioActivo.rol] || "Usuario"})`;
     }
 
     // Prefill de campos según el usuario activo

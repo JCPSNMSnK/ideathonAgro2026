@@ -1732,3 +1732,118 @@ h4 {
         padding: 1.5cm !important;
     }
 }
+
+/* =============================================================================
+   11. ELEMENTOS DESTACADOS DE INICIO DE SESIÓN Y BOTONES DE ENTRADA
+   ============================================================================= */
+.role-tab-login {
+    background: var(--color-primario-suave) !important;
+    color: var(--color-primario) !important;
+    border: 1.5px solid var(--color-exito-borde) !important;
+    font-weight: 700 !important;
+}
+
+.role-tab-login:hover {
+    background: var(--color-primario) !important;
+    color: var(--texto-sobre-primario) !important;
+}
+
+.role-tab-login svg {
+    stroke: var(--color-primario);
+}
+
+.role-tab-login:hover svg {
+    stroke: var(--texto-sobre-primario);
+}
+
+.btn-iniciar-sesion-navbar {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.42rem 0.95rem !important;
+    min-height: 40px !important;
+    border-radius: 9999px !important;
+    background: var(--color-primario) !important;
+    color: var(--texto-sobre-primario) !important;
+    border: 1.5px solid var(--color-crema-dorado) !important;
+    box-shadow: 0 3px 10px rgba(22, 66, 40, 0.35) !important;
+    font-size: 0.86rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-iniciar-sesion-navbar:hover {
+    background: var(--color-primario-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(22, 66, 40, 0.45) !important;
+}
+
+.btn-iniciar-sesion-navbar svg {
+    stroke: var(--texto-sobre-primario) !important;
+}
+
+.btn-iniciar-sesion-navbar .session-badge-pill {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: #FFFFFF !important;
+    font-size: 0.70rem !important;
+    font-weight: 800 !important;
+    padding: 0.15rem 0.5rem !important;
+    border-radius: 9999px !important;
+}
+
+.hero-login-callout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--color-primario);
+    border-radius: var(--radio-md);
+    padding: 0.95rem 1.15rem;
+    margin-bottom: 1.35rem;
+    cursor: pointer;
+    box-shadow: var(--sombra-suave);
+    transition: all 0.2s ease;
+}
+
+.hero-login-callout:hover {
+    background: var(--bg-tarjeta-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-destacada);
+    border-color: var(--color-exito-borde);
+}
+
+.login-callout-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.login-callout-icon svg {
+    stroke: var(--texto-sobre-primario);
+}
+
+.login-callout-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.callout-heading {
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: var(--texto-principal);
+    line-height: 1.25;
+}
+
+.callout-desc {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+    margin-top: 0.2rem;
+}

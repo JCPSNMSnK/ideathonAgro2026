@@ -109,18 +109,30 @@
                     </svg>
                     <span>Logística / Camión</span>
                 </button>
+                <!-- Pestaña Directa para Iniciar Sesión -->
+                <button type="button"
+                        class="role-tab-btn role-tab-login"
+                        id="nav-btn-login"
+                        onclick="abrirModalLogin()">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <polyline points="10 17 15 12 10 7"></polyline>
+                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    <span id="nav-login-tab-label">Iniciar Sesión</span>
+                </button>
             </nav>
 
             <!-- Acciones de Navegación: Usuario Activo, Conexión y Modo Claro/Oscuro -->
             <div class="nav-actions">
                 <!-- Botón de Identificación / Sesión de Usuario -->
-                <button type="button" id="btn-user-session" class="user-session-btn" onclick="abrirModalLogin()" aria-label="Identificarse como usuario">
+                <button type="button" id="btn-user-session" class="user-session-btn btn-iniciar-sesion-navbar" onclick="abrirModalLogin()" aria-label="Iniciar Sesión en Moñái">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <span id="session-user-label">Identificarme</span>
-                    <span class="session-badge-pill" id="session-role-pill">Demo</span>
+                    <strong id="session-user-label">Iniciar Sesión</strong>
+                    <span class="session-badge-pill" id="session-role-pill">Ingresar</span>
                 </button>
 
                 <span class="db-pill">{{ db_mode_label }}</span>
@@ -177,6 +189,23 @@
                             <span class="corredor-tag">RN 12 (Corrientes ⇄ Goya)</span>
                             <span class="corredor-tag">RN 118 (Saladas ⇄ Loreto)</span>
                             <span class="corredor-tag">RN 14 (Virasoro ⇄ Alvear)</span>
+                        </div>
+
+                                                <!-- Banner Directo de Iniciar Sesión / Identificación -->
+                        <div class="hero-login-callout" onclick="abrirModalLogin()" role="button" tabindex="0">
+                            <div class="login-callout-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="login-callout-text">
+                                <div class="callout-heading">Iniciar Sesión / Identificarme en Moñái</div>
+                                <div class="callout-desc">Elegí si sos Comprador, Vendedor o Fletero en 1 clic para personalizar tus fletes, distancias y cotizaciones.</div>
+                            </div>
+                            <button type="button" class="btn-primary" style="width:auto; padding:0.5rem 1.15rem; min-height:40px; font-size:0.88rem; flex-shrink:0;">
+                                Iniciar Sesión →
+                            </button>
                         </div>
 
                         <div class="role-entry-label">¿Cómo vas a operar en Moñái? Seleccioná tu perfil:</div>
