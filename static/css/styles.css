@@ -335,13 +335,16 @@ h4 {
 /* =============================================================================
    2. PANELES DE VISTA POR ROL (.user-view-panel)
    ============================================================================= */
-.user-view-panel {
+.user-view-panel,
+.app-tab-panel {
     display: none;
     opacity: 0;
     transition: opacity 0.25s ease;
+    width: 100%;
 }
 
-.user-view-panel.active {
+.user-view-panel.active,
+.app-tab-panel.active {
     display: block;
     opacity: 1;
     animation: fadeInPanel 0.25s ease-out;
@@ -509,41 +512,56 @@ h4 {
     border-radius: 9999px;
 }
 
+.workspace-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.activity-choice-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
 /* =============================================================================
    3. LANDING PAGE Y PSEUDO-DEMOSTRACIÓN INTERACTIVA (VISTA INICIO)
    ============================================================================= */
-.hero-landing {
-    padding: 0.5rem 0 1.5rem;
+/* =============================================================================
+   3. LANDING PAGE Y HERO SHOWCASE DE ALTO IMPACTO (VISTA INICIO)
+   ============================================================================= */
+.hero-showcase {
+    text-align: center;
+    padding: 2.5rem 1rem 3.5rem;
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
 }
 
-.hero-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-@media (min-width: 1024px) {
-    .hero-grid {
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 2.2rem;
-        align-items: start;
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(21, 128, 61, 0);
     }
 }
 
-.hero-eyebrow {
+.hero-eyebrow-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     font-size: 0.74rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-primario);
     background: var(--color-primario-suave);
     border: 1px solid var(--color-exito-borde);
-    padding: 0.35rem 0.75rem;
+    padding: 0.45rem 1.1rem;
     border-radius: 9999px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(22, 66, 40, 0.06);
 }
 
 .eyebrow-dot {
@@ -552,96 +570,231 @@ h4 {
     border-radius: 50%;
     background: var(--color-exito);
     box-shadow: 0 0 8px var(--color-exito);
+    animation: pulseGlow 2s infinite ease-in-out;
 }
 
-.hero-title {
+.hero-main-title {
     font-family: var(--fuente-display);
-    font-size: 2.2rem;
+    font-size: clamp(2.1rem, 5vw, 3.25rem);
     font-weight: 700;
-    line-height: 1.18;
+    line-height: 1.14;
     color: var(--texto-principal);
-    margin-bottom: 1rem;
-    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
 }
 
-.hero-title em {
+.hero-main-title em {
     font-style: italic;
     color: var(--color-primario);
+    text-decoration: underline;
+    text-decoration-color: var(--color-crema-dorado);
+    text-underline-offset: 4px;
 }
 
-.hero-subtitle {
-    font-size: 1rem;
-    line-height: 1.62;
+.hero-main-subtitle {
+    font-size: clamp(0.98rem, 1.8vw, 1.12rem);
+    line-height: 1.68;
     color: var(--texto-secundario);
-    margin-bottom: 1.25rem;
+    max-width: 840px;
+    margin: 0 auto 2.25rem;
+    text-wrap: pretty;
 }
 
-/* Corredor Visual NEA */
-.corredor-nea-strip {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-bottom: 1.5rem;
-    padding: 0.65rem 0.85rem;
-    background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    border-radius: var(--radio-md);
-}
-
-.corredor-label {
-    font-size: 0.76rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--texto-suave);
-    margin-right: 0.25rem;
-}
-
-.corredor-tag {
-    font-size: 0.76rem;
-    font-weight: 600;
-    background: var(--bg-tarjeta);
-    color: var(--texto-principal);
-    padding: 0.2rem 0.55rem;
-    border-radius: 6px;
-    border: 1px solid var(--borde-color);
-}
-
-.hero-actions-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.85rem;
-    margin-bottom: 1.6rem;
-}
-
-.hero-actions-row .btn-primary {
-    width: auto;
-    padding: 0.72rem 1.4rem;
-    min-height: 44px;
-}
-
-.hero-actions-row .btn-secondary {
-    width: auto;
-    padding: 0.72rem 1.3rem;
-    min-height: 44px;
-}
-
-.role-entry-label {
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: var(--texto-principal);
-    margin-bottom: 0.75rem;
-}
-
-/* Las 3 Puertas de Entrada Táctiles */
-.role-entry-cards {
+/* 3 Píldoras de Valor Cuantitativas */
+.hero-value-pills-row {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.85rem;
+    max-width: 840px;
+    margin: 0 auto 2.25rem;
 }
 
 @media (min-width: 640px) {
+    .hero-value-pills-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.15rem;
+    }
+}
+
+.hero-stat-chip {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    padding: 1.15rem 1rem;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-stat-chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.stat-highlight {
+    display: block;
+    font-family: var(--fuente-mono);
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--color-exito);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+}
+
+.stat-caption {
+    font-size: 0.80rem;
+    font-weight: 600;
+    color: var(--texto-secundario);
+    line-height: 1.35;
+}
+
+/* Botones de Acción Hero */
+.hero-actions-row.hero-actions-centered {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-cta-main {
+    width: auto !important;
+    padding: 0.85rem 2rem !important;
+    font-size: 1rem !important;
+    border-radius: 9999px !important;
+    min-height: 52px !important;
+    box-shadow: 0 4px 16px rgba(22, 66, 40, 0.35) !important;
+}
+
+.btn-cta-secondary {
+    width: auto !important;
+    padding: 0.85rem 1.8rem !important;
+    font-size: 0.94rem !important;
+    border-radius: 9999px !important;
+    min-height: 52px !important;
+    background: var(--bg-tarjeta) !important;
+    border: 1.5px solid var(--borde-color) !important;
+    box-shadow: var(--sombra-suave) !important;
+}
+
+.btn-cta-secondary:hover {
+    background: var(--bg-tarjeta-hover) !important;
+    border-color: var(--color-primario) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* =============================================================================
+   3b. GUÍA SIMPLE: CÓMO FUNCIONA MOÑÁI EN 3 PASOS
+   ============================================================================= */
+.how-it-works-section {
+    padding: 3rem 0 3.5rem;
+    border-top: 1px dashed var(--borde-color);
+    margin-top: 1.5rem;
+}
+
+.section-tag-center {
+    display: block;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primario);
+    margin-bottom: 0.45rem;
+}
+
+.section-headline-center {
+    font-family: var(--fuente-display);
+    font-size: clamp(1.65rem, 3.2vw, 2.25rem);
+    font-weight: 700;
+    text-align: center;
+    color: var(--texto-principal);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.section-subheadline-center {
+    font-size: 0.95rem;
+    color: var(--texto-secundario);
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 2.25rem;
+    line-height: 1.55;
+}
+
+.how-it-works-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .how-it-works-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+.step-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.75rem 1.5rem;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.step-card-num {
+    font-family: var(--fuente-mono);
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--color-primario);
+    opacity: 0.85;
+    margin-bottom: 0.85rem;
+    line-height: 1;
+}
+
+.step-card-title {
+    font-family: var(--fuente-display);
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.5rem;
+    line-height: 1.25;
+}
+
+.step-card-desc {
+    font-size: 0.86rem;
+    color: var(--texto-secundario);
+    line-height: 1.6;
+}
+
+/* =============================================================================
+   3c. ENTRADA SEGMENTADA POR ROL EN LA CADENA
+   ============================================================================= */
+.role-entry-section {
+    padding: 3rem 0 3.5rem;
+    border-top: 1px dashed var(--borde-color);
+}
+
+.role-entry-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+}
+
+@media (min-width: 768px) {
     .role-entry-cards {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -650,199 +803,247 @@ h4 {
 .role-card {
     text-align: left;
     background: var(--bg-tarjeta);
-    border: 1px solid var(--borde-color);
+    border: 1.5px solid var(--borde-color);
     border-radius: var(--radio-lg);
-    padding: 1.15rem;
+    padding: 1.5rem;
     box-shadow: var(--sombra-suave);
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 155px;
+    min-height: 175px;
+    cursor: pointer;
 }
 
 .role-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: var(--color-primario);
     box-shadow: var(--sombra-destacada);
+}
+
+.role-card:hover .role-arrow {
+    transform: translateX(4px);
 }
 
 .role-card-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.65rem;
 }
 
 .role-tag {
-    font-size: 0.70rem;
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: var(--color-primario);
 }
 
 .role-arrow {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--color-primario);
+    transition: transform 0.2s ease;
 }
 
 .role-card-title {
     font-family: var(--fuente-display);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--texto-principal);
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
 }
 
 .role-card-desc {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: var(--texto-secundario);
-    line-height: 1.45;
+    line-height: 1.55;
+}
+
+/* Modificadores sutiles para cada rol */
+.role-card.role-buyer {
+    border-top: 3px solid var(--color-primario);
+}
+
+.role-card.role-seller {
+    border-top: 3px solid var(--color-acento);
+}
+
+.role-card.role-carrier {
+    border-top: 3px solid var(--color-crema-dorado);
 }
 
 /* =============================================================================
-   4. CONSOLA DE PSEUDO-DEMOSTRACIÓN INTERACTIVA (LIVE SANDBOX)
+   4. CONSOLA DE SIMULACIÓN INTERACTIVA EN VIVO (LIVE SANDBOX)
    ============================================================================= */
 .live-demo-stage {
     background: var(--bg-tarjeta);
     border: 1.5px solid var(--borde-fuerte);
     border-radius: var(--radio-lg);
-    padding: 1.35rem;
+    padding: 1.5rem;
     box-shadow: var(--sombra-destacada);
     position: relative;
+}
+
+.live-demo-stage.live-demo-stage-full {
+    max-width: 980px;
+    margin: 2rem auto 3.5rem;
+    border: 2px solid var(--color-primario);
+    border-radius: var(--radio-xl);
+    padding: 2rem;
 }
 
 .demo-stage-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1rem;
-    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .demo-live-badge {
     display: inline-block;
-    font-size: 0.70rem;
+    font-size: 0.72rem;
     font-weight: 800;
     color: var(--color-exito);
     background: var(--color-exito-bg);
-    border: 1px solid var(--color-exito-borde);
-    padding: 0.2rem 0.55rem;
+    border: 1.5px solid var(--color-exito-borde);
+    padding: 0.25rem 0.65rem;
     border-radius: 9999px;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.04em;
 }
 
 .demo-stage-title {
     font-family: var(--fuente-display);
-    font-size: 1.28rem;
+    font-size: 1.45rem;
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.22;
     color: var(--texto-principal);
 }
 
 .demo-stage-meta {
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    color: var(--texto-suave);
-    background: var(--bg-bloque-suave);
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
+    color: var(--color-primario);
+    background: var(--color-primario-suave);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
     white-space: nowrap;
 }
 
 /* Selector de Casos Demo */
 .demo-preset-tabs {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.4rem;
-    margin-bottom: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .demo-preset-tabs {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .demo-preset-btn {
-    padding: 0.45rem 0.5rem;
-    min-height: 38px;
+    padding: 0.75rem 0.95rem;
+    min-height: 48px;
     background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    border-radius: var(--radio-xs);
-    font-size: 0.76rem;
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--texto-secundario);
     text-align: center;
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .demo-preset-btn:hover {
     color: var(--texto-principal);
-    border-color: var(--borde-fuerte);
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
 }
 
 .demo-preset-btn.active {
     background: var(--color-primario);
     color: var(--texto-sobre-primario);
     border-color: var(--color-primario);
-    box-shadow: 0 2px 6px rgba(22, 66, 40, 0.25);
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.25);
 }
 
-/* Ficha del Escenario */
+/* Ficha del Escenario Activo */
 .demo-scenario-summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     background: var(--bg-bloque-suave);
-    border-radius: var(--radio-sm);
-    padding: 0.75rem 0.95rem;
-    margin-bottom: 1rem;
+    border-radius: var(--radio-md);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.25rem;
     border: 1px solid var(--borde-color);
 }
 
 .demo-scenario-route {
-    font-size: 0.92rem;
-    font-weight: 700;
+    font-size: 1.05rem;
+    font-weight: 800;
     color: var(--texto-principal);
 }
 
 .demo-scenario-sub {
-    font-size: 0.78rem;
+    font-size: 0.84rem;
     color: var(--texto-secundario);
-    margin-top: 0.15rem;
+    margin-top: 0.25rem;
 }
 
 /* Visualizador de Batea del Camión */
 .truck-visualizer {
-    background: var(--bg-pagina);
+    background: var(--bg-bloque-suave);
     border: 1px solid var(--borde-color);
-    border-radius: var(--radio-sm);
-    padding: 0.9rem;
-    margin-bottom: 1rem;
+    border-radius: var(--radio-md);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .truck-vis-header {
     display: flex;
     justify-content: space-between;
-    font-size: 0.82rem;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.86rem;
     font-weight: 700;
     color: var(--texto-principal);
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.85rem;
 }
 
 .truck-bars-stack {
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.75rem;
 }
 
 .truck-bar-label {
     display: flex;
     justify-content: space-between;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: var(--texto-secundario);
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.text-alert-vol {
+    color: var(--color-peligro);
+    font-weight: 800;
 }
 
 .progress-bar-bg {
     width: 100%;
-    height: 12px;
+    height: 14px;
     background: var(--bg-elevado);
     border-radius: 9999px;
     overflow: hidden;
@@ -860,28 +1061,36 @@ h4 {
 }
 
 .truck-vis-note {
-    font-size: 0.78rem;
-    color: var(--texto-suave);
-    margin-top: 0.65rem;
-    line-height: 1.4;
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+    margin-top: 0.85rem;
+    line-height: 1.5;
     border-top: 1px dashed var(--borde-color);
-    padding-top: 0.5rem;
+    padding-top: 0.65rem;
 }
 
 /* Comparador Visual Lado a Lado (Tarjeta Clave #2) */
 .comparison-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 600px) {
+    .comparison-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
 }
 
 .comp-box {
-    padding: 0.95rem;
-    border-radius: var(--radio-sm);
+    padding: 1.15rem;
+    border-radius: var(--radio-md);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-height: 140px;
 }
 
 .comp-bad {
@@ -895,11 +1104,11 @@ h4 {
 }
 
 .comp-badge-header {
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.35rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.45rem;
 }
 
 .comp-bad .comp-badge-header {
@@ -912,10 +1121,10 @@ h4 {
 
 .comp-price {
     font-family: var(--fuente-mono);
-    font-size: 1.45rem;
+    font-size: 1.7rem;
     font-weight: 800;
     line-height: 1.1;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.45rem;
 }
 
 .comp-bad .comp-price {
@@ -929,9 +1138,27 @@ h4 {
 }
 
 .comp-desc {
-    font-size: 0.76rem;
-    line-height: 1.35;
+    font-size: 0.80rem;
+    line-height: 1.42;
     color: var(--texto-secundario);
+}
+
+.demo-box-rojo {
+    background: var(--color-peligro-bg);
+    border: 1.5px solid var(--color-peligro-borde);
+}
+
+.demo-box-verde {
+    background: var(--color-exito-bg);
+    border: 1.5px solid var(--color-exito-borde);
+}
+
+.demo-vs-grid {
+    margin: 1.25rem 0;
+}
+
+.truck-bar-row {
+    margin-bottom: 0.65rem;
 }
 
 .demo-stage-footer {
@@ -939,22 +1166,32 @@ h4 {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 1rem;
     border-top: 1px solid var(--borde-color);
-    padding-top: 0.95rem;
+    padding-top: 1.15rem;
 }
 
 .demo-saving-highlight {
     display: flex;
     flex-direction: column;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     color: var(--texto-secundario);
 }
 
 .demo-saving-highlight strong {
     font-family: var(--fuente-mono);
-    font-size: 1.25rem;
+    font-size: 1.45rem;
+    font-weight: 800;
     color: var(--color-exito);
+}
+
+.demo-cta-btn {
+    width: auto !important;
+    padding: 0.8rem 1.6rem !important;
+    min-height: 48px !important;
+    font-size: 0.94rem !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.3) !important;
 }
 
 /* =============================================================================
@@ -1042,81 +1279,155 @@ h4 {
 }
 
 /* =============================================================================
-   6. PORTAL DEL COMPRADOR (TARJETA CLAVE #1 Y COTIZADOR)
+   6. PORTAL DEL COMPRADOR (TARJETA CLAVE #1 Y COTIZADOR ACCESIBLE)
    ============================================================================= */
-.filter-bar {
+.buyer-filter-card {
     background: var(--bg-tarjeta);
-    border: 1px solid var(--borde-color);
+    border: 1.5px solid var(--borde-color);
     border-radius: var(--radio-lg);
-    padding: 1.2rem;
-    margin-bottom: 1.25rem;
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.35rem;
     box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
-.recommender-form-grid {
+.filter-step-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--texto-principal);
+}
+
+.step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    font-size: 0.80rem;
+    font-weight: 800;
+}
+
+/* Selector de Actividad Táctil y Accesible (4 Botones Grandes) */
+.activity-selector-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.85rem;
-    margin-bottom: 0.85rem;
+    gap: 0.65rem;
 }
 
-@media (min-width: 768px) {
-    .recommender-form-grid {
-        grid-template-columns: repeat(3, 1fr);
+@media (min-width: 600px) {
+    .activity-selector-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-.filter-controls {
+@media (min-width: 1024px) {
+    .activity-selector-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.activity-choice-btn {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-}
-
-.chip-btn {
-    display: inline-flex;
     align-items: center;
-    padding: 0.4rem 0.85rem;
-    min-height: 38px;
-    border-radius: 9999px;
+    justify-content: center;
+    text-align: center;
+    padding: 0.85rem 1rem;
+    min-height: 52px;
     background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--texto-secundario);
-    transition: all 0.18s ease;
-}
-
-.chip-btn:hover {
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
     color: var(--texto-principal);
-    border-color: var(--borde-fuerte);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.3;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.chip-btn.active {
+.activity-choice-btn:hover {
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-suave);
+}
+
+.activity-choice-btn.active {
     background: var(--color-primario);
     color: var(--texto-sobre-primario);
     border-color: var(--color-primario);
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.25);
+}
+
+/* Fila de Ubicación y Búsqueda */
+.buyer-location-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    border-top: 1px dashed var(--borde-color);
+    padding-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .buyer-location-bar {
+        grid-template-columns: 1.3fr 1fr;
+        align-items: end;
+    }
+}
+
+.location-input-group label,
+.search-input-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.4rem;
 }
 
 .recommender-active-banner {
-    margin-top: 0.85rem;
-    padding: 0.65rem 0.95rem;
-    background: var(--color-primario-suave);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--color-exito-bg);
     border: 1px solid var(--color-exito-borde);
-    border-radius: var(--radio-sm);
-    font-size: 0.84rem;
-    color: var(--color-primario);
+    border-radius: var(--radio-md);
+    font-size: 0.88rem;
+    color: var(--texto-principal);
+    line-height: 1.45;
 }
 
+.recommender-bulb {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.recommender-active-banner strong {
+    display: block;
+    color: var(--color-primario);
+    margin-bottom: 0.15rem;
+}
+
+/* Grilla de Catálogo + Cotizador */
 .main-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.35rem;
 }
 
 @media (min-width: 1024px) {
     .main-grid {
         grid-template-columns: 1.15fr 0.85fr;
-        gap: 1.5rem;
+        gap: 1.6rem;
         align-items: start;
     }
 }
@@ -1125,17 +1436,17 @@ h4 {
 .lotes-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.15rem;
 }
 
 .lote-card {
     background: var(--bg-tarjeta);
     border: 1.5px solid var(--borde-color);
-    border-radius: var(--radio-md);
-    padding: 1.25rem;
+    border-radius: var(--radio-lg);
+    padding: 1.35rem;
     box-shadow: var(--sombra-suave);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
 
@@ -1155,17 +1466,18 @@ h4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.75rem;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .badge-cat {
     font-size: 0.72rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 0.2rem 0.55rem;
-    border-radius: 6px;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
     background: var(--bg-bloque-suave);
     color: var(--texto-principal);
     border: 1px solid var(--borde-color);
@@ -1189,62 +1501,60 @@ h4 {
     border-color: var(--badge-citrus-borde);
 }
 
-.badge-flete {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.2rem 0.55rem;
-    border-radius: 6px;
+.badge-flete-savings {
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
     background: var(--color-exito-bg);
     color: var(--color-exito);
-    border: 1px solid var(--color-exito-borde);
-}
-
-.badge-flete-vendedor {
-    background: var(--color-acento-bg);
-    color: var(--color-acento);
-    border-color: var(--color-acento);
-}
-
-.badge-flete-compartido {
-    background: var(--badge-compartido-bg);
-    color: var(--badge-compartido-text);
-    border-color: var(--badge-compartido-borde);
-}
-
-.badge-recomendado {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.2rem 0.55rem;
-    border-radius: 6px;
-    background: var(--color-exito-bg);
-    color: var(--color-exito);
-    border: 1px solid var(--color-exito-borde);
+    border: 1.5px solid var(--color-exito-borde);
+    letter-spacing: 0.02em;
 }
 
 .lote-title {
     font-family: var(--fuente-display);
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: var(--texto-principal);
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.45rem;
     line-height: 1.25;
 }
 
-.lote-origin {
-    font-size: 0.84rem;
+.lote-origin-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-size: 0.86rem;
     color: var(--texto-secundario);
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.95rem;
+}
+
+.origin-dot {
+    font-size: 0.95rem;
+}
+
+.lote-dist-pill {
+    display: inline-block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    background: var(--color-primario-suave);
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-exito-borde);
 }
 
 .lote-metrics {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.6rem;
+    gap: 0.65rem;
     background: var(--bg-bloque-suave);
     border: 1px solid var(--borde-color);
     border-radius: var(--radio-sm);
-    padding: 0.75rem;
-    margin-bottom: 0.85rem;
+    padding: 0.85rem;
+    margin-bottom: 0.95rem;
 }
 
 .metric-item {
@@ -1257,30 +1567,40 @@ h4 {
     color: var(--texto-suave);
     text-transform: uppercase;
     font-weight: 700;
+    letter-spacing: 0.03em;
 }
 
 .metric-item strong {
-    font-size: 0.95rem;
+    font-size: 0.96rem;
     color: var(--texto-principal);
-    margin-top: 0.15rem;
+    margin-top: 0.2rem;
+}
+
+.metric-item.highlight-metric {
+    border-left: 2px solid var(--color-primario);
+    padding-left: 0.55rem;
+}
+
+.metric-item.highlight-metric strong {
+    color: var(--color-primario);
 }
 
 .lote-uso {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: var(--texto-secundario);
-    line-height: 1.45;
-    margin-bottom: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
 }
 
 .lote-uso-extra {
-    margin-top: 0.35rem;
-    padding: 0.45rem 0.75rem;
+    margin-top: 0.45rem;
+    padding: 0.55rem 0.85rem;
     background: var(--color-primario-suave);
     border: 1px solid var(--color-exito-borde);
     border-radius: var(--radio-xs);
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     color: var(--color-primario);
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .lote-card-footer {
@@ -1288,31 +1608,33 @@ h4 {
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.85rem;
     border-top: 1px solid var(--borde-color);
-    padding-top: 0.85rem;
+    padding-top: 0.95rem;
 }
 
 .lote-route-hint {
-    font-size: 0.80rem;
+    font-size: 0.82rem;
     color: var(--texto-suave);
 }
 
 .btn-cotizar-lote {
-    padding: 0.45rem 0.95rem;
-    min-height: 38px;
+    padding: 0.6rem 1.2rem;
+    min-height: 42px;
     border-radius: 9999px;
-    background: var(--color-primario-suave);
-    color: var(--color-primario);
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
     border: 1.5px solid var(--color-primario);
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     font-weight: 700;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(22, 66, 40, 0.2);
 }
 
 .btn-cotizar-lote:hover {
-    background: var(--color-primario);
-    color: var(--texto-sobre-primario);
+    background: var(--color-primario-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(22, 66, 40, 0.3);
 }
 
 /* =============================================================================
@@ -1445,6 +1767,41 @@ h4 {
     font-size: 0.95rem;
     color: var(--texto-principal);
     font-weight: 700;
+}
+
+.cotizador-section-label {
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primario);
+    margin: 1.15rem 0 0.65rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px dashed var(--borde-color);
+}
+
+.escrow-trust-pill {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    border-radius: var(--radio-sm);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--texto-principal);
+    margin-bottom: 1.15rem;
+}
+
+.escrow-shield {
+    font-size: 1.2rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.escrow-trust-pill strong {
+    color: var(--color-primario);
 }
 
 .btn-primary {
@@ -1615,6 +1972,45 @@ h4 {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+}
+
+/* =============================================================================
+   8b. ESTILOS VISUALES GPS PARA PORTAL DE LOGÍSTICA / CAMIONES
+   ============================================================================= */
+.truck-route-card {
+    border-left: 4px solid var(--color-primario);
+}
+
+.truck-gps-banner {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem 1rem;
+    margin: 0.65rem 0;
+}
+
+.gps-route-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--fuente-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    line-height: 1.2;
+}
+
+.gps-arrow {
+    color: var(--color-primario);
+    font-weight: 800;
+}
+
+.gps-corredor-pill {
+    display: inline-block;
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+    margin-top: 0.35rem;
 }
 
 /* =============================================================================
