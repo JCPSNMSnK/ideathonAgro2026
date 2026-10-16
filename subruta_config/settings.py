@@ -69,14 +69,21 @@ WSGI_APPLICATION = "subruta_config.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True,
-        )
-    }
-    DB_MODE_LABEL = "Supabase Cloud (PostgreSQL)"
+    # Limpiar parámetro ?pgbouncer=true (propio de Prisma) que psycopg2 no admite en el DSN
+    clean_db_url = (
+        DATABASE_URL.replace("?pgbouncer=true&", "?")
+        .replace("&pgbouncer=true", "")
+        .replace("?pgbouncer=true", "")
+    )
+    db_config = dj_database_url.parse(
+        clean_db_url,
+        conn_max_age=0,
+        ssl_require=True,
+    )
+    # Requerido por el Transaction Pooler de Supabase (puerto 6543) en Django
+    db_config["DISABLE_SERVER_SIDE_CURSORS"] = True
+    DATABASES = {"default": db_config}
+    DB_MODE_LABEL = "Supabase Cloud Activo (PostgreSQL)"
 else:
     DATABASES = {
         "default": {
