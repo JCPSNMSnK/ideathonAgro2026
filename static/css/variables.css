@@ -1,14 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 /* =============================================================================
-   MÓDULO CARRIL 1 — Identidad Visual y Sistema de Diseño Mobile-First
-   Responsable: Luciana Avalos (Diseño Gráfico — UX/UI, Identidad Visual)
-   Producto: Moñái — Economía Circular y Flete Calzado en el NEA (Ideathon 2026)
-   =============================================================================
-   Archivo central de Design Tokens (Tonos Crema Cálidos, Verdes Monte y Rojos Tierra)
-   con soporte nativo y conmutable para Modo Claro y Modo Oscuro.
-*/
+   MÓDULO CARRIL 1 — Identidad Visual y Sistema de Diseño Editorial Agro-Fintech
+   Responsable: Luciana Avalos (Dirección de Arte, Identidad Visual y UI de Producto)
+   Producto: Moñái — Economía Circular y Logística de Flete Calzado del NEA (2026)
+   ============================================================================= */
 
 :root {
-    /* Soporte moderno de esquema de color (modern-web-guidance) */
     color-scheme: light dark;
 
     &:has(> head > meta[name="color-scheme"][content="dark"]),
@@ -22,105 +20,148 @@
     }
 
     /* =========================================================================
-       MODO CLARO (Por defecto — Crema Cálido, Verde Monte y Rojo Tierra)
+       PALETA MODO CLARO (Editorial Crema Pergamino, Verde Monte y Rojo Tierra Colorada)
        ========================================================================= */
+    --bg-pagina: #F6F0E2;
+    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(27, 77, 46, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(180, 83, 9, 0.07), transparent 60%);
+    --bg-tarjeta: #FFFDF8;
+    --bg-tarjeta-hover: #FAF5E8;
+    --bg-bloque-suave: #EDE4D0;
+    --bg-elevado: #E2D6BC;
+    --bg-glass: rgba(255, 253, 248, 0.86);
+    --bg-header: rgba(255, 253, 248, 0.88);
 
-    /* Fondos y Superficies Crema */
-    --bg-pagina: #FAF5E8;            /* Crema cálido principal */
-    --bg-tarjeta: #FFFDF9;           /* Crema marfil para tarjetas */
-    --bg-bloque-suave: #F2E9D4;      /* Crema arena suave para bloques internos y métricas */
-    --bg-elevado: #E8DCC2;           /* Crema tostado para elementos destacados/inputs */
-    --bg-header: #1E5631;            /* Verde monte institucional para barra superior */
+    /* Colores Institucionales y Semánticos */
+    --color-primario: #164228;
+    --color-primario-hover: #0F2E1C;
+    --color-primario-suave: rgba(22, 66, 40, 0.12);
+    --color-secundario: #246A40;
+    --color-acento: #9A3412;
+    --color-acento-hover: #7C2D12;
+    --color-acento-bg: rgba(154, 52, 18, 0.10);
+    --color-crema-dorado: #C8B692;
 
-    /* Colores Principales — Verde Monte y Tierra/Madera */
-    --color-primario: #1E5631;       /* Verde monte profundo */
-    --color-primario-hover: #143D22; /* Verde monte oscuro al interactuar */
-    --color-primario-suave: #E6F0E9; /* Tinte verde suave para fondos activos */
-    --color-acento: #B45309;         /* Tierra / Madera cálida */
-    --color-acento-hover: #92400E;
-    --color-acento-bg: #FEF3C7;
-    --color-crema-dorado: #C8AE7D;   /* Borde dorado/crema para sellos y certificados */
+    /* Rentabilidad Logística: Verde (Flete Calzado) vs Rojo (Flete Tradicional) */
+    --color-exito: #157347;
+    --color-exito-bg: #E4F5EC;
+    --color-exito-borde: #75C99B;
 
-    /* Semántica de Rentabilidad: Verde (Flete Calzado) vs Rojo (Flete Tradicional) */
-    --color-exito: #15803D;          /* Verde rentabilidad Flete Calzado */
-    --color-exito-bg: #E3F5E8;
-    --color-exito-borde: #2E8B52;
+    --color-peligro: #B91C1C;
+    --color-peligro-bg: #FCE8E8;
+    --color-peligro-borde: #F29B9B;
 
-    --color-peligro: #B91C1C;        /* Rojo Flete Tradicional que no cierra */
-    --color-peligro-bg: #FDE8E8;
-    --color-peligro-borde: #DC2626;
+    /* Trazabilidad Ambiental y Hedera Hashgraph */
+    --color-blockchain: #164228;
+    --color-blockchain-bg: #E6F0EA;
+    --color-blockchain-borde: #75C99B;
 
-    /* Trazabilidad y Garantía (Sello Circular / Hedera) */
-    --color-blockchain: #1E5631;
-    --color-blockchain-bg: #E8F2EC;
-    --color-blockchain-borde: #86EFAC;
-
-    /* Textos */
-    --texto-principal: #1C261E;
-    --texto-secundario: #4A584D;
-    --texto-suave: #6B786E;
+    /* Jerarquía Tipográfica de Color */
+    --texto-principal: #141F17;
+    --texto-secundario: #425246;
+    --texto-suave: #68776C;
     --texto-sobre-primario: #FAF5E8;
 
-    /* Bordes, Radios y Sombras */
-    --borde-color: #DDD0B6;
-    --borde-fuerte: #C5B494;
-    --radio-sm: 8px;
-    --radio-md: 12px;
-    --radio-lg: 16px;
-    --sombra-suave: 0 2px 10px rgba(28, 38, 30, 0.06);
-    --sombra-destacada: 0 8px 24px rgba(30, 86, 49, 0.14);
+    /* Bordes, Radios y Elevación */
+    --borde-color: #D8CBB0;
+    --borde-fuerte: #C2B292;
+    --radio-xs: 6px;
+    --radio-sm: 10px;
+    --radio-md: 14px;
+    --radio-lg: 20px;
+    --radio-xl: 26px;
+    --sombra-suave: 0 4px 20px -2px rgba(20, 31, 23, 0.06), 0 2px 6px -1px rgba(20, 31, 23, 0.04);
+    --sombra-destacada: 0 18px 40px -10px rgba(22, 66, 40, 0.14), 0 4px 12px -2px rgba(20, 31, 23, 0.06);
 
-    /* Tipografía */
-    --fuente-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --fuente-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    /* Familias Tipográficas */
+    --fuente-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --fuente-display: 'Fraunces', Georgia, serif;
+    --fuente-mono: 'JetBrains Mono', monospace;
 }
 
 /* =============================================================================
-   MODO OSCURO — Verde Noche Profundo, Superficies Musgo y Texto Crema Claro
-   Se activa con [data-theme="dark"] en <html>/<body> o meta color-scheme="dark"
+   PALETA MODO OSCURO ([data-theme="dark"] — Noche de Monte y Crema Luminoso)
    ============================================================================= */
 :root:has(> head > meta[name="color-scheme"][content="dark"]),
 :root[data-theme="dark"],
 [data-theme="dark"] {
-    /* Fondos y Superficies Oscuras */
-    --bg-pagina: #121A14;            /* Verde noche profundo */
-    --bg-tarjeta: #1A261D;           /* Superficie tarjeta oscura */
-    --bg-bloque-suave: #223126;      /* Bloque interno oscuro */
-    --bg-elevado: #2B3E30;           /* Superficie elevada en modo oscuro */
-    --bg-header: #162219;            /* Barra superior integrada en modo oscuro */
+    --bg-pagina: #0D1510;
+    --bg-gradiente: radial-gradient(1100px 550px at 15% -10%, rgba(46, 139, 82, 0.14), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(185, 28, 28, 0.10), transparent 60%);
+    --bg-tarjeta: #142018;
+    --bg-tarjeta-hover: #1A291F;
+    --bg-bloque-suave: #1C2C21;
+    --bg-elevado: #25392B;
+    --bg-glass: rgba(20, 32, 24, 0.88);
+    --bg-header: rgba(20, 32, 24, 0.88);
 
-    /* Colores Principales */
-    --color-primario: #2E8B52;       /* Verde monte luminoso */
-    --color-primario-hover: #38A169;
-    --color-primario-suave: rgba(46, 139, 82, 0.2);
-    --color-acento: #D97706;         /* Ámbar / Madera cálida */
-    --color-acento-hover: #F59E0B;
-    --color-acento-bg: rgba(217, 119, 6, 0.18);
-    --color-crema-dorado: #8A754D;
+    --color-primario: #34A861;
+    --color-primario-hover: #46C075;
+    --color-primario-suave: rgba(52, 168, 97, 0.18);
+    --color-secundario: #22C55E;
+    --color-acento: #EA580C;
+    --color-acento-hover: #F97316;
+    --color-acento-bg: rgba(234, 88, 12, 0.16);
+    --color-crema-dorado: #3A4F40;
 
-    /* Semántica de Rentabilidad: Verde vs Rojo en Modo Oscuro */
     --color-exito: #4ADE80;
-    --color-exito-bg: rgba(34, 197, 94, 0.15);
-    --color-exito-borde: #22C55E;
+    --color-exito-bg: rgba(34, 197, 94, 0.14);
+    --color-exito-borde: rgba(74, 222, 128, 0.4);
 
     --color-peligro: #F87171;
-    --color-peligro-bg: rgba(239, 68, 68, 0.16);
-    --color-peligro-borde: #EF4444;
+    --color-peligro-bg: rgba(239, 68, 68, 0.15);
+    --color-peligro-borde: rgba(248, 113, 113, 0.42);
 
-    /* Trazabilidad y Garantía */
     --color-blockchain: #86EFAC;
     --color-blockchain-bg: rgba(34, 197, 94, 0.12);
-    --color-blockchain-borde: #2E8B52;
+    --color-blockchain-borde: rgba(134, 239, 172, 0.35);
 
-    /* Textos en Crema Claro */
-    --texto-principal: #F5EFE0;      /* Texto crema claro en modo oscuro */
-    --texto-secundario: #C7BFA9;
-    --texto-suave: #948C78;
+    --texto-principal: #F5EFE2;
+    --texto-secundario: #C4BCAA;
+    --texto-suave: #8D8675;
+    --texto-sobre-primario: #0D1510;
+
+    --borde-color: #26382C;
+    --borde-fuerte: #354D3C;
+    --sombra-suave: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+    --sombra-destacada: 0 20px 45px -10px rgba(0, 0, 0, 0.65);
+}
+
+/* =============================================================================
+   PALETA MODO CLARO EXPLÍCITA ([data-theme="light"])
+   ============================================================================= */
+:root:has(> head > meta[name="color-scheme"][content="light"]),
+:root[data-theme="light"],
+[data-theme="light"] {
+    --bg-pagina: #F6F0E2;
+    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(27, 77, 46, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(180, 83, 9, 0.07), transparent 60%);
+    --bg-tarjeta: #FFFDF8;
+    --bg-tarjeta-hover: #FAF5E8;
+    --bg-bloque-suave: #EDE4D0;
+    --bg-elevado: #E2D6BC;
+    --bg-glass: rgba(255, 253, 248, 0.86);
+    --bg-header: rgba(255, 253, 248, 0.88);
+    --color-primario: #164228;
+    --color-primario-hover: #0F2E1C;
+    --color-primario-suave: rgba(22, 66, 40, 0.12);
+    --color-secundario: #246A40;
+    --color-acento: #9A3412;
+    --color-acento-hover: #7C2D12;
+    --color-acento-bg: rgba(154, 52, 18, 0.10);
+    --color-crema-dorado: #C8B692;
+    --color-exito: #157347;
+    --color-exito-bg: #E4F5EC;
+    --color-exito-borde: #75C99B;
+    --color-peligro: #B91C1C;
+    --color-peligro-bg: #FCE8E8;
+    --color-peligro-borde: #F29B9B;
+    --color-blockchain: #164228;
+    --color-blockchain-bg: #E6F0EA;
+    --color-blockchain-borde: #75C99B;
+    --texto-principal: #141F17;
+    --texto-secundario: #425246;
+    --texto-suave: #68776C;
     --texto-sobre-primario: #FAF5E8;
-
-    /* Bordes y Sombras */
-    --borde-color: #2E4033;
-    --borde-fuerte: #3D5543;
-    --sombra-suave: 0 4px 14px rgba(0, 0, 0, 0.35);
-    --sombra-destacada: 0 10px 28px rgba(0, 0, 0, 0.55);
+    --borde-color: #D8CBB0;
+    --borde-fuerte: #C2B292;
+    --sombra-suave: 0 4px 20px -2px rgba(20, 31, 23, 0.06), 0 2px 6px -1px rgba(20, 31, 23, 0.04);
+    --sombra-destacada: 0 18px 40px -10px rgba(22, 66, 40, 0.14), 0 4px 12px -2px rgba(20, 31, 23, 0.06);
 }

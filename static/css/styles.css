@@ -1,11 +1,16 @@
 /* =============================================================================
-   MÓDULO CARRIL 1 — Sistema de Diseño Mobile-First y Componentes UI
-   Responsable: Luciana Avalos (Diseño Gráfico — UX/UI, Identidad Visual)
-   Producto: Moñái — Del Subproducto al Mercado con Flete Calzado (NEA Tech 2026)
+   MÓDULO CARRIL 1 — Dirección de Arte, Identidad Visual y UI de Producto
+   Responsable: Luciana Avalos (Diseño Gráfico — Identidad Visual & UI/UX)
+   Producto: Moñái — Economía Circular y Logística de Flete Calzado del NEA
+   Estética: Editorial Agro-Fintech Premium (Crema Pergamino, Verde Monte, Rojo Tierra)
+   Arquitectura: 100% Mobile-First (360px base -> 768px Tablet -> 1024px+ Desktop)
    ============================================================================= */
+
 @import url('variables.css');
 
-/* Reset y Base Mobile-First (360px - 480px base) */
+/* =============================================================================
+   0. RESET, BASE EDITORIAL Y UTILIDADES GLOBALES
+   ============================================================================= */
 *,
 *::before,
 *::after {
@@ -18,121 +23,309 @@ html {
     font-size: 16px;
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    font-family: var(--fuente-base);
 }
 
 body {
     font-family: var(--fuente-base);
     background-color: var(--bg-pagina);
+    background-image: var(--bg-gradiente);
+    background-attachment: fixed;
     color: var(--texto-principal);
-    line-height: 1.5;
+    line-height: 1.55;
     min-height: 100vh;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+img,
+svg {
+    max-width: 100%;
+    display: block;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+a {
+    color: var(--color-primario);
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+
+.font-display {
+    font-family: var(--fuente-display);
+}
+
+.font-mono {
+    font-family: var(--fuente-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.container {
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 0.9rem 1rem 3rem;
 }
 
 /* =============================================================================
-   1. HEADER COMPACTO DE APLICACIÓN (.navbar) + CONMUTADOR CLARO/OSCURO
+   1. BARRA DE NAVEGACIÓN SUPERIOR (.navbar) — STICKY GLASS EDITORIAL
    ============================================================================= */
 .navbar {
-    background: var(--bg-header);
-    color: var(--texto-sobre-primario);
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    border-bottom: 2px solid var(--color-crema-dorado);
-    box-shadow: var(--sombra-suave);
     position: sticky;
     top: 0;
-    z-index: 100;
-}
-
-.brand-box {
+    z-index: 200;
+    background: var(--bg-glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--borde-color);
+    box-shadow: var(--sombra-suave);
+    padding: 0.65rem 1rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 0.65rem;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.navbar-inner {
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+/* Marca e Isotipo Moñái (.brand-box, .brand-mark, .brand-badge) */
+.brand-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+    cursor: pointer;
     min-width: 0;
 }
 
+.brand-mark,
 .brand-badge {
-    background: var(--bg-pagina);
-    color: var(--color-primario);
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    color: #FAF5E8;
     border: 1.5px solid var(--color-crema-dorado);
-    font-weight: 900;
-    padding: 0.35rem 0.7rem;
-    border-radius: var(--radio-sm);
-    font-size: 1.05rem;
-    letter-spacing: 0.4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fuente-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
     flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 16px -4px rgba(22, 66, 40, 0.38);
+    position: relative;
+}
+
+.brand-mark::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-acento);
+    border: 2px solid var(--bg-tarjeta);
+}
+
+.brand-text-wrap {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .brand-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    line-height: 1.2;
-    color: #FAF5E8;
+    font-family: var(--fuente-display);
+    font-size: 1.18rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--texto-principal);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.brand-tag {
+    font-family: var(--fuente-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border: 1px solid var(--borde-color);
 }
 
 .brand-subtitle {
-    font-size: 0.75rem;
-    color: #E8DCC2;
-    opacity: 0.92;
+    font-size: 0.73rem;
+    font-weight: 500;
+    color: var(--texto-secundario);
     line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
+/* Navegación Central por Roles (.role-switcher, .role-tab-btn) */
+.role-switcher {
+    order: 3;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.35rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    padding: 0.3rem;
+    border-radius: var(--radio-md);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.role-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.52rem 0.75rem;
+    border-radius: var(--radio-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--texto-secundario);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    min-height: 38px;
+}
+
+.role-tab-btn:hover {
+    color: var(--texto-principal);
+    background: rgba(255, 255, 255, 0.35);
+}
+
+[data-theme="dark"] .role-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.role-tab-btn.active {
+    background: var(--bg-tarjeta);
+    color: var(--color-primario);
+    border-color: var(--borde-fuerte);
+    box-shadow: var(--sombra-suave);
+}
+
+.role-tab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--borde-fuerte);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.role-tab-btn.active .role-tab-dot {
+    background: var(--color-primario);
+    transform: scale(1.2);
+}
+
+.role-tab-count {
+    font-family: var(--fuente-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.08rem 0.42rem;
+    border-radius: 999px;
+    background: var(--bg-elevado);
+    color: var(--texto-principal);
+}
+
+.role-tab-btn.active .role-tab-count {
+    background: var(--color-primario);
+    color: #FAF5E8;
+}
+
+/* Acciones derechas del Navbar (.nav-actions, .db-pill, .theme-toggle) */
 .nav-actions {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 0.5rem;
+    margin-left: auto;
 }
 
 .db-pill {
-    background: rgba(250, 245, 232, 0.14);
-    color: #FAF5E8;
-    border: 1px solid rgba(250, 245, 232, 0.28);
-    padding: 0.3rem 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.32rem 0.68rem;
     border-radius: 999px;
-    font-size: 0.74rem;
+    font-family: var(--fuente-mono);
+    font-size: 0.71rem;
     font-weight: 600;
     white-space: nowrap;
 }
 
-/* Botón Conmutador Modo Claro / Modo Oscuro (.theme-toggle) */
+.db-pill::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-exito);
+    box-shadow: 0 0 0 3px rgba(21, 115, 71, 0.2);
+}
+
 .theme-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.42rem;
     background: var(--bg-tarjeta);
     color: var(--texto-principal);
-    border: 1.5px solid var(--color-crema-dorado);
-    padding: 0.38rem 0.75rem;
+    border: 1.5px solid var(--borde-fuerte);
+    padding: 0.38rem 0.78rem;
     border-radius: 999px;
-    font-family: inherit;
     font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.18s ease;
-    white-space: nowrap;
     min-height: 36px;
+    box-shadow: var(--sombra-suave);
 }
 
 .theme-toggle:hover {
-    border-color: var(--color-acento);
-    background: var(--bg-bloque-suave);
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
     transform: translateY(-1px);
 }
 
-.theme-toggle:focus-visible {
-    outline: 2px solid var(--color-acento);
-    outline-offset: 2px;
-}
-
 .theme-toggle-indicator {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
     background: var(--color-acento);
     display: inline-block;
@@ -140,16 +333,676 @@ body {
 }
 
 /* =============================================================================
-   2. CONTENEDOR Y SISTEMA DE PESTAÑAS (TABS) MOBILE-FIRST
+   2. SECCIÓN 1: LANDING ESPECTACULAR + PSEUDO-DEMO INTERACTIVA
+      (.hero-landing, .hero-grid, .live-demo-stage, .role-entry-cards)
    ============================================================================= */
-.container {
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0.85rem;
+.hero-landing {
+    position: relative;
+    padding: 1.1rem 0 2rem;
 }
 
-/* Navegación por Pestañas (.app-tabs-nav, .app-tab-btn, .app-tab-panel) */
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.hero-copy-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Píldora Editorial Superior (.hero-eyebrow) */
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-fuerte);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    box-shadow: var(--sombra-suave);
+    letter-spacing: 0.02em;
+}
+
+.eyebrow-dot,
+.hero-eyebrow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-primario);
+    box-shadow: 0 0 0 3px var(--color-primario-suave);
+    flex-shrink: 0;
+}
+
+.eyebrow-tag-red {
+    color: var(--color-acento);
+    font-family: var(--fuente-mono);
+    font-weight: 700;
+}
+
+/* Título Editorial Principal (.hero-title) */
+.hero-title {
+    font-family: var(--fuente-display);
+    font-size: clamp(1.85rem, 5vw, 3.15rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--texto-principal);
+}
+
+.hero-title .highlight-green,
+.hero-title em {
+    font-style: italic;
+    color: var(--color-primario);
+    background: linear-gradient(180deg, transparent 68%, var(--color-primario-suave) 68%);
+    padding: 0 0.15rem;
+}
+
+.hero-title .highlight-terra {
+    color: var(--color-acento);
+    text-decoration: underline;
+    text-decoration-color: var(--color-crema-dorado);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+}
+
+/* Subtítulo Explicativo (.hero-subtitle) */
+.hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--texto-secundario);
+    max-width: 64ch;
+}
+
+.hero-subtitle strong {
+    color: var(--texto-principal);
+    font-weight: 700;
+}
+
+/* 3 Tarjetas de Entrada Rápida por Rol (.role-entry-cards, .role-card) */
+.role-entry-section-label {
+    font-family: var(--fuente-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--texto-suave);
+    margin-top: 0.25rem;
+}
+
+.role-entry-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 0.2rem;
+}
+
+.role-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.55rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.role-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--color-primario);
+    transition: width 0.2s ease;
+}
+
+.role-card.role-buyer::before {
+    background: var(--color-primario);
+}
+
+.role-card.role-seller::before {
+    background: var(--color-acento);
+}
+
+.role-card.role-carrier::before {
+    background: var(--color-secundario);
+}
+
+.role-card:hover {
+    transform: translateY(-3px);
+    background: var(--bg-tarjeta-hover);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.role-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.role-card-tag {
+    font-family: var(--fuente-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.18rem 0.55rem;
+    border-radius: 6px;
+    background: var(--bg-bloque-suave);
+    color: var(--texto-principal);
+}
+
+.role-card.role-buyer .role-card-tag {
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+}
+
+.role-card.role-seller .role-card-tag {
+    background: var(--color-acento-bg);
+    color: var(--color-acento);
+}
+
+.role-card.role-carrier .role-card-tag {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+}
+
+.role-card-arrow {
+    font-family: var(--fuente-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    transition: transform 0.2s ease;
+}
+
+.role-card:hover .role-card-arrow {
+    transform: translateX(4px);
+}
+
+.role-card h3,
+.role-card-title {
+    font-family: var(--fuente-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    line-height: 1.25;
+}
+
+.role-card p,
+.role-card-desc {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+    line-height: 1.45;
+}
+
+.role-card-cta {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--color-primario);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+}
+
+/* =============================================================================
+   3. CONSOLA DE PSEUDO-DEMOSTRACIÓN INTERACTIVA EN LA LANDING (.live-demo-stage)
+   ============================================================================= */
+.live-demo-stage {
+    background: var(--bg-tarjeta);
+    border: 2px solid var(--borde-fuerte);
+    border-radius: var(--radio-lg);
+    padding: 1.15rem;
+    box-shadow: var(--sombra-destacada);
+    position: relative;
+    overflow: hidden;
+}
+
+.live-demo-stage::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--color-primario) 0%, var(--color-secundario) 55%, var(--color-acento) 100%);
+}
+
+.demo-stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 0.9rem;
+    border-bottom: 1px solid var(--borde-color);
+}
+
+.demo-stage-title-box h2,
+.demo-stage-title {
+    font-family: var(--fuente-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.demo-stage-subtitle {
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+}
+
+.demo-live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-family: var(--fuente-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.demo-live-badge::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-exito);
+    animation: pulseLive 1.8s infinite;
+}
+
+@keyframes pulseLive {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.45;
+        transform: scale(1.25);
+    }
+}
+
+/* Botones de Casos Reales Preconfigurados (.demo-presets-bar, .demo-preset-btn) */
+.demo-presets-bar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+    margin-bottom: 0.95rem;
+}
+
+.demo-preset-btn {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.55rem 0.65rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+}
+
+.demo-preset-btn:hover {
+    border-color: var(--color-primario);
+    background: var(--bg-elevado);
+}
+
+.demo-preset-btn.active {
+    background: var(--color-primario);
+    color: #FAF5E8;
+    border-color: var(--color-primario);
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.24);
+}
+
+.demo-preset-btn strong {
+    font-size: 0.78rem;
+    font-weight: 800;
+    display: block;
+}
+
+.demo-preset-btn span {
+    font-family: var(--fuente-mono);
+    font-size: 0.68rem;
+    opacity: 0.85;
+}
+
+/* Visualizador Gráfico de Batea del Camión (.truck-visualizer, .truck-bay) */
+.truck-visualizer {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    padding: 0.9rem;
+    margin-bottom: 0.95rem;
+}
+
+.truck-vis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.truck-limit-pill {
+    font-family: var(--fuente-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    background: var(--color-acento-bg);
+    color: var(--color-acento);
+    border: 1px solid rgba(154, 52, 18, 0.28);
+}
+
+.truck-bay {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.truck-bar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+
+.truck-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+}
+
+.truck-bar-label strong {
+    font-family: var(--fuente-mono);
+    color: var(--texto-principal);
+}
+
+.truck-bar-track {
+    width: 100%;
+    height: 12px;
+    background: var(--bg-elevado);
+    border: 1px solid var(--borde-fuerte);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.truck-fill-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.truck-fill-bar.fill-volume,
+.truck-fill-bar.volume-alert {
+    background: linear-gradient(90deg, var(--color-acento) 0%, #D97706 100%);
+}
+
+/* Comparador Instantáneo Rojo vs Verde en la Demo (.demo-vs-grid) */
+.demo-vs-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin-bottom: 0.9rem;
+}
+
+.demo-box-rojo {
+    background: var(--color-peligro-bg);
+    border: 1.5px solid var(--color-peligro-borde);
+    color: var(--color-peligro);
+    padding: 0.85rem 0.95rem;
+    border-radius: var(--radio-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.demo-box-verde {
+    background: var(--color-exito-bg);
+    border: 2px solid var(--color-exito-borde);
+    color: var(--color-exito);
+    padding: 0.85rem 0.95rem;
+    border-radius: var(--radio-md);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    box-shadow: 0 6px 18px -4px rgba(21, 115, 71, 0.18);
+}
+
+.demo-box-tag {
+    font-family: var(--fuente-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.demo-box-amount {
+    font-family: var(--fuente-mono);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.demo-box-note {
+    font-size: 0.75rem;
+    opacity: 0.92;
+}
+
+/* Tira de Impacto KPI (.kpi-strip, .kpi-card) */
+.kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--borde-color);
+}
+
+.kpi-card {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.55rem 0.65rem;
+    text-align: center;
+}
+
+.kpi-card strong {
+    display: block;
+    font-family: var(--fuente-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-primario);
+}
+
+.kpi-card span {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--texto-secundario);
+    display: block;
+    margin-top: 0.1rem;
+}
+
+/* =============================================================================
+   4. PILARES DE VALOR DE MARKETING (.value-pillars-grid)
+   ============================================================================= */
+.value-pillars-section {
+    margin: 1.5rem 0 2.2rem;
+}
+
+.value-pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.value-pillar-card {
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-top: 4px solid var(--color-primario);
+    border-radius: var(--radio-md);
+    padding: 1.2rem;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.value-pillar-card:nth-child(2) {
+    border-top-color: var(--color-acento);
+}
+
+.value-pillar-card:nth-child(3) {
+    border-top-color: var(--color-secundario);
+}
+
+.pillar-kicker {
+    font-family: var(--fuente-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-acento);
+}
+
+.value-pillar-card h3 {
+    font-family: var(--fuente-display);
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.value-pillar-card p {
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
+    line-height: 1.5;
+}
+
+/* =============================================================================
+   5. VISTAS DIVIDIDAS POR TIPO DE USUARIO (.user-view-panel, .app-tab-panel)
+   ============================================================================= */
+.user-view-panel,
+.app-tab-panel {
+    display: none;
+}
+
+.user-view-panel.active,
+.app-tab-panel.active {
+    display: block;
+    animation: viewSlideFade 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes viewSlideFade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cabecera Editorial de cada Vista de Rol (.role-workspace-header) */
+.role-workspace-header {
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-left: 5px solid var(--color-primario);
+    border-radius: var(--radio-lg);
+    padding: 1.15rem 1.25rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.85rem;
+}
+
+.role-workspace-header.seller-header {
+    border-left-color: var(--color-acento);
+}
+
+.role-workspace-header.carrier-header {
+    border-left-color: var(--color-secundario);
+}
+
+.workspace-title-group h1,
+.workspace-title-group h2 {
+    font-family: var(--fuente-display);
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    font-weight: 700;
+    color: var(--texto-principal);
+    line-height: 1.2;
+}
+
+.workspace-title-group p {
+    font-size: 0.88rem;
+    color: var(--texto-secundario);
+    margin-top: 0.25rem;
+    max-width: 68ch;
+}
+
+.workspace-metrics-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.workspace-metric-pill {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.45rem 0.75rem;
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.workspace-metric-pill span {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--texto-suave);
+}
+
+.workspace-metric-pill strong {
+    font-family: var(--fuente-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-primario);
+}
+
+/* Compatibilidad con pestañas secundarias (.app-tabs-nav, .app-tab-btn) */
 .app-tabs-nav {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -158,7 +1011,7 @@ body {
     border: 1px solid var(--borde-color);
     padding: 0.4rem;
     border-radius: var(--radio-md);
-    margin-bottom: 1rem;
+    margin-bottom: 1.15rem;
     box-shadow: var(--sombra-suave);
 }
 
@@ -168,41 +1021,21 @@ body {
     justify-content: flex-start;
     gap: 0.5rem;
     width: 100%;
-    padding: 0.6rem 0.7rem;
+    padding: 0.62rem 0.75rem;
     border: 1px solid transparent;
     border-radius: var(--radio-sm);
     background: transparent;
     color: var(--texto-secundario);
-    font-family: inherit;
     font-size: 0.82rem;
     font-weight: 700;
-    text-align: left;
     cursor: pointer;
     transition: all 0.18s ease;
-    min-height: 44px; /* Óptimo para pulgar en móvil */
+    min-height: 44px;
 }
 
 .app-tab-btn:hover {
     background: var(--bg-tarjeta);
     color: var(--texto-principal);
-}
-
-/* Indicador numérico sobrio (1, 2, 3, 4) dentro de la pestaña */
-.app-tab-num,
-.tab-num,
-.app-tab-btn .step-index {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    background: var(--bg-elevado);
-    color: var(--texto-principal);
-    font-size: 0.75rem;
-    font-weight: 800;
-    flex-shrink: 0;
-    transition: all 0.18s ease;
 }
 
 .app-tab-btn.active {
@@ -212,79 +1045,82 @@ body {
     box-shadow: var(--sombra-suave);
 }
 
-.app-tab-btn.active .app-tab-num,
-.app-tab-btn.active .tab-num,
-.app-tab-btn.active .step-index {
+.tab-step-num,
+.app-tab-num,
+.tab-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--bg-elevado);
+    color: var(--texto-principal);
+    font-family: var(--fuente-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.app-tab-btn.active .tab-step-num,
+.app-tab-btn.active .app-tab-num {
     background: var(--color-primario);
     color: #FAF5E8;
 }
 
-.app-tab-panel {
-    display: none;
-}
-
-.app-tab-panel.active {
-    display: block;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Compatibilidad con cinta de pasos (.demo-steps / .step-card) */
-.demo-steps {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
-    margin-bottom: 1rem;
-}
-
-.step-card {
-    background: var(--bg-tarjeta);
-    border: 1px solid var(--borde-color);
-    border-left: 4px solid var(--color-primario);
-    border-radius: var(--radio-md);
-    padding: 0.75rem 0.9rem;
-    box-shadow: var(--sombra-suave);
-}
-
-.step-num {
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    color: var(--color-acento);
-}
-
-.step-title {
-    font-weight: 600;
-    font-size: 0.88rem;
+.tab-count-badge {
+    margin-left: auto;
+    background: var(--bg-elevado);
     color: var(--texto-principal);
-    margin-top: 0.15rem;
+    font-family: var(--fuente-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.12rem 0.48rem;
+    border-radius: 999px;
 }
 
 /* =============================================================================
-   3. BARRA DE FILTRO / RECOMENDADOR POR ACTIVIDAD (.filter-bar, .chip-btn)
+   6. VISTA COMPRADOR: RECOMENDADOR, CATÁLOGO (.lote-card) Y COTIZADOR EN VIVO
    ============================================================================= */
 .filter-bar {
     background: var(--bg-tarjeta);
     border: 1px solid var(--borde-color);
-    border-radius: var(--radio-md);
-    padding: 0.95rem;
-    margin-bottom: 1rem;
+    border-radius: var(--radio-lg);
+    padding: 1.1rem;
+    margin-bottom: 1.25rem;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
+    gap: 0.85rem;
     box-shadow: var(--sombra-suave);
+}
+
+.filter-header-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.section-heading {
+    font-family: var(--fuente-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.section-subheading {
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+    margin-top: 0.15rem;
+}
+
+.recommender-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    width: 100%;
 }
 
 .filter-controls {
@@ -297,10 +1133,10 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
-    padding: 0.5rem 0.85rem;
+    gap: 0.35rem;
+    padding: 0.48rem 0.9rem;
     border-radius: 999px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 700;
     border: 1px solid var(--borde-fuerte);
     color: var(--texto-principal);
@@ -319,653 +1155,15 @@ body {
     background: var(--color-primario);
     color: #FAF5E8;
     border-color: var(--color-primario);
-    box-shadow: 0 2px 8px rgba(30, 86, 49, 0.22);
-}
-
-/* =============================================================================
-   4. GRILLA PRINCIPAL Y TARJETA CLAVE 1: SUBPRODUCTO RECOMENDADO (.lote-card)
-   ============================================================================= */
-.main-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.15rem;
-    align-items: start;
-}
-
-.lotes-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-}
-
-/* Tarjeta Clave 1 de Luciana: .lote-card */
-.lote-card {
-    background: var(--bg-tarjeta);
-    border: 2px solid var(--borde-color);
-    border-radius: var(--radio-lg);
-    padding: 1rem;
-    box-shadow: var(--sombra-suave);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-    cursor: pointer;
-    position: relative;
-}
-
-.lote-card:hover {
-    border-color: var(--color-primario);
-    box-shadow: var(--sombra-destacada);
-}
-
-.lote-card.selected {
-    border-color: var(--color-primario);
-    background: var(--bg-tarjeta);
-    box-shadow: 0 0 0 3px var(--color-primario-suave), var(--sombra-destacada);
-}
-
-.lote-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-bottom: 0.55rem;
-}
-
-.badge-cat {
-    background: var(--bg-bloque-suave);
-    color: var(--color-primario);
-    border: 1px solid var(--borde-color);
-    font-weight: 800;
-    font-size: 0.72rem;
-    padding: 0.22rem 0.6rem;
-    border-radius: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.badge-recomendado {
-    background: var(--color-exito-bg);
-    color: var(--color-exito);
-    border: 1px solid var(--color-exito-borde);
-    font-weight: 800;
-    font-size: 0.72rem;
-    padding: 0.22rem 0.6rem;
-    border-radius: 6px;
-    letter-spacing: 0.2px;
-}
-
-.badge-flete {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.22rem 0.6rem;
-    border-radius: 6px;
-    background: var(--color-acento-bg);
-    color: var(--color-acento);
-    border: 1px solid rgba(180, 83, 9, 0.25);
-}
-
-.lote-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: var(--texto-principal);
-    margin-bottom: 0.2rem;
-    line-height: 1.3;
-}
-
-.lote-origin {
-    font-size: 0.82rem;
-    color: var(--texto-secundario);
-    margin-bottom: 0.7rem;
-}
-
-/* Grilla de métricas claras: Volumen m3, Densidad kg/m3, Precio/tn */
-.lote-metrics {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.45rem;
-    background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    padding: 0.65rem;
-    border-radius: var(--radio-sm);
-    margin-bottom: 0.7rem;
-}
-
-.metric-item span {
-    display: block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--texto-suave);
-    text-transform: uppercase;
-    letter-spacing: 0.2px;
-    margin-bottom: 0.1rem;
-}
-
-.metric-item strong {
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: var(--texto-principal);
-}
-
-/* Bloque de aplicación productiva (.lote-uso) */
-.lote-uso {
-    font-size: 0.82rem;
-    color: var(--texto-principal);
-    background: var(--color-exito-bg);
-    border-left: 3.5px solid var(--color-exito);
-    padding: 0.5rem 0.7rem;
-    border-radius: 6px;
-    margin-bottom: 0.65rem;
-}
-
-.lote-card-footer,
-.lote-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.btn-cotizar-lote {
-    width: 100%;
-    background: var(--bg-bloque-suave);
-    color: var(--color-primario);
-    border: 1.5px solid var(--color-primario);
-    padding: 0.55rem 0.85rem;
-    border-radius: var(--radio-sm);
-    font-size: 0.84rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-align: center;
-}
-
-.btn-cotizar-lote:hover,
-.lote-card.selected .btn-cotizar-lote {
-    background: var(--color-primario);
-    color: #FAF5E8;
-}
-
-/* =============================================================================
-   5. PANEL CALCULADORA LOGÍSTICA Y CUBICAJE (.calculator-panel, .cubicaje-box)
-   ============================================================================= */
-.calculator-panel {
-    background: var(--bg-tarjeta);
-    border: 2px solid var(--color-primario);
-    border-radius: var(--radio-lg);
-    padding: 1.1rem;
-    box-shadow: var(--sombra-destacada);
-}
-
-.panel-header {
-    border-bottom: 1px solid var(--borde-color);
-    padding-bottom: 0.75rem;
-    margin-bottom: 0.9rem;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
-    margin-bottom: 0.65rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.28rem;
-    margin-bottom: 0.7rem;
-}
-
-.form-group label {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--texto-secundario);
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.6rem 0.75rem;
-    background: var(--bg-pagina);
-    color: var(--texto-principal);
-    border: 1.5px solid var(--borde-fuerte);
-    border-radius: var(--radio-sm);
-    font-size: 0.92rem;
-    font-family: inherit;
-    min-height: 42px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: var(--color-primario);
-    box-shadow: 0 0 0 3px var(--color-primario-suave);
-}
-
-/* Barras de Cubicaje (Peso vs Volumen) */
-.cubicaje-box {
-    background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    border-radius: var(--radio-md);
-    padding: 0.85rem;
-    margin-bottom: 0.95rem;
-}
-
-.progress-row {
-    margin-top: 0.55rem;
-}
-
-.progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--texto-secundario);
-    margin-bottom: 0.25rem;
-}
-
-.progress-bar-bg {
-    height: 10px;
-    background: var(--bg-elevado);
-    border: 1px solid var(--borde-color);
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: var(--color-primario);
-    border-radius: 999px;
-    transition: width 0.3s ease;
-}
-
-.progress-bar-fill.volume-alert {
-    background: var(--color-acento);
-}
-
-/* =============================================================================
-   6. TARJETA CLAVE 2: COMPARADOR VISUAL LADO A LADO
-      (.comparison-grid, .comp-bad, .comp-good, .savings-banner)
-   ============================================================================= */
-.comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
-    margin: 0.9rem 0;
-}
-
-.comp-box {
-    padding: 0.85rem 0.95rem;
-    border-radius: var(--radio-md);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-/* Rojo: Flete Tradicional FADEEAC — No cierra */
-.comp-bad {
-    background: var(--color-peligro-bg);
-    border: 2px solid var(--color-peligro-borde);
-    color: var(--color-peligro);
-}
-
-/* Verde: Flete Calzado Moñái — Negocio Rentable */
-.comp-good {
-    background: var(--color-exito-bg);
-    border: 2px solid var(--color-exito-borde);
-    color: var(--color-exito);
-    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.12);
-}
-
-.comp-price {
-    font-size: 1.3rem;
-    font-weight: 900;
-    margin: 0.2rem 0;
-    letter-spacing: -0.3px;
-}
-
-.savings-banner {
-    background: var(--color-primario);
-    color: #FAF5E8;
-    border: 1.5px solid var(--color-crema-dorado);
-    padding: 0.75rem 0.95rem;
-    border-radius: var(--radio-md);
-    text-align: center;
-    font-size: 0.88rem;
-    font-weight: 600;
-    margin-bottom: 0.95rem;
-    box-shadow: var(--sombra-suave);
-}
-
-.savings-banner strong {
-    font-size: 1.12rem;
-    font-weight: 900;
-    color: #FDE68A;
-    display: inline-block;
-    margin-left: 0.2rem;
-}
-
-/* =============================================================================
-   7. BOTONES DE ACCIÓN (.btn-primary, .btn-secondary)
-   ============================================================================= */
-.btn-primary {
-    width: 100%;
-    background: var(--color-primario);
-    color: #FAF5E8;
-    border: 1px solid transparent;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radio-sm);
-    font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: background 0.18s ease, transform 0.12s ease;
-    min-height: 46px;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background: var(--color-primario-hover);
-}
-
-.btn-primary:disabled {
-    opacity: 0.65;
-    cursor: wait;
-}
-
-.btn-secondary {
-    background: var(--color-acento);
-    color: #FAF5E8;
-    border: 1px solid rgba(250, 245, 232, 0.25);
-    padding: 0.45rem 0.85rem;
-    border-radius: var(--radio-sm);
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.18s ease;
-    min-height: 36px;
-}
-
-.btn-secondary:hover {
-    background: var(--color-acento-hover);
-}
-
-/* =============================================================================
-   8. TARJETA CLAVE 3: CERTIFICADO OFICIAL DE TRAZABILIDAD AMBIENTAL
-      (.certificado-oficial-card, .cert-seal-header, .cert-grid, .hash-box)
-      + Compatibilidad con modal (.cert-modal-backdrop, .cert-modal)
-   ============================================================================= */
-.certificado-oficial-card {
-    background: var(--bg-tarjeta);
-    border: 2px solid var(--color-primario);
-    outline: 3px double var(--color-crema-dorado);
-    outline-offset: -7px;
-    border-radius: var(--radio-lg);
-    padding: 1.25rem;
-    box-shadow: var(--sombra-destacada);
-    position: relative;
-}
-
-.cert-seal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    padding-bottom: 0.85rem;
-    margin-bottom: 0.9rem;
-    border-bottom: 2px solid var(--borde-color);
-}
-
-.cert-seal-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    background: var(--color-exito-bg);
-    color: var(--color-exito);
-    border: 1.5px solid var(--color-exito-borde);
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
-    font-size: 0.74rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.cert-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.55rem;
-    background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    padding: 0.9rem;
-    border-radius: var(--radio-md);
-    font-size: 0.86rem;
-    margin-bottom: 0.9rem;
-}
-
-.cert-grid-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.12rem;
-    padding-bottom: 0.45rem;
-    border-bottom: 1px dashed var(--borde-color);
-}
-
-.cert-grid-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.cert-grid-item span {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--texto-suave);
-}
-
-.cert-grid-item strong {
-    font-size: 0.9rem;
-    color: var(--texto-principal);
-}
-
-/* Bloque técnico del Hash SHA-256 en Hedera */
-.hash-box {
-    background: var(--color-blockchain-bg);
-    color: var(--color-blockchain);
-    border: 1px solid var(--color-blockchain-borde);
-    font-family: var(--fuente-mono);
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 0.7rem 0.85rem;
-    border-radius: var(--radio-sm);
-    word-break: break-all;
-    margin: 0.55rem 0 0.9rem 0;
-    line-height: 1.4;
-}
-
-/* Modal de Certificado y Publicación (.cert-modal-backdrop, .cert-modal) */
-.cert-modal-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(18, 26, 20, 0.76);
-    backdrop-filter: blur(3px);
-    z-index: 999;
-    align-items: center;
-    justify-content: center;
-    padding: 0.85rem;
-    overflow-y: auto;
-}
-
-.cert-modal {
-    background: var(--bg-tarjeta);
-    color: var(--texto-principal);
-    max-width: 640px;
-    width: 100%;
-    border-radius: var(--radio-lg);
-    border: 2px solid var(--color-primario);
-    border-top: 7px solid var(--color-primario);
-    padding: 1.25rem;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-    max-height: 92vh;
-    overflow-y: auto;
-}
-
-/* =============================================================================
-   9. ESCALADO RESPONSIVO (TABLET >= 768px Y DESKTOP >= 1024px)
-   ============================================================================= */
-@media (min-width: 768px) {
-    .navbar {
-        padding: 0.9rem 1.5rem;
-    }
-
-    .brand-title {
-        font-size: 1.25rem;
-    }
-
-    .brand-subtitle {
-        font-size: 0.82rem;
-    }
-
-    .container {
-        padding: 1.25rem 1.5rem;
-    }
-
-    .app-tabs-nav {
-        grid-template-columns: repeat(4, 1fr);
-        padding: 0.45rem;
-    }
-
-    .app-tab-btn {
-        justify-content: center;
-        font-size: 0.86rem;
-    }
-
-    .demo-steps {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.85rem;
-    }
-
-    .filter-bar {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.15rem 1.25rem;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.85rem;
-    }
-
-    .comparison-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.85rem;
-    }
-
-    .cert-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem 1rem;
-    }
-
-    .cert-modal,
-    .certificado-oficial-card {
-        padding: 1.65rem;
-    }
-}
-
-@media (min-width: 1024px) {
-    .demo-steps {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    .main-grid {
-        grid-template-columns: 1.15fr 1fr;
-        gap: 1.5rem;
-    }
-
-    .calculator-panel {
-        padding: 1.45rem;
-        position: sticky;
-        top: 5.2rem;
-    }
-
-    .lote-card {
-        padding: 1.2rem;
-    }
-}
-
-/* =============================================================================
-   10. COMPLEMENTOS DE LA INTERFAZ SECCIONADA POR PESTAÑAS (MOÑÁI)
-   ============================================================================= */
-.tab-step-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    background: var(--bg-elevado);
-    color: var(--texto-principal);
-    font-size: 0.75rem;
-    font-weight: 800;
-    flex-shrink: 0;
-}
-
-.app-tab-btn.active .tab-step-num {
-    background: var(--color-primario);
-    color: #FAF5E8;
-}
-
-.tab-count-badge {
-    margin-left: auto;
-    background: var(--bg-elevado);
-    color: var(--texto-principal);
-    font-size: 0.72rem;
-    font-weight: 800;
-    padding: 0.12rem 0.48rem;
-    border-radius: 999px;
-}
-
-.filter-bar {
-    flex-direction: column !important;
-    align-items: stretch !important;
-}
-
-.filter-header-block {
-    margin-bottom: 0.25rem;
-}
-
-.section-heading {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--texto-principal);
-}
-
-.section-subheading {
-    font-size: 0.84rem;
-    color: var(--texto-secundario);
-    margin-top: 0.15rem;
-}
-
-.recommender-form-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    width: 100%;
-}
-
-@media (min-width: 768px) {
-    .recommender-form-grid {
-        grid-template-columns: 1fr 1fr 1fr;
-    }
+    box-shadow: 0 3px 10px rgba(22, 66, 40, 0.25);
 }
 
 .recommender-active-banner {
-    background: var(--bg-bloque-suave);
-    border-left: 4px solid var(--color-primario);
-    padding: 0.65rem 0.85rem;
-    border-radius: 6px;
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    border-left: 4px solid var(--color-exito);
+    padding: 0.68rem 0.9rem;
+    border-radius: var(--radio-sm);
     font-size: 0.83rem;
     color: var(--texto-principal);
 }
@@ -976,7 +1174,16 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.95rem;
+}
+
+/* Layout Comprador: Catálogo + Cotizador Lateral/Inferior */
+.buyer-workspace-grid,
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    align-items: start;
 }
 
 .lotes-grid {
@@ -985,22 +1192,80 @@ body {
     gap: 1rem;
 }
 
-@media (min-width: 768px) {
-    .lotes-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.lotes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
 }
 
-@media (min-width: 1120px) {
-    .lotes-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
+/* TARJETA CLAVE 1: Subproducto Recomendado (.lote-card) */
 .lote-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.15rem;
+    box-shadow: var(--sombra-suave);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.lote-card:hover {
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
+    box-shadow: var(--sombra-destacada);
+    transform: translateY(-2px);
+}
+
+.lote-card.selected {
+    border: 2px solid var(--color-primario);
+    background: var(--bg-tarjeta);
+    box-shadow: 0 0 0 4px var(--color-primario-suave), var(--sombra-destacada);
+}
+
+.lote-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.65rem;
+}
+
+.badge-cat {
+    background: var(--bg-bloque-suave);
+    color: var(--color-primario);
+    border: 1px solid var(--borde-fuerte);
+    font-family: var(--fuente-mono);
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.badge-recomendado {
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    font-weight: 800;
+    font-size: 0.71rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 6px;
+}
+
+.badge-flete {
+    font-size: 0.71rem;
+    font-weight: 700;
+    padding: 0.22rem 0.6rem;
+    border-radius: 6px;
+    background: var(--color-acento-bg);
+    color: var(--color-acento);
+    border: 1px solid rgba(154, 52, 18, 0.25);
 }
 
 .badge-flete-vendedor {
@@ -1012,50 +1277,302 @@ body {
 .badge-flete-compartido {
     background: var(--bg-bloque-suave);
     color: var(--texto-principal);
-    border-color: var(--borde-color);
+    border-color: var(--borde-fuerte);
+}
+
+.lote-title {
+    font-family: var(--fuente-display);
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.22rem;
+    line-height: 1.28;
+}
+
+.lote-origin {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+    margin-bottom: 0.75rem;
+}
+
+/* Grilla de Métricas con Fuente Mono (.lote-metrics) */
+.lote-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.45rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    padding: 0.68rem;
+    border-radius: var(--radio-sm);
+    margin-bottom: 0.75rem;
+}
+
+.metric-item span {
+    display: block;
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.12rem;
+}
+
+.metric-item strong {
+    font-family: var(--fuente-mono);
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.lote-uso {
+    font-size: 0.81rem;
+    color: var(--texto-principal);
+    background: var(--color-exito-bg);
+    border-left: 3.5px solid var(--color-exito);
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.7rem;
+    line-height: 1.45;
 }
 
 .lote-uso-extra {
     margin-top: 0.35rem;
     padding-top: 0.35rem;
     border-top: 1px dashed var(--color-exito-borde);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--texto-secundario);
 }
 
-.lote-card-footer {
+.lote-card-footer,
+.lote-actions {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0.55rem;
-    padding-top: 0.55rem;
+    padding-top: 0.65rem;
     border-top: 1px solid var(--borde-color);
+    margin-top: auto;
 }
 
 .lote-route-hint {
+    font-size: 0.77rem;
+    color: var(--texto-secundario);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-cotizar-lote,
+.btn-cotizar-card {
+    width: 100%;
+    background: var(--bg-bloque-suave);
+    color: var(--color-primario);
+    border: 1.5px solid var(--color-primario);
+    padding: 0.62rem 0.9rem;
+    border-radius: var(--radio-sm);
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: center;
+    min-height: 42px;
+}
+
+.btn-cotizar-lote:hover,
+.btn-cotizar-card:hover,
+.lote-card.selected .btn-cotizar-lote,
+.lote-card.selected .btn-cotizar-card {
+    background: var(--color-primario);
+    color: #FAF5E8;
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.22);
+}
+
+/* =============================================================================
+   7. PANEL COTIZADOR LOGÍSTICO Y COMPARADOR ROJO VS VERDE
+      (.calculator-panel, .cubicaje-box, .comparison-grid, .cost-breakdown-box)
+   ============================================================================= */
+.calculator-panel {
+    background: var(--bg-tarjeta);
+    border: 2px solid var(--color-primario);
+    border-radius: var(--radio-lg);
+    padding: 1.25rem;
+    box-shadow: var(--sombra-destacada);
+    position: relative;
+}
+
+.panel-header {
+    border-bottom: 1px solid var(--borde-color);
+    padding-bottom: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.panel-header h2,
+.panel-header h3 {
+    font-family: var(--fuente-display);
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+}
+
+.form-group label {
     font-size: 0.78rem;
+    font-weight: 700;
     color: var(--texto-secundario);
 }
 
-.btn-cotizar-card {
-    padding: 0.65rem 0.9rem;
-    font-size: 0.88rem;
-    min-height: 40px;
+.form-control {
+    width: 100%;
+    padding: 0.62rem 0.8rem;
+    background: var(--bg-pagina);
+    color: var(--texto-principal);
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: var(--radio-sm);
+    font-size: 0.9rem;
+    min-height: 42px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px var(--color-primario-suave);
+}
+
+/* Cubicaje Peso vs Volumen (.cubicaje-box) */
+.cubicaje-box {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    padding: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.progress-row {
+    margin-top: 0.6rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    margin-bottom: 0.25rem;
+}
+
+.progress-label span:last-child,
+.progress-label strong {
+    font-family: var(--fuente-mono);
+    color: var(--texto-principal);
+}
+
+.progress-bar-bg {
+    height: 11px;
+    background: var(--bg-elevado);
+    border: 1px solid var(--borde-fuerte);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primario), var(--color-secundario));
+    border-radius: 999px;
+    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress-bar-fill.volume-alert {
+    background: linear-gradient(90deg, var(--color-acento), #D97706);
+}
+
+/* TARJETA CLAVE 2: Comparador Lado a Lado Rojo vs Verde (.comparison-grid) */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 0.95rem 0;
+}
+
+.comp-box {
+    padding: 0.95rem 1rem;
+    border-radius: var(--radio-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.25rem;
+}
+
+.comp-bad {
+    background: var(--color-peligro-bg);
+    border: 1.5px solid var(--color-peligro-borde);
+    color: var(--color-peligro);
+}
+
+.comp-good {
+    background: var(--color-exito-bg);
+    border: 2px solid var(--color-exito-borde);
+    color: var(--color-exito);
+    box-shadow: 0 8px 20px -6px rgba(21, 115, 71, 0.2);
 }
 
 .comp-badge-header {
-    font-size: 0.74rem;
-    font-weight: 800;
+    font-family: var(--fuente-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.04em;
+}
+
+.comp-price {
+    font-family: var(--fuente-mono);
+    font-size: 1.38rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0.15rem 0;
 }
 
 .comp-desc {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     line-height: 1.35;
 }
 
+.savings-banner {
+    background: linear-gradient(135deg, var(--color-primario) 0%, #0F2E1C 100%);
+    color: #FAF5E8;
+    border: 1.5px solid var(--color-crema-dorado);
+    padding: 0.82rem 1rem;
+    border-radius: var(--radio-md);
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.savings-banner strong {
+    font-family: var(--fuente-mono);
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: #FDE68A;
+    margin-left: 0.25rem;
+}
+
 .cost-breakdown-box {
-    font-size: 0.86rem;
+    font-size: 0.85rem;
     margin-bottom: 1rem;
     background: var(--bg-bloque-suave);
     border: 1px solid var(--borde-color);
@@ -1068,19 +1585,263 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
+}
+
+.breakdown-row strong {
+    font-family: var(--fuente-mono);
 }
 
 .breakdown-divider {
     border: none;
-    border-top: 1px solid var(--borde-color);
-    margin: 0.55rem 0;
+    border-top: 1px solid var(--borde-fuerte);
+    margin: 0.6rem 0;
 }
 
 .breakdown-total {
     font-size: 1rem;
+    font-weight: 800;
     color: var(--color-primario);
     margin-bottom: 0;
+}
+
+/* =============================================================================
+   8. VISTA VENDEDOR (INDUSTRIA): ALTA DE EXCEDENTES Y ESTRATEGIA DE FLETE
+      (.flete-strategy-cards, .strategy-option, .seller-layout-grid)
+   ============================================================================= */
+.seller-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.flete-strategy-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin: 0.5rem 0 0.9rem;
+}
+
+.strategy-option {
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.75rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.strategy-option:hover {
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
+}
+
+.strategy-option.active,
+.strategy-option:has(input:checked) {
+    background: var(--color-exito-bg);
+    border-color: var(--color-exito);
+    box-shadow: 0 0 0 3px var(--color-primario-suave);
+}
+
+.strategy-option strong {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: var(--texto-principal);
+}
+
+.strategy-option span {
+    font-size: 0.76rem;
+    color: var(--texto-secundario);
+}
+
+.plant-cubicaje-preview {
+    background: var(--bg-bloque-suave);
+    border: 1px dashed var(--color-primario);
+    border-radius: var(--radio-md);
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.plant-cubicaje-preview strong {
+    font-family: var(--fuente-mono);
+    font-size: 0.98rem;
+    color: var(--color-primario);
+}
+
+/* =============================================================================
+   9. VISTA LOGÍSTICA / CAMIÓN DE RETORNO
+      (.truck-route-card, .backhaul-match-card, .carrier-grid)
+   ============================================================================= */
+.carrier-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.truck-routes-list,
+.backhaul-matches-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+}
+
+.truck-route-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-left: 5px solid var(--color-secundario);
+    border-radius: var(--radio-md);
+    padding: 1.1rem;
+    box-shadow: var(--sombra-suave);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.truck-route-card:hover {
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+    transform: translateY(-2px);
+}
+
+.truck-route-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.truck-route-title {
+    font-family: var(--fuente-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+
+.truck-corridor-badge {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    font-family: var(--fuente-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.22rem 0.6rem;
+    border-radius: 999px;
+}
+
+.truck-specs-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.45rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.6rem;
+}
+
+.truck-specs-row div span {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+}
+
+.truck-specs-row div strong {
+    font-family: var(--fuente-mono);
+    font-size: 0.85rem;
+    color: var(--texto-principal);
+}
+
+.backhaul-match-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--color-exito-borde);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.1rem;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.backhaul-match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.backhaul-income-pill {
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    font-family: var(--fuente-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+}
+
+/* =============================================================================
+   10. TARJETA CLAVE 3: CERTIFICADO OFICIAL DE TRAZABILIDAD AMBIENTAL
+       (.certificado-oficial-card, .cert-seal-header, .cert-number-box, .cert-grid, .hash-box)
+   ============================================================================= */
+.certificado-oficial-card {
+    background: var(--bg-tarjeta);
+    border: 2px solid var(--color-primario);
+    outline: 3px double var(--color-crema-dorado);
+    outline-offset: -8px;
+    border-radius: var(--radio-lg);
+    padding: 1.4rem;
+    box-shadow: var(--sombra-destacada);
+    position: relative;
+}
+
+.cert-seal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-bottom: 0.95rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--borde-color);
+}
+
+.cert-seal-header h2,
+.cert-seal-header h3 {
+    font-family: var(--fuente-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    line-height: 1.2;
+}
+
+.cert-seal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1.5px solid var(--color-exito-borde);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-family: var(--fuente-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .cert-number-box {
@@ -1093,37 +1854,252 @@ body {
 
 .cert-number-box span {
     display: block;
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     text-transform: uppercase;
     font-weight: 700;
     color: var(--texto-suave);
 }
 
 .cert-number-box strong {
+    font-family: var(--fuente-mono);
     font-size: 1rem;
-    font-weight: 900;
+    font-weight: 700;
     color: var(--color-primario);
 }
 
-.cert-field {
+.cert-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    padding: 0.95rem;
+    border-radius: var(--radio-md);
+    margin-bottom: 1rem;
+}
+
+.cert-field,
+.cert-grid-item {
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
-    padding: 0.55rem 0.7rem;
+    padding: 0.6rem 0.75rem;
     background: var(--bg-tarjeta);
     border: 1px solid var(--borde-color);
     border-radius: var(--radio-sm);
 }
 
-.cert-field span {
-    font-size: 0.7rem;
+.cert-field span,
+.cert-grid-item span {
+    font-size: 0.68rem;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--texto-suave);
 }
 
-.cert-field strong {
+.cert-field strong,
+.cert-grid-item strong {
     font-size: 0.9rem;
+    font-weight: 700;
     color: var(--texto-principal);
 }
 
+.hash-box {
+    background: var(--color-blockchain-bg);
+    color: var(--color-blockchain);
+    border: 1.5px solid var(--color-blockchain-borde);
+    font-family: var(--fuente-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.78rem 0.95rem;
+    border-radius: var(--radio-sm);
+    word-break: break-all;
+    margin: 0.6rem 0 1rem 0;
+    line-height: 1.45;
+}
+
+/* =============================================================================
+   11. BOTONES DE ACCIÓN GLOBALES (.btn-primary, .btn-secondary, .btn-outline)
+   ============================================================================= */
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    color: #FAF5E8;
+    border: 1px solid var(--color-primario);
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radio-sm);
+    font-size: 0.92rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    min-height: 46px;
+    box-shadow: 0 6px 16px -4px rgba(22, 66, 40, 0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--color-primario-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -6px rgba(22, 66, 40, 0.45);
+}
+
+.btn-primary:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: var(--color-acento);
+    color: #FAF5E8;
+    border: 1px solid transparent;
+    padding: 0.55rem 0.95rem;
+    border-radius: var(--radio-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    min-height: 38px;
+}
+
+.btn-secondary:hover {
+    background: var(--color-acento-hover);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: var(--bg-tarjeta);
+    color: var(--texto-principal);
+    border: 1.5px solid var(--borde-fuerte);
+    padding: 0.55rem 0.95rem;
+    border-radius: var(--radio-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    min-height: 38px;
+}
+
+.btn-outline:hover {
+    border-color: var(--color-primario);
+    color: var(--color-primario);
+    background: var(--bg-bloque-suave);
+}
+
+/* =============================================================================
+   12. ESCALADO RESPONSIVO: TABLET (>= 768px) Y DESKTOP (>= 1024px)
+   ============================================================================= */
+@media (min-width: 768px) {
+    .navbar {
+        padding: 0.75rem 1.5rem;
+    }
+
+    .role-switcher {
+        order: 0;
+        width: auto;
+        display: inline-flex;
+        flex-wrap: nowrap;
+        gap: 0.35rem;
+    }
+
+    .nav-actions {
+        margin-left: 0;
+    }
+
+    .container {
+        padding: 1.35rem 1.5rem 3.5rem;
+    }
+
+    .role-entry-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .demo-presets-bar {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .demo-vs-grid,
+    .comparison-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .value-pillars-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .role-workspace-header {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .recommender-form-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .lotes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .flete-strategy-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cert-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .app-tabs-nav {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-grid {
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .buyer-workspace-grid,
+    .main-grid {
+        grid-template-columns: 1.25fr 0.95fr;
+        gap: 1.5rem;
+    }
+
+    .seller-layout-grid,
+    .carrier-grid {
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 1.5rem;
+    }
+
+    .calculator-panel {
+        position: sticky;
+        top: 5.2rem;
+        padding: 1.4rem;
+    }
+}
+
+@media (min-width: 1240px) {
+    .lotes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lotes-grid.lotes-grid-full {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

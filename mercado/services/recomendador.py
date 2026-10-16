@@ -9,10 +9,12 @@ Objetivo:
   el establecimiento del comprador.
 - Explicar al productor por qué le conviene cada lote y cómo impacta el cubicaje (m3).
 - Permitir la publicación rápida de nuevos lotes con inferencia inteligente por rubro.
+- Proveer los casos precalculados de la Landing Page (CASOS_DEMO_LANDING) y la
+  gestión de camiones con retorno vacío para el rol Logística / Camión.
 """
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 from django.db.models import Q
-from mercado.models import LoteSubproducto
+from mercado.models import CamionRetorno, LoteSubproducto
 
 PERFILES_PRODUCTIVOS: List[Dict[str, str]] = [
     {
@@ -142,6 +144,108 @@ DEFAULTS_POR_CATEGORIA: Dict[str, Dict] = {
         "perfiles_comprador": "BIOMASA,VIVERO,GANADERO",
     },
 }
+
+CASOS_DEMO_LANDING: List[Dict] = [
+    {
+        "id": "arrocero",
+        "codigo": "ARROZ",
+        "etiqueta_boton": "Caso 1 · Sector Arrocero",
+        "titulo": "Caso Arrocero: Cascarilla de Arroz para Cama Avícola",
+        "subproducto": "Cascarilla de Arroz Seca (Granel)",
+        "empresa_vendedora": "Molino Arrocero San Lorenzo (Saladas)",
+        "empresa_compradora": "Granja Avícola Santa Lucía (Goya)",
+        "origen": "Saladas, Corrientes",
+        "destino": "Goya, Corrientes",
+        "ruta": "Saladas → Goya (RN 12 / RP 27)",
+        "distancia_km": 135,
+        "toneladas": 15.0,
+        "densidad_kg_m3": 165,
+        "volumen_m3": 90.9,
+        "factor_limitante": "SATURA POR VOLUMEN (90.9 m³)",
+        "modalidad_flete": "COMPRADOR",
+        "modalidad_flete_label": "100% Comprador con Flete Calzado (-45%)",
+        "precio_tonelada_ars": 22000,
+        "subtotal_subproducto_ars": 330000,
+        "flete_tradicional_ars": 1400000,
+        "flete_calzado_ars": 770000,
+        "ahorro_ars": 630000,
+        "descuento_pct": 45,
+        "pago_vendedor_flete_ars": 0,
+        "pago_comprador_flete_ars": 770000,
+        "transportista": "Transporte Litoral Express (Batea 90 m³)",
+        "explicacion_logistica": (
+            "15 tn a 165 kg/m³ ocupan 90.9 m³: el camión se llena por volumen antes que por peso. "
+            "Al calzar una batea que regresaba vacía hacia Goya, el flete baja de $1.400.000 a $770.000."
+        ),
+        "impacto_ambiental": "Evita quema a cielo abierto en molino y reemplaza viruta comprada fuera de la provincia.",
+    },
+    {
+        "id": "forestal",
+        "codigo": "MADERA",
+        "etiqueta_boton": "Caso 2 · Foresto-Industria",
+        "titulo": "Caso Forestal: Aserrín de Pino Seco con Flete Compartido 50/50",
+        "subproducto": "Aserrín y Viruta de Pino Seleccionado",
+        "empresa_vendedora": "Aserradero Río Paraná SRL (Saladas)",
+        "empresa_compradora": "Planta de Pellets y Biomasa Paiubre (Mercedes)",
+        "origen": "Saladas, Corrientes",
+        "destino": "Mercedes, Corrientes",
+        "ruta": "Saladas → Mercedes (RN 118 / RN 123)",
+        "distancia_km": 165,
+        "toneladas": 14.0,
+        "densidad_kg_m3": 210,
+        "volumen_m3": 66.7,
+        "factor_limitante": "ALTO VOLUMEN EN CAJA (66.7 m³)",
+        "modalidad_flete": "COMPARTIDO_50_50",
+        "modalidad_flete_label": "Flete Compartido 50% Vendedor / 50% Comprador",
+        "precio_tonelada_ars": 18500,
+        "subtotal_subproducto_ars": 259000,
+        "flete_tradicional_ars": 1300000,
+        "flete_calzado_ars": 676000,
+        "ahorro_ars": 624000,
+        "descuento_pct": 48,
+        "pago_vendedor_flete_ars": 338000,
+        "pago_comprador_flete_ars": 338000,
+        "transportista": "Logística Guaraní SRL (Semirremolque 90 m³)",
+        "explicacion_logistica": (
+            "14 tn a 210 kg/m³ ocupan 66.7 m³. El aserradero necesita liberar patio de acopio y comparte "
+            "el Flete Calzado 50/50 ($338.000 cada parte), destrabando una operación antes inviable."
+        ),
+        "impacto_ambiental": "Transforma pasivo forestal con riesgo de incendio en energía térmica renovable certificada.",
+    },
+    {
+        "id": "citricola",
+        "codigo": "CITRUS",
+        "etiqueta_boton": "Caso 3 · Sector Citrícola",
+        "titulo": "Caso Citrícola: Cáscara Húmeda de Citrus con Urgencia 48 hs",
+        "subproducto": "Bagazo y Cáscara Húmeda de Citrus",
+        "empresa_vendedora": "Jugos del Litoral SA (Bella Vista)",
+        "empresa_compradora": "Feedlot y Recría Don Esteban (Goya)",
+        "origen": "Bella Vista, Corrientes",
+        "destino": "Goya, Corrientes",
+        "ruta": "Bella Vista → Goya (RP 27)",
+        "distancia_km": 85,
+        "toneladas": 24.0,
+        "densidad_kg_m3": 650,
+        "volumen_m3": 36.9,
+        "factor_limitante": "SATURA POR PESO (24 tn en solo 36.9 m³)",
+        "modalidad_flete": "VENDEDOR",
+        "modalidad_flete_label": "Flete 100% Vendedor (Urgencia ambiental 48 hs)",
+        "precio_tonelada_ars": 14000,
+        "subtotal_subproducto_ars": 336000,
+        "flete_tradicional_ars": 950000,
+        "flete_calzado_ars": 520000,
+        "ahorro_ars": 430000,
+        "descuento_pct": 45,
+        "pago_vendedor_flete_ars": 520000,
+        "pago_comprador_flete_ars": 0,
+        "transportista": "Transporte Litoral Express (Batea Estanca)",
+        "explicacion_logistica": (
+            "24 tn a 650 kg/m³ ocupan apenas 36.9 m³ (carga pesada y húmeda). Por urgencia ambiental de 48 hs "
+            "para evitar fermentación en planta, la juguera absorbe el 100% del Flete Calzado ($520.000)."
+        ),
+        "impacto_ambiental": "Evita vuelco y lixiviados ácidos convirtiendo 24 tn húmedas en fibra energética bovina.",
+    },
+]
 
 
 def obtener_perfil_por_codigo(codigo: Optional[str]) -> Dict[str, str]:
@@ -324,3 +428,103 @@ def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
         perfiles_comprador=perfiles_comprador,
         modalidad_flete=(datos.get("modalidad_flete") or "COMPRADOR").strip(),
     )
+
+
+def crear_nuevo_camion_retorno(datos: dict) -> CamionRetorno:
+    """
+    Permite que un transportista o flota registre un nuevo camión con retorno vacío
+    en la bolsa de Flete Calzado del NEA.
+    """
+    transportista = (datos.get("transportista") or "Transporte Regional NEA").strip()
+    origen_viaje = (datos.get("origen_viaje") or "Corrientes Capital").strip()
+    destino_viaje = (datos.get("destino_viaje") or "Goya, Corrientes").strip()
+    pasa_por = (
+        datos.get("pasa_por") or "Saladas, San Roque, Bella Vista"
+    ).strip()
+    fecha_disponible = (
+        datos.get("fecha_disponible") or "Hoy — Salida 17:00 hs"
+    ).strip()
+    tipo_carroceria = (
+        datos.get("tipo_carroceria") or "Batea Cerealera con Lona (85 m3)"
+    ).strip()
+
+    cap_tn_raw = datos.get("capacidad_max_tn")
+    capacidad_max_tn = (
+        float(cap_tn_raw) if cap_tn_raw not in (None, "", 0, "0") else 30.0
+    )
+
+    cap_m3_raw = datos.get("capacidad_max_m3")
+    capacidad_max_m3 = (
+        float(cap_m3_raw) if cap_m3_raw not in (None, "", 0, "0") else 85.0
+    )
+
+    desc_raw = datos.get("descuento_retorno_pct")
+    descuento_retorno_pct = (
+        float(desc_raw) if desc_raw not in (None, "", 0, "0") else 45.0
+    )
+
+    return CamionRetorno.objects.create(
+        transportista=transportista,
+        origen_viaje=origen_viaje,
+        destino_viaje=destino_viaje,
+        pasa_por=pasa_por,
+        fecha_disponible=fecha_disponible,
+        tipo_carroceria=tipo_carroceria,
+        capacidad_max_tn=capacidad_max_tn,
+        capacidad_max_m3=capacidad_max_m3,
+        descuento_retorno_pct=descuento_retorno_pct,
+        disponible=True,
+    )
+
+
+def enriquecer_camiones_con_cargas(
+    camiones: Iterable[CamionRetorno],
+    lotes: Iterable[LoteSubproducto],
+) -> List[CamionRetorno]:
+    """
+    Para cada camión de retorno, adjunta en memoria:
+    - camion.lotes_compatibles_ruta: lotes cuya localidad de origen coincide o está en el corredor del camión.
+    - camion.ingreso_estimado_retorno_ars: monto estimado (~$520.000 a $770.000 ARS) que recupera el
+      transportista en lugar de regresar vacío.
+    """
+    lista_camiones = list(camiones)
+    lista_lotes = list(lotes) if lotes is not None else list(LoteSubproducto.objects.all())
+
+    for camion in lista_camiones:
+        corredor_texto = " ".join(
+            [
+                camion.origen_viaje or "",
+                camion.destino_viaje or "",
+                camion.pasa_por or "",
+            ]
+        ).lower()
+
+        compatibles: List[LoteSubproducto] = []
+        for lote in lista_lotes:
+            origen_lote = (lote.localidad_origen or "").strip().lower()
+            provincia_lote = (lote.provincia or "").strip().lower()
+            if origen_lote and origen_lote in corredor_texto:
+                compatibles.append(lote)
+            elif "sáenz peña" in origen_lote or "saenz peña" in origen_lote:
+                if "resistencia" in corredor_texto or "chaco" in corredor_texto:
+                    compatibles.append(lote)
+            elif provincia_lote == "chaco" and "resistencia" in corredor_texto:
+                compatibles.append(lote)
+
+        if not compatibles and lista_lotes:
+            compatibles = lista_lotes[:2]
+
+        camion.lotes_compatibles_ruta = compatibles
+        camion.cantidad_lotes_compatibles = len(compatibles)
+
+        descuento_pct = float(camion.descuento_retorno_pct or 45.0)
+        capacidad_m3 = float(camion.capacidad_max_m3 or 85.0)
+        tarifa_base_corredor = 1400000.0 if capacidad_m3 >= 85.0 else 1100000.0
+        ingreso_calculado = round(
+            tarifa_base_corredor * (1.0 - (descuento_pct / 100.0)), -3
+        )
+        camion.ingreso_estimado_retorno_ars = int(
+            max(520000, min(770000, ingreso_calculado))
+        )
+
+    return lista_camiones

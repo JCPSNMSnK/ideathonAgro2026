@@ -16,10 +16,13 @@ from mercado.services.seed_data import asegurar_datos_iniciales_nea
 from mercado.services.recomendador import (
     PERFILES_PRODUCTIVOS,
     LOCALIDADES_COMPRADOR_NEA,
+    CASOS_DEMO_LANDING,
     obtener_perfil_por_codigo,
     obtener_localidad_por_codigo,
     obtener_lotes_recomendados,
     crear_nuevo_lote,
+    crear_nuevo_camion_retorno,
+    enriquecer_camiones_con_cargas,
 )
 from mercado.services.calculadora_flete import cotizar_operacion_completa
 from mercado.services.trazabilidad_blockchain import registrar_operacion_con_garantia
@@ -27,10 +30,14 @@ from mercado.services.trazabilidad_blockchain import registrar_operacion_con_gar
 
 def home_demo(request):
     """
-    Renderiza la interfaz principal de 4 pasos de la Demo.
+    Renderiza la interfaz principal de la Demo (Landing + Roles Comprador, Vendedor y Logística).
     Si la base está vacía, precarga automáticamente los casos del NEA.
     """
     asegurar_datos_iniciales_nea()
+
+    rol_activo = request.GET.get("rol", "inicio").lower().strip()
+    if rol_activo not in ("inicio", "comprador", "vendedor", "logistica"):
+        rol_activo = "inicio"
 
     perfil_actual = request.GET.get("perfil", "TODOS").upper()
     localidad_actual = request.GET.get("localidad", "GOYA").upper()
@@ -40,10 +47,13 @@ def home_demo(request):
     localidad_actual_obj = obtener_localidad_por_codigo(localidad_actual)
 
     lotes = obtener_lotes_recomendados(perfil_actual, localidad_actual, q)
-    camiones = CamionRetorno.objects.filter(disponible=True)
+    camiones = list(CamionRetorno.objects.filter(disponible=True))
+    enriquecer_camiones_con_cargas(camiones, lotes)
     certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:5]
 
     context = {
+        "rol_activo": rol_activo,
+        "casos_demo_landing": CASOS_DEMO_LANDING,
         "perfiles": PERFILES_PRODUCTIVOS,
         "perfil_actual": perfil_actual_obj["codigo"],
         "perfil_actual_obj": perfil_actual_obj,
@@ -161,5 +171,26 @@ def api_publicar_lote(request):
             "ok": True,
             "lote_id": lote.id,
             "mensaje": f"Lote '{lote.titulo}' publicado exitosamente en {lote.localidad_origen}.",
+        }
+    )
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_publicar_camion(request):
+    """
+    Endpoint JSON para que un transportista o flota registre un nuevo camión con retorno vacío
+    durante la demo desde la vista Logística / Camión.
+    """
+    data = json.loads(request.body.decode("utf-8"))
+    camion = crear_nuevo_camion_retorno(data)
+    return JsonResponse(
+        {
+            "ok": True,
+            "camion_id": camion.id,
+            "mensaje": (
+                f"Camión de '{camion.transportista}' ({camion.origen_viaje} → {camion.destino_viaje}) "
+                f"registrado con -{camion.descuento_retorno_pct:.0f}% de Flete Calzado."
+            ),
         }
     )
