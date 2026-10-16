@@ -29,6 +29,8 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
 ---
 
 ## 4. Índice del Repositorio (`documentacion/`)
+- [`/documentacion/specs.md`](./documentacion/specs.md) — **Especificaciones Técnicas (SPECS):** Arquitectura, modelos, fórmulas matemáticas ($m^3$, FADEEAC, Flete Calzado), contratos de API REST y configuración Supabase/Vercel.
+- [`/documentacion/memory.md`](./documentacion/memory.md) — **Memoria del Proyecto (MEMORY):** Registro de Decisiones de Arquitectura (ADRs), caso Saladas, checklist de entrega y lecciones aprendidas.
 - [`/documentacion/01-problema/problema.md`](./documentacion/01-problema/problema.md) — Actor, dolor, resolución actual, datos auditados (BCCBA, FADEEAC 2026) y supuestos validados.
 - [`/documentacion/02-solucion/solucion.md`](./documentacion/02-solucion/solucion.md) — Idea elegida, ideas descartadas, alerta de sobreingeniería, flujo de la demo en 4 pasos y validación.
 - [`/documentacion/03-costos-y-ganancias/costos-y-ganancias.md`](./documentacion/03-costos-y-ganancias/costos-y-ganancias.md) — Estructura de costos, terceros necesarios, flexibilidad del flete y cuenta estimada.
