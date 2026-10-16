@@ -1,38 +1,126 @@
 /* =============================================================================
-   MÓDULO CARRIL 1 (Responsable sugerida: Luciana Avalos — Diseño Gráfico)
+   MÓDULO CARRIL 1 — Identidad Visual y Sistema de Diseño Mobile-First
+   Responsable: Luciana Avalos (Diseño Gráfico — UX/UI, Identidad Visual)
+   Producto: Moñái — Economía Circular y Flete Calzado en el NEA (Ideathon 2026)
    =============================================================================
-   Archivo central de identidad visual (Design Tokens).
-   Cambiando estos valores se actualiza automáticamente toda la estética de la app.
+   Archivo central de Design Tokens (Tonos Crema Cálidos, Verdes Monte y Rojos Tierra)
+   con soporte nativo y conmutable para Modo Claro y Modo Oscuro.
 */
-:root {
-    /* Paleta Regional NEA (Monte, Tierra Colorada, Citrus y Río) */
-    --color-primario: #1b4332;       /* Verde monte profundo */
-    --color-primario-hover: #2d6a4f; /* Verde hoja */
-    --color-acento: #d97706;         /* Ámbar / Citrus / Madera */
-    --color-exito: #15803d;          /* Verde ahorro Flete Calzado */
-    --color-exito-bg: #dcfce7;
-    --color-peligro: #b91c1c;        /* Rojo alerta Flete Muerto / Inviable */
-    --color-peligro-bg: #fee2e2;
-    --color-blockchain: #1e3a8a;     /* Azul sello de garantía y trazabilidad */
-    --color-blockchain-bg: #dbeafe;
 
-    /* Fondos y Superficies */
-    --bg-pagina: #f8faf7;
-    --bg-tarjeta: #ffffff;
-    --bg-bloque-suave: #f1f5f0;
+:root {
+    /* Soporte moderno de esquema de color (modern-web-guidance) */
+    color-scheme: light dark;
+
+    &:has(> head > meta[name="color-scheme"][content="dark"]),
+    &[data-theme="dark"] {
+        color-scheme: dark;
+    }
+
+    &:has(> head > meta[name="color-scheme"][content="light"]),
+    &[data-theme="light"] {
+        color-scheme: light;
+    }
+
+    /* =========================================================================
+       MODO CLARO (Por defecto — Crema Cálido, Verde Monte y Rojo Tierra)
+       ========================================================================= */
+
+    /* Fondos y Superficies Crema */
+    --bg-pagina: #FAF5E8;            /* Crema cálido principal */
+    --bg-tarjeta: #FFFDF9;           /* Crema marfil para tarjetas */
+    --bg-bloque-suave: #F2E9D4;      /* Crema arena suave para bloques internos y métricas */
+    --bg-elevado: #E8DCC2;           /* Crema tostado para elementos destacados/inputs */
+    --bg-header: #1E5631;            /* Verde monte institucional para barra superior */
+
+    /* Colores Principales — Verde Monte y Tierra/Madera */
+    --color-primario: #1E5631;       /* Verde monte profundo */
+    --color-primario-hover: #143D22; /* Verde monte oscuro al interactuar */
+    --color-primario-suave: #E6F0E9; /* Tinte verde suave para fondos activos */
+    --color-acento: #B45309;         /* Tierra / Madera cálida */
+    --color-acento-hover: #92400E;
+    --color-acento-bg: #FEF3C7;
+    --color-crema-dorado: #C8AE7D;   /* Borde dorado/crema para sellos y certificados */
+
+    /* Semántica de Rentabilidad: Verde (Flete Calzado) vs Rojo (Flete Tradicional) */
+    --color-exito: #15803D;          /* Verde rentabilidad Flete Calzado */
+    --color-exito-bg: #E3F5E8;
+    --color-exito-borde: #2E8B52;
+
+    --color-peligro: #B91C1C;        /* Rojo Flete Tradicional que no cierra */
+    --color-peligro-bg: #FDE8E8;
+    --color-peligro-borde: #DC2626;
+
+    /* Trazabilidad y Garantía (Sello Circular / Hedera) */
+    --color-blockchain: #1E5631;
+    --color-blockchain-bg: #E8F2EC;
+    --color-blockchain-borde: #86EFAC;
 
     /* Textos */
-    --texto-principal: #111827;
-    --texto-secundario: #4b5563;
-    --texto-suave: #6b7280;
+    --texto-principal: #1C261E;
+    --texto-secundario: #4A584D;
+    --texto-suave: #6B786E;
+    --texto-sobre-primario: #FAF5E8;
 
-    /* Bordes y Sombras */
-    --borde-color: #dce3da;
+    /* Bordes, Radios y Sombras */
+    --borde-color: #DDD0B6;
+    --borde-fuerte: #C5B494;
+    --radio-sm: 8px;
     --radio-md: 12px;
     --radio-lg: 16px;
-    --sombra-suave: 0 4px 16px rgba(27, 67, 50, 0.07);
-    --sombra-destacada: 0 10px 28px rgba(27, 67, 50, 0.14);
+    --sombra-suave: 0 2px 10px rgba(28, 38, 30, 0.06);
+    --sombra-destacada: 0 8px 24px rgba(30, 86, 49, 0.14);
 
     /* Tipografía */
     --fuente-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --fuente-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* =============================================================================
+   MODO OSCURO — Verde Noche Profundo, Superficies Musgo y Texto Crema Claro
+   Se activa con [data-theme="dark"] en <html>/<body> o meta color-scheme="dark"
+   ============================================================================= */
+:root:has(> head > meta[name="color-scheme"][content="dark"]),
+:root[data-theme="dark"],
+[data-theme="dark"] {
+    /* Fondos y Superficies Oscuras */
+    --bg-pagina: #121A14;            /* Verde noche profundo */
+    --bg-tarjeta: #1A261D;           /* Superficie tarjeta oscura */
+    --bg-bloque-suave: #223126;      /* Bloque interno oscuro */
+    --bg-elevado: #2B3E30;           /* Superficie elevada en modo oscuro */
+    --bg-header: #162219;            /* Barra superior integrada en modo oscuro */
+
+    /* Colores Principales */
+    --color-primario: #2E8B52;       /* Verde monte luminoso */
+    --color-primario-hover: #38A169;
+    --color-primario-suave: rgba(46, 139, 82, 0.2);
+    --color-acento: #D97706;         /* Ámbar / Madera cálida */
+    --color-acento-hover: #F59E0B;
+    --color-acento-bg: rgba(217, 119, 6, 0.18);
+    --color-crema-dorado: #8A754D;
+
+    /* Semántica de Rentabilidad: Verde vs Rojo en Modo Oscuro */
+    --color-exito: #4ADE80;
+    --color-exito-bg: rgba(34, 197, 94, 0.15);
+    --color-exito-borde: #22C55E;
+
+    --color-peligro: #F87171;
+    --color-peligro-bg: rgba(239, 68, 68, 0.16);
+    --color-peligro-borde: #EF4444;
+
+    /* Trazabilidad y Garantía */
+    --color-blockchain: #86EFAC;
+    --color-blockchain-bg: rgba(34, 197, 94, 0.12);
+    --color-blockchain-borde: #2E8B52;
+
+    /* Textos en Crema Claro */
+    --texto-principal: #F5EFE0;      /* Texto crema claro en modo oscuro */
+    --texto-secundario: #C7BFA9;
+    --texto-suave: #948C78;
+    --texto-sobre-primario: #FAF5E8;
+
+    /* Bordes y Sombras */
+    --borde-color: #2E4033;
+    --borde-fuerte: #3D5543;
+    --sombra-suave: 0 4px 14px rgba(0, 0, 0, 0.35);
+    --sombra-destacada: 0 10px 28px rgba(0, 0, 0, 0.55);
 }

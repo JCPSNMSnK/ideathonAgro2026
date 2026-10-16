@@ -1,11 +1,12 @@
 /**
  * =============================================================================
- * FRONTEND INTERACTIVO — SubRuta (Ideathon NEA Tech 2026)
+ * FRONTEND INTERACTIVO — Moñái (Ideathon NEA Tech 2026)
  * =============================================================================
- * Conecta la interfaz con los 3 endpoints de Django:
- * 1. /api/cotizar/   -> Calculadora Peso/Volumen + Tarifas FADEEAC + Flete Calzado
- * 2. /api/reservar/  -> Pago en Garantía + Certificado Trazabilidad (Blockchain Invisible)
- * 3. /api/publicar/  -> Publicación rápida de nuevos subproductos
+ * Herramienta web mobile-first seccionada por pestañas:
+ * 1. Recomendador y Catálogo de Lotes
+ * 2. Publicar Excedente Industrial
+ * 3. Cotizador Peso/Volumen + Tarifas FADEEAC 2026 + Flete Calzado (/api/cotizar/)
+ * 4. Garantía Escrow + Certificado de Trazabilidad Ambiental (/api/reservar/)
  */
 
 function formatoARS(valor) {
@@ -15,19 +16,111 @@ function formatoARS(valor) {
     });
 }
 
-function seleccionarLote(loteId, toneladasDefault) {
-    document.querySelectorAll(".lote-card").forEach((card) => {
+/* =============================================================================
+   1. MODO CLARO / MODO OSCURO SENCILLO DE ENTENDER
+   ============================================================================= */
+function aplicarTema(tema) {
+    const html = document.documentElement;
+    const meta = document.querySelector('meta[name="color-scheme"]');
+    const btnText = document.getElementById("theme-toggle-text");
+    const iconSun = document.getElementById("theme-icon-sun");
+    const iconMoon = document.getElementById("theme-icon-moon");
+
+    html.setAttribute("data-theme", tema);
+    if (meta) meta.setAttribute("content", tema);
+
+    if (tema === "dark") {
+        if (btnText) btnText.textContent = "Modo Claro";
+        if (iconSun) iconSun.style.display = "inline-block";
+        if (iconMoon) iconMoon.style.display = "none";
+    } else {
+        if (btnText) btnText.textContent = "Modo Oscuro";
+        if (iconSun) iconSun.style.display = "none";
+        if (iconMoon) iconMoon.style.display = "inline-block";
+    }
+}
+
+function alternarTema() {
+    const actual = document.documentElement.getAttribute("data-theme") || "light";
+    const nuevo = actual === "dark" ? "light" : "dark";
+    try {
+        localStorage.setItem("monai-theme", nuevo);
+        localStorage.setItem("color-scheme", nuevo);
+    } catch (e) {}
+    aplicarTema(nuevo);
+}
+
+/* =============================================================================
+   2. NAVEGACIÓN POR PESTAÑAS (MOBILE-FIRST TABS)
+   ============================================================================= */
+function cambiarPestana(panelId) {
+    document.querySelectorAll(".app-tab-panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === panelId);
+    });
+
+    document.querySelectorAll(".app-tab-btn").forEach((btn) => {
+        const activo = btn.getAttribute("data-tab-target") === panelId;
+        btn.classList.toggle("active", activo);
+        btn.setAttribute("aria-selected", activo ? "true" : "false");
+    });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* =============================================================================
+   3. RECOMENDADOR Y SELECCIÓN DE LOTES (CARRIL 2 -> CARRIL 3)
+   ============================================================================= */
+function seleccionarLote(loteId, toneladasDefault, distanciaSugerida) {
+    document.querySelectorAll(".lote-card[data-lote-id]").forEach((card) => {
         card.classList.toggle("selected", Number(card.dataset.loteId) === Number(loteId));
     });
 
     const inputLote = document.getElementById("calc-lote-id");
     const inputTn = document.getElementById("calc-toneladas");
-    if (inputLote) inputLote.value = loteId;
+    const inputKm = document.getElementById("calc-distancia-km");
+
+    if (inputLote) inputLote.value = String(loteId);
     if (inputTn && toneladasDefault) inputTn.value = toneladasDefault;
+    if (inputKm && distanciaSugerida) inputKm.value = distanciaSugerida;
 
     recalcularCotizacionEnVivo();
 }
 
+function seleccionarLoteYCotizar(loteId, toneladasDefault, distanciaSugerida) {
+    seleccionarLote(loteId, toneladasDefault, distanciaSugerida);
+    cambiarPestana("panel-cotizador");
+}
+
+function alCambiarSelectorLote(selectEl) {
+    const opt = selectEl.options[selectEl.selectedIndex];
+    const tn = opt ? opt.getAttribute("data-toneladas") : null;
+    const km = opt ? opt.getAttribute("data-distancia") : null;
+    seleccionarLote(selectEl.value, tn, km);
+}
+
+function actualizarLocalidadComprador(selectEl) {
+    const opt = selectEl.options[selectEl.selectedIndex];
+    const nombreDestino = opt ? opt.getAttribute("data-nombre") : "";
+    const inputDestino = document.getElementById("calc-destino");
+    if (inputDestino && nombreDestino) {
+        inputDestino.value = nombreDestino;
+    }
+    if (selectEl.form) {
+        selectEl.form.submit();
+    }
+}
+
+function filtrarTarjetasEnCliente(texto) {
+    const q = (texto || "").trim().toLowerCase();
+    document.querySelectorAll("#contenedor-tarjetas-lotes .lote-card").forEach((card) => {
+        const contenido = (card.getAttribute("data-busqueda") || "").toLowerCase();
+        card.style.display = !q || contenido.includes(q) ? "" : "none";
+    });
+}
+
+/* =============================================================================
+   4. COTIZADOR PESO/VOLUMEN Y FLETE CALZADO (CARRIL 3 - /api/cotizar/)
+   ============================================================================= */
 async function recalcularCotizacionEnVivo() {
     const loteId = document.getElementById("calc-lote-id")?.value;
     const camionId = document.getElementById("calc-camion-id")?.value;
@@ -68,7 +161,7 @@ async function recalcularCotizacionEnVivo() {
         document.getElementById("res-incidencia-pct").textContent = `${c.incidencia_flete_tradicional_pct}% del total`;
         document.getElementById("res-flete-calzado").textContent = formatoARS(c.flete_calzado_ars);
         document.getElementById("res-descuento-pct").textContent = `-${c.descuento_retorno_pct}% por Retorno`;
-        document.getElementById("res-ahorro").textContent = formatoARS(c.ahorro_logistico_ars);
+        document.getElementById("res-ahorro").textContent = `${formatoARS(c.ahorro_logistico_ars)} ARS`;
 
         // Desglose transparente
         document.getElementById("res-subtotal-prod").textContent = formatoARS(c.subtotal_subproducto_ars);
@@ -79,6 +172,9 @@ async function recalcularCotizacionEnVivo() {
     }
 }
 
+/* =============================================================================
+   5. RESERVA CON GARANTÍA Y CERTIFICADO AMBIENTAL (CARRIL 4 - /api/reservar/)
+   ============================================================================= */
 async function confirmarReservaConGarantia() {
     const loteId = document.getElementById("calc-lote-id")?.value;
     const camionId = document.getElementById("calc-camion-id")?.value;
@@ -112,34 +208,74 @@ async function confirmarReservaConGarantia() {
         alert("No se pudo procesar la reserva. Verificá la conexión.");
     } finally {
         btn.disabled = false;
-        btn.textContent = "4. Reservar con Pago en Garantía + Emitir Certificado";
+        btn.textContent = "Reservar Lote + Camión con Pago en Garantía";
     }
 }
 
 function mostrarModalCertificado(cert) {
-    document.getElementById("cert-id").textContent = `#SR-2026-${String(cert.id).padStart(4, "0")}`;
+    document.getElementById("cert-id").textContent = `#MN-2026-${String(cert.id).padStart(4, "0")}`;
     document.getElementById("cert-vendedor").textContent = `${cert.vendedor} (${cert.origen})`;
     document.getElementById("cert-comprador").textContent = `${cert.comprador} (${cert.destino})`;
     document.getElementById("cert-subproducto").textContent = `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`;
     document.getElementById("cert-transportista").textContent = cert.transportista;
-    document.getElementById("cert-ahorro").textContent = formatoARS(cert.ahorro_logistico_ars);
-    document.getElementById("cert-total").textContent = formatoARS(cert.total_comprador_ars);
+    document.getElementById("cert-ahorro").textContent = `${formatoARS(cert.ahorro_logistico_ars)} ARS`;
+    document.getElementById("cert-total").textContent = `${formatoARS(cert.total_comprador_ars)} ARS`;
     document.getElementById("cert-hash").textContent = cert.hash_certificado;
     document.getElementById("cert-red").textContent = cert.red_blockchain;
 
-    document.getElementById("modal-certificado").style.display = "flex";
+    cambiarPestana("panel-certificado");
 }
 
 function cerrarModalCertificado() {
-    document.getElementById("modal-certificado").style.display = "none";
+    const modal = document.getElementById("modal-certificado");
+    if (modal) modal.style.display = "none";
 }
 
+/* =============================================================================
+   6. PUBLICACIÓN DE NUEVO EXCEDENTE INDUSTRIAL (CARRIL 2 - /api/publicar/)
+   ============================================================================= */
 function abrirModalPublicar() {
-    document.getElementById("modal-publicar").style.display = "flex";
+    cambiarPestana("panel-publicar");
 }
 
 function cerrarModalPublicar() {
-    document.getElementById("modal-publicar").style.display = "none";
+    cambiarPestana("panel-oportunidades");
+}
+
+function sugerirValoresPorSector(sector) {
+    const inputDensidad = document.getElementById("pub-densidad");
+    const inputPrecio = document.getElementById("pub-precio");
+    const inputUsos = document.getElementById("pub-usos");
+    if (!inputDensidad) return;
+
+    if (sector === "ARROZ") {
+        inputDensidad.value = 165;
+        if (inputPrecio) inputPrecio.value = 22000;
+        if (inputUsos) inputUsos.value = "Cama para galpones avícolas, sustrato de vivero y biomasa térmica";
+    } else if (sector === "MADERA") {
+        inputDensidad.value = 210;
+        if (inputPrecio) inputPrecio.value = 18500;
+        if (inputUsos) inputUsos.value = "Cama de pollo de alta absorción, compostaje y pellets de biomasa";
+    } else if (sector === "CITRUS") {
+        inputDensidad.value = 650;
+        if (inputPrecio) inputPrecio.value = 14000;
+        if (inputUsos) inputUsos.value = "Suplementación energética y fibra digestible para recría bovina y feedlot";
+    } else if (sector === "ALGODON") {
+        inputDensidad.value = 480;
+        if (inputPrecio) inputPrecio.value = 95000;
+        if (inputUsos) inputUsos.value = "Suplemento proteico-energético de alta fibra para rodeos de cría e invernada";
+    }
+    actualizarPreviewCubicajePublicacion();
+}
+
+function actualizarPreviewCubicajePublicacion() {
+    const tn = parseFloat(document.getElementById("pub-toneladas")?.value || 15);
+    const dens = parseFloat(document.getElementById("pub-densidad")?.value || 165);
+    const preview = document.getElementById("pub-volumen-preview");
+    if (preview && dens > 0) {
+        const m3 = ((tn * 1000) / dens).toFixed(1);
+        preview.textContent = `${m3} m³ (${tn} tn a ${dens} kg/m³)`;
+    }
 }
 
 async function enviarNuevoLote(event) {
@@ -163,10 +299,13 @@ async function enviarNuevoLote(event) {
     });
     const data = await res.json();
     if (data.ok) {
-        window.location.reload();
+        window.location.href = "/";
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+    aplicarTema(currentTheme);
+    actualizarPreviewCubicajePublicacion();
     recalcularCotizacionEnVivo();
 });
