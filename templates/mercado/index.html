@@ -17,96 +17,132 @@
             } catch (e) {}
         })();
     </script>
-    <title>Moñái — Economía Circular y Flete Calzado del NEA</title>
+    <title>Moñái — Logística Circular y Flete Calzado del NEA</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
 
     <!-- =================================================================== -->
-    <!-- BARRA SUPERIOR CON SELECTOR POR TIPO DE USUARIO Y MODO CLARO/OSCURO -->
+    <!-- BARRA SUPERIOR: MARCA MOÑÁI, SELECTOR DE ROL, USUARIO Y TEMA        -->
     <!-- =================================================================== -->
     <header class="navbar">
-        <div class="brand-box" onclick="cambiarVistaRol('vista-inicio')" style="cursor:pointer;">
-            <span class="brand-badge">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:4px;">
-                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c4.2 0 7.8-2.6 9.3-6.3"/>
-                    <path d="M17 8c-2.5 0-4.5 2-4.5 4.5S14.5 17 17 17s4.5-2 4.5-4.5"/>
-                    <path d="M7 13.5c1.5-2 4-2 5.5 0"/>
-                </svg>
-                Moñái
-            </span>
-            <div>
-                <div class="brand-title">Logística Circular de Subproductos · NEA</div>
-                <div class="brand-subtitle">Cubicaje Peso/Volumen · Flete Calzado · Garantía Auditable</div>
+        <div class="navbar-inner">
+            <!-- Marca e Isotipo Oficial Moñái (Protector Guaraní de los Caminos) -->
+            <div class="brand-box" onclick="cambiarVistaRol('vista-inicio')" role="button" tabindex="0" aria-label="Ir al inicio de Moñái">
+                <div class="brand-mark" aria-hidden="true">
+                    <!-- Isotipo SVG: Serpiente Protectora Guaraní + Curva de Ruta + Espiga de Campo -->
+                    <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor">
+                        <!-- Senda curva de ruta / cuerpo sinuoso de Moñái -->
+                        <path d="M6 24C6 17 12 15 16 12C20 9 22 5 26 6C27.5 6.5 28 8.5 27 10C25 13 20 15 16 18C12 21 10 24 6 24Z" 
+                              stroke="var(--color-crema-dorado)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <!-- Espiga / Hoja de Bioeconomía integrada -->
+                        <path d="M16 12C14 9 15 6 18 5C20 7 19 10 16 12Z" fill="var(--color-exito)" stroke="var(--color-crema-dorado)" stroke-width="1.2"/>
+                        <circle cx="25.5" cy="7.5" r="1.5" fill="var(--color-acento)"/>
+                        <path d="M12 21L14 18" stroke="var(--color-crema-dorado)" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="brand-text-wrap">
+                    <div class="brand-title">Moñái</div>
+                    <div class="brand-subtitle">Logística Circular y Flete Calzado · NEA</div>
+                </div>
             </div>
-        </div>
 
-        <!-- Selector Central de Rol / Vista -->
-        <nav class="role-switcher" role="tablist" aria-label="Seleccionar perfil de usuario">
-            <button type="button"
-                    class="role-tab-btn active"
-                    id="nav-btn-inicio"
-                    data-role-target="vista-inicio"
-                    role="tab"
-                    aria-selected="true"
-                    onclick="cambiarVistaRol('vista-inicio')">
-                <span class="role-dot"></span>
-                <span>Resumen y Demo</span>
-            </button>
+            <!-- Navegación Central por Tipo de Usuario / Rol -->
+            <nav class="role-switcher" role="tablist" aria-label="Seleccionar perfil de usuario">
+                <button type="button"
+                        class="role-tab-btn active"
+                        id="nav-btn-inicio"
+                        data-role-target="vista-inicio"
+                        role="tab"
+                        aria-selected="true"
+                        onclick="cambiarVistaRol('vista-inicio')">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Inicio y Demo</span>
+                </button>
 
-            <button type="button"
-                    class="role-tab-btn"
-                    id="nav-btn-comprador"
-                    data-role-target="vista-comprador"
-                    role="tab"
-                    aria-selected="false"
-                    onclick="cambiarVistaRol('vista-comprador')">
-                <span class="role-dot"></span>
-                <span>Soy Comprador</span>
-            </button>
+                <button type="button"
+                        class="role-tab-btn"
+                        id="nav-btn-comprador"
+                        data-role-target="vista-comprador"
+                        role="tab"
+                        aria-selected="false"
+                        onclick="cambiarVistaRol('vista-comprador')">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="M12 8v4"></path>
+                        <path d="M12 16h.01"></path>
+                    </svg>
+                    <span>Comprador</span>
+                </button>
 
-            <button type="button"
-                    class="role-tab-btn"
-                    id="nav-btn-vendedor"
-                    data-role-target="vista-vendedor"
-                    role="tab"
-                    aria-selected="false"
-                    onclick="cambiarVistaRol('vista-vendedor')">
-                <span class="role-dot"></span>
-                <span>Soy Vendedor</span>
-            </button>
+                <button type="button"
+                        class="role-tab-btn"
+                        id="nav-btn-vendedor"
+                        data-role-target="vista-vendedor"
+                        role="tab"
+                        aria-selected="false"
+                        onclick="cambiarVistaRol('vista-vendedor')">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 21h18"></path>
+                        <path d="M19 21v-4"></path>
+                        <path d="M19 13V7l-6 4-6-4v14"></path>
+                        <path d="M9 21v-8"></path>
+                    </svg>
+                    <span>Vendedor</span>
+                </button>
 
-            <button type="button"
-                    class="role-tab-btn"
-                    id="nav-btn-logistica"
-                    data-role-target="vista-logistica"
-                    role="tab"
-                    aria-selected="false"
-                    onclick="cambiarVistaRol('vista-logistica')">
-                <span class="role-dot"></span>
-                <span>Logística / Camión</span>
-            </button>
-        </nav>
+                <button type="button"
+                        class="role-tab-btn"
+                        id="nav-btn-logistica"
+                        data-role-target="vista-logistica"
+                        role="tab"
+                        aria-selected="false"
+                        onclick="cambiarVistaRol('vista-logistica')">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    <span>Logística / Camión</span>
+                </button>
+            </nav>
 
-        <div class="nav-actions">
-            <span class="db-pill">{{ db_mode_label }}</span>
-            <button type="button" id="theme-toggle" class="theme-toggle" onclick="alternarTema()" aria-label="Cambiar entre modo claro y oscuro">
-                <svg id="theme-icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                <svg id="theme-icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-                <span id="theme-toggle-text">Modo Oscuro</span>
-            </button>
+            <!-- Acciones de Navegación: Usuario Activo, Conexión y Modo Claro/Oscuro -->
+            <div class="nav-actions">
+                <!-- Botón de Identificación / Sesión de Usuario -->
+                <button type="button" id="btn-user-session" class="user-session-btn" onclick="abrirModalLogin()" aria-label="Identificarse como usuario">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span id="session-user-label">Identificarme</span>
+                    <span class="session-badge-pill" id="session-role-pill">Demo</span>
+                </button>
+
+                <span class="db-pill">{{ db_mode_label }}</span>
+
+                <button type="button" id="theme-toggle" class="theme-toggle" onclick="alternarTema()" aria-label="Cambiar entre modo claro y oscuro">
+                    <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span id="theme-toggle-text">Modo Oscuro</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -120,55 +156,63 @@
             <div class="hero-landing">
                 <div class="hero-grid">
 
-                    <!-- Columna Izquierda: Narrativa Editorial + Acceso por Tipo de Usuario -->
+                    <!-- Columna Izquierda: Propuesta de Valor, Corredor NEA y Acceso por Rol -->
                     <div class="hero-copy-col">
                         <div class="hero-eyebrow">
                             <span class="eyebrow-dot"></span>
-                            <span>INFRAESTRUCTURA DE BIOECONOMÍA Y FLETE DE RETORNO · NEA</span>
+                            <span>CORREDOR LOGÍSTICO Y BIOECONOMÍA DEL NEA · CORRIENTES</span>
                         </div>
 
                         <h1 class="hero-title">
-                            Donde el excedente agroindustrial encuentra su <em>flete de retorno</em>.
+                            Donde el residuo agroindustrial encuentra su <em>flete de retorno</em>.
                         </h1>
 
                         <p class="hero-subtitle">
-                            En el NEA se acumulan miles de toneladas de cascarilla de arroz, aserrín y pulpa cítrica porque ocupan mucho volumen para su peso y contratar un camión tradicional consume hasta el <strong>78% del margen</strong>. <strong>Moñái</strong> calcula el cubicaje exacto ($m^3$) y lo calza con camiones que hoy regresan vacíos, reduciendo el flete entre un <strong>40% y un 50%</strong>.
+                            En el NEA se acumulan miles de toneladas de cascarilla de arroz, aserrín y cáscara de citrus porque ocupan mucho volumen para su poco peso. Contratar un camión tradicional consume hasta el <strong>78% del costo total</strong>. <strong>Moñái</strong> calcula el cubicaje exacto ($m^3$) y lo calza con camiones que hoy regresan vacíos por RN 12, RN 14 y RN 118, reduciendo el flete entre un <strong>40% y un 50%</strong>.
                         </p>
 
-                        <div class="role-entry-label">Seleccioná tu perfil para operar en la plataforma:</div>
+                        <!-- Esquema Visual del Corredor NEA -->
+                        <div class="corredor-nea-strip">
+                            <span class="corredor-label">Rutas troncales activas:</span>
+                            <span class="corredor-tag">RN 12 (Corrientes ⇄ Goya)</span>
+                            <span class="corredor-tag">RN 118 (Saladas ⇄ Loreto)</span>
+                            <span class="corredor-tag">RN 14 (Virasoro ⇄ Alvear)</span>
+                        </div>
 
-                        <!-- Las 3 Puertas de Entrada según Tipo de Usuario -->
+                        <div class="role-entry-label">¿Cómo vas a operar en Moñái? Seleccioná tu perfil:</div>
+
+                        <!-- Las 3 Puertas de Entrada Táctiles por Rol -->
                         <div class="role-entry-cards">
                             <button type="button" class="role-card role-buyer" onclick="cambiarVistaRol('vista-comprador')">
                                 <div class="role-card-top">
                                     <span class="role-tag">PERFIL 01 · COMPRADOR</span>
-                                    <span class="role-arrow">Entrar →</span>
+                                    <span class="role-arrow">Ingresar →</span>
                                 </div>
                                 <div class="role-card-title">Productor Agropecuario</div>
                                 <p class="role-card-desc">
-                                    Avícolas, feedlots, ganaderos y calderas de biomasa. Descubrí subproductos cercanos recomendados para tu actividad y cotizalos puestos en tu tranquera.
+                                    Avícolas, feedlots y calderas de biomasa. Encontrá cama de pollo o fibra cercana y cotizala puesta en tu tranquera a mitad de flete.
                                 </p>
                             </button>
 
                             <button type="button" class="role-card role-seller" onclick="cambiarVistaRol('vista-vendedor')">
                                 <div class="role-card-top">
                                     <span class="role-tag">PERFIL 02 · VENDEDOR</span>
-                                    <span class="role-arrow">Entrar →</span>
+                                    <span class="role-arrow">Ingresar →</span>
                                 </div>
                                 <div class="role-card-title">Industria Generadora</div>
                                 <p class="role-card-desc">
-                                    Molinos arroceros, aserraderos y plantas citrícolas. Evacuá galpones colapsados definiendo quién absorbe el flete y obtené tu Certificado Ambiental auditable.
+                                    Molinos arroceros, aserraderos y citrícolas. Vaciá galpones colapsados en 48 hs definiendo quién paga el flete y emití tu Certificado Ambiental.
                                 </p>
                             </button>
 
                             <button type="button" class="role-card role-carrier" onclick="cambiarVistaRol('vista-logistica')">
                                 <div class="role-card-top">
                                     <span class="role-tag">PERFIL 03 · LOGÍSTICA</span>
-                                    <span class="role-arrow">Entrar →</span>
+                                    <span class="role-arrow">Ingresar →</span>
                                 </div>
-                                <div class="role-card-title">Transporte y Flotas</div>
+                                <div class="role-card-title">Transporte y Fleteros</div>
                                 <p class="role-card-desc">
-                                    Cooperativas y camiones con retorno vacío. Monetizá tus kilómetros de regreso en RN 12, RN 14 y RN 118 con carga compatible y cobro en garantía.
+                                    Camiones con retorno vacío. Monetizá tus kilómetros de vuelta cargando subproductos compatibles con cobro garantizado al descargar.
                                 </p>
                             </button>
                         </div>
@@ -178,19 +222,19 @@
                     <div class="live-demo-stage" aria-label="Demostración interactiva en vivo de Moñái">
                         <div class="demo-stage-header">
                             <div>
-                                <span class="demo-live-badge">SIMULADOR INTERACTIVO EN VIVO</span>
+                                <span class="demo-live-badge">SIMULADOR EN VIVO · ESCENARIOS REALES</span>
                                 <h2 class="demo-stage-title">Cómo Moñái transforma un viaje inviable en rentable</h2>
                             </div>
-                            <span class="demo-stage-meta">Escala FADEEAC 2026</span>
+                            <span class="demo-stage-meta">Tarifa FADEEAC 2026</span>
                         </div>
 
-                        <!-- Selector de Escenarios de la Demo -->
+                        <!-- Selector de Escenarios Reales del NEA -->
                         <div class="demo-preset-tabs" role="group" aria-label="Casos reales del NEA">
                             <button type="button" class="demo-preset-btn active" id="demo-btn-0" onclick="seleccionarCasoDemoLanding(0)">
                                 1. Cascarilla en Saladas (15 tn)
                             </button>
                             <button type="button" class="demo-preset-btn" id="demo-btn-1" onclick="seleccionarCasoDemoLanding(1)">
-                                2. Aserrín de Pino (12 tn)
+                                2. Aserrín de Pino (14 tn)
                             </button>
                             <button type="button" class="demo-preset-btn" id="demo-btn-2" onclick="seleccionarCasoDemoLanding(2)">
                                 3. Citrus Bella Vista (24 tn)
@@ -206,10 +250,10 @@
                             <span class="badge-flete" id="demo-modalidad-pill">Flete: 100% Comprador</span>
                         </div>
 
-                        <!-- Gráfico de Cubicaje del Camión (La Trampa del Volumen) -->
+                        <!-- Gráfico de Cubicaje en Batea (La Trampa del Volumen) -->
                         <div class="truck-visualizer">
                             <div class="truck-vis-header">
-                                <span>Diagnóstico de Cubicaje en Batea (90 m³ / 30 tn máx)</span>
+                                <span>Cubicaje en Batea Típica (90 m³ / 30 tn máx)</span>
                                 <strong id="demo-densidad-badge">Densidad: 165 kg/m³</strong>
                             </div>
 
@@ -240,7 +284,7 @@
                             </p>
                         </div>
 
-                        <!-- Comparador Lado a Lado: Rojo (No cierra) vs Verde (Flete Calzado) -->
+                        <!-- Comparador Lado a Lado: Rojo FADEEAC vs Verde Flete Calzado -->
                         <div class="comparison-grid demo-vs-grid">
                             <div class="comp-box comp-bad demo-box-rojo">
                                 <div class="comp-badge-header">Flete Tradicional (Tarifa Plena)</div>
@@ -259,21 +303,21 @@
                             </div>
                         </div>
 
-                        <!-- Resultado y CTA a la Herramienta -->
+                        <!-- Resultado y Botón de Acción Directa -->
                         <div class="demo-stage-footer">
                             <div class="demo-saving-highlight">
-                                <span>Ahorro directo generado en el viaje:</span>
+                                <span>Ahorro directo en este viaje:</span>
                                 <strong id="demo-ahorro-valor">$630.000 ARS</strong>
                             </div>
                             <button type="button" class="btn-primary demo-cta-btn" onclick="abrirCasoDemoEnCotizador()">
-                                Operar este lote en vivo →
+                                Cotizar y Operar este Caso →
                             </button>
                         </div>
                     </div>
 
                 </div>
 
-                <!-- Tira de Indicadores Auditados del Mercado -->
+                <!-- Tira de Indicadores de Mercado (BCCBA y FADEEAC) -->
                 <div class="kpi-strip">
                     <div class="kpi-card">
                         <span class="kpi-value">40,2 M tn</span>
@@ -281,41 +325,41 @@
                     </div>
                     <div class="kpi-card">
                         <span class="kpi-value">-40% a -50%</span>
-                        <span class="kpi-label">Reducción tarifaria con camiones de retorno vacío (Flete Calzado)</span>
+                        <span class="kpi-label">Descuento promedio en camión de retorno vacío (Flete Calzado)</span>
                     </div>
                     <div class="kpi-card">
                         <span class="kpi-value">2,5% + 2,5%</span>
-                        <span class="kpi-label">Comisión sólo al éxito · Equilibrio operativo con 27 viajes/mes</span>
+                        <span class="kpi-label">Comisión al éxito · Equilibrio operativo con solo 27 viajes/mes</span>
                     </div>
                     <div class="kpi-card">
-                        <span class="kpi-value">Escrow + HCS</span>
-                        <span class="kpi-label">Pago resguardado en pesos y Certificado Ambiental en Hedera ($0,0001 USD)</span>
+                        <span class="kpi-value">Hedera HCS</span>
+                        <span class="kpi-label">Sello ambiental inmutable a costo de $0,0001 USD por certificado</span>
                     </div>
                 </div>
 
-                <!-- Ventajas Estratégicas para cada Actor del Ecosistema -->
+                <!-- Pilares de Valor para cada Actor -->
                 <div class="value-pillars-grid">
                     <article class="pillar-card">
-                        <div class="pillar-num">01 · PARA EL COMPRADOR RURAL</div>
-                        <h3>Insumos productivos a mitad de costo logístico</h3>
+                        <div class="pillar-num">01 · PRODUCTOR COMPRADOR</div>
+                        <h3>Insumos a mitad de costo de flete puesto en tranquera</h3>
                         <p>
-                            El recomendador traduce residuos industriales cercanos en cama avícola, fibra bovina o biomasa térmica, calculando el precio exacto puesto en tranquera con pago protegido hasta la descarga.
+                            El recomendador traduce excedentes industriales en cama avícola o fibra digestible para ganado, cotizando el precio exacto en destino con pago en garantía.
                         </p>
                     </article>
 
                     <article class="pillar-card">
-                        <div class="pillar-num">02 · PARA LA AGROINDUSTRIA VENDEDORA</div>
-                        <h3>Despacho rápido y trazabilidad ambiental</h3>
+                        <div class="pillar-num">02 · AGROINDUSTRIA GENERADORA</div>
+                        <h3>Evacuación de galpones y Certificado Ambiental</h3>
                         <p>
-                            Liberá espacio crítico en silos y playas de acopio evitando riesgos de incendio o multas ambientales en 48 horas, obteniendo un Certificado de Disposición Final inmutable.
+                            Despachá subproductos en 48 hs para evitar multas del ICAA o peligro de incendio, obteniendo un Remito Circular auditable para bancos y normativas provinciales.
                         </p>
                     </article>
 
                     <article class="pillar-card">
-                        <div class="pillar-num">03 · PARA EL TRANSPORTE REGIONAL</div>
-                        <h3>Fin del "Flete Muerto" en rutas del NEA</h3>
+                        <div class="pillar-num">03 · TRANSPORTE REGIONAL</div>
+                        <h3>Fin del retorno vacío ("Flete Muerto")</h3>
                         <p>
-                            El 40% de los camiones regresan vacíos tras descargar. Moñái calza cargas compatibles con su carrocería y ventana horaria confirmada sin sufrir los $223.180/día de estadía.
+                            El 40% de los camiones en el NEA vuelven vacíos tras descargar. Moñái les calza carga compatible con ventana horaria confirmada sin perder días en planta.
                         </p>
                     </article>
                 </div>
@@ -331,9 +375,9 @@
             <div class="role-workspace-header">
                 <div>
                     <span class="role-badge-pill">PORTAL COMPRADOR AGROPECUARIO</span>
-                    <h2 class="workspace-title">Descubrí oportunidades y cotizá con Flete Calzado</h2>
+                    <h2 class="workspace-title">Oportunidades de Subproductos y Cotizador en Destino</h2>
                     <p class="workspace-subtitle">
-                        Filtrá subproductos según tu actividad productiva y localidad, simulá el cubicaje real en camión y reservá con Pago en Garantía.
+                        Elegí tu actividad productiva y localidad para ver los lotes recomendados, simular el flete de retorno y reservar con Pago en Garantía.
                     </p>
                 </div>
                 <div class="workspace-header-actions">
@@ -341,12 +385,12 @@
                 </div>
             </div>
 
-            <!-- Barra de Recomendación Inteligente (Carril 2 - Joel) -->
+            <!-- Barra de Filtros Accesible (Carril 2 - Joel) -->
             <div class="filter-bar">
                 <form method="get" action="/" class="recommender-form-grid" id="form-filtros-carril2">
                     <input type="hidden" name="rol" value="comprador">
                     <div class="form-group" style="margin-bottom:0;">
-                        <label for="filtro-perfil-select">1. ¿Qué producís en tu establecimiento?</label>
+                        <label for="filtro-perfil-select">1. ¿Qué producís en tu campo?</label>
                         <select id="filtro-perfil-select" name="perfil" class="form-control" onchange="this.form.submit()">
                             {% for p in perfiles %}
                             <option value="{{ p.codigo }}" {% if perfil_actual == p.codigo %}selected{% endif %}>
@@ -357,7 +401,7 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom:0;">
-                        <label for="filtro-localidad-select">2. ¿Dónde está ubicado tu campo?</label>
+                        <label for="filtro-localidad-select">2. ¿Dónde está tu establecimiento?</label>
                         <select id="filtro-localidad-select" name="localidad" class="form-control" onchange="actualizarLocalidadComprador(this)">
                             {% if localidades_comprador %}
                                 {% for loc in localidades_comprador %}
@@ -379,23 +423,23 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom:0;">
-                        <label for="filtro-busqueda-input">3. Filtrar por insumo o planta</label>
+                        <label for="filtro-busqueda-input">3. Buscar por residuo o ciudad</label>
                         <div style="display:flex; gap:0.5rem;">
                             <input type="text"
                                    id="filtro-busqueda-input"
                                    name="q"
                                    value="{{ busqueda_q|default:'' }}"
                                    class="form-control"
-                                   placeholder="Ej: cascarilla, aserrín, citrus, Saladas..."
+                                   placeholder="Ej: cascarilla, aserrín, Saladas..."
                                    oninput="filtrarTarjetasEnCliente(this.value)">
                             {% if busqueda_q or perfil_actual != 'TODOS' %}
-                            <a href="/?rol=comprador" class="chip-btn" style="white-space:nowrap;">Ver todos</a>
+                            <a href="/?rol=comprador" class="chip-btn" style="white-space:nowrap;">Limpiar</a>
                             {% endif %}
                         </div>
                     </div>
                 </form>
 
-                <!-- Chips rápidos de actividad -->
+                <!-- Chips Rápidos de Actividad -->
                 <div class="filter-controls">
                     {% for p in perfiles %}
                     <a href="?rol=comprador&perfil={{ p.codigo }}{% if localidad_actual %}&localidad={{ localidad_actual }}{% endif %}"
@@ -413,10 +457,10 @@
                 {% endif %}
             </div>
 
-            <!-- Grilla Operativa del Comprador: Izquierda Lotes / Derecha Cotizador y Comparador -->
+            <!-- Grilla Principal: Catálogo Izquierda / Cotizador Derecha -->
             <div class="main-grid">
 
-                <!-- Columna Izquierda: Catálogo de Subproductos Recomendados -->
+                <!-- Columna Izquierda: Tarjetas de Subproductos (Tarjeta Clave #1) -->
                 <div class="lotes-list" id="contenedor-tarjetas-lotes">
                     {% for lote in lotes %}
                     <article class="lote-card {% if forloop.first %}selected{% endif %}"
@@ -425,7 +469,7 @@
                              data-distancia-km="{{ lote.distancia_sugerida_km|default:160 }}"
                              onclick="seleccionarLote('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
                         <div class="lote-header">
-                            <span class="badge-cat">{{ lote.get_categoria_display }}</span>
+                            <span class="badge-cat badge-cat-{{ lote.categoria|lower }}">{{ lote.get_categoria_display }}</span>
                             <span class="badge-flete {% if lote.modalidad_flete == 'VENDEDOR' %}badge-flete-vendedor{% elif lote.modalidad_flete == 'COMPARTIDO_50_50' %}badge-flete-compartido{% endif %}">
                                 Flete: {{ lote.get_modalidad_flete_display }}
                             </span>
@@ -438,21 +482,21 @@
 
                         <div class="lote-metrics">
                             <div class="metric-item">
-                                <span>Volumen Lote</span>
-                                <strong>{{ lote.toneladas_disponibles|floatformat:0 }} tn ({{ lote.volumen_total_m3 }} m³)</strong>
+                                <span>Volumen Total</span>
+                                <strong class="font-mono">{{ lote.toneladas_disponibles|floatformat:0 }} tn ({{ lote.volumen_total_m3 }} m³)</strong>
                             </div>
                             <div class="metric-item">
                                 <span>Densidad Real</span>
-                                <strong>{{ lote.densidad_kg_m3 }} kg/m³</strong>
+                                <strong class="font-mono">{{ lote.densidad_kg_m3 }} kg/m³</strong>
                             </div>
                             <div class="metric-item">
                                 <span>Precio en Planta</span>
-                                <strong>${{ lote.precio_tonelada_ars|floatformat:0 }} / tn</strong>
+                                <strong class="font-mono">${{ lote.precio_tonelada_ars|floatformat:0 }} / tn</strong>
                             </div>
                         </div>
 
                         <div class="lote-uso">
-                            <strong>Aplicación productiva:</strong> {{ lote.usos_recomendados }}
+                            <strong>Aplicación en tu campo:</strong> {{ lote.usos_recomendados }}
                             {% if lote.explicacion_para_comprador %}
                             <div class="lote-uso-extra">{{ lote.explicacion_para_comprador }}</div>
                             {% endif %}
@@ -460,37 +504,37 @@
 
                         <div class="lote-card-footer">
                             <span class="lote-route-hint">
-                                Distancia estimada a tu campo: <strong>{{ lote.distancia_sugerida_km|default:160 }} km</strong> · Equipo: {{ lote.carroceria_requerida }}
+                                Distancia a tu campo: <strong class="font-mono">{{ lote.distancia_sugerida_km|default:160 }} km</strong> · Requiere: {{ lote.carroceria_requerida }}
                             </span>
                             <button type="button"
                                     class="btn-cotizar-lote"
                                     onclick="event.stopPropagation(); seleccionarLoteYEnfocarCotizador('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
-                                Simular Flete Calzado y Reservar →
+                                Cotizar en destino →
                             </button>
                         </div>
                     </article>
                     {% empty %}
                     <div class="calculator-panel">
-                        <p>No se encontraron lotes para el criterio seleccionado.</p>
-                        <a href="/?rol=comprador" class="btn-secondary" style="display:inline-block; margin-top:0.75rem; text-decoration:none;">Restablecer catálogo</a>
+                        <p>No se encontraron lotes con ese criterio.</p>
+                        <a href="/?rol=comprador" class="btn-secondary" style="display:inline-block; margin-top:0.75rem; text-decoration:none;">Ver todos los lotes</a>
                     </div>
                     {% endfor %}
                 </div>
 
-                <!-- Columna Derecha: Motor de Cálculo Peso/Volumen + Comparador FADEEAC vs Flete Calzado -->
+                <!-- Columna Derecha: Cotizador FADEEAC vs Calzado (Tarjeta Clave #2) -->
                 <aside class="calculator-panel" id="panel-cotizador-comprador">
                     <div class="panel-header">
-                        <span class="step-num">Cotizador Logístico FADEEAC 2026 + Flete Calzado</span>
-                        <h3 id="res-lote-titulo" style="font-size: 1.22rem; margin-top: 0.2rem;">
+                        <span class="step-num">Cotizador con Tarifa FADEEAC 2026 + Flete Calzado</span>
+                        <h3 id="res-lote-titulo" style="font-size: 1.25rem; margin-top: 0.25rem; font-family: var(--fuente-display);">
                             {% if lotes %}{{ lotes.0.titulo }}{% else %}Seleccioná un lote{% endif %}
                         </h3>
-                        <p id="res-origen" style="font-size: 0.85rem; color: var(--texto-secundario);">
+                        <p id="res-origen" style="font-size: 0.88rem; color: var(--texto-secundario);">
                             {% if lotes %}{{ lotes.0.empresa_vendedora }} ({{ lotes.0.localidad_origen }}, {{ lotes.0.provincia }}){% endif %}
                         </p>
                     </div>
 
                     <div class="form-group">
-                        <label for="calc-lote-id">Lote Seleccionado</label>
+                        <label for="calc-lote-id">Subproducto a cotizar</label>
                         <select id="calc-lote-id" class="form-control" onchange="alCambiarSelectorLote(this)">
                             {% for lote in lotes %}
                             <option value="{{ lote.id }}"
@@ -504,13 +548,13 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="calc-toneladas">Toneladas a cargar (tn)</label>
+                            <label for="calc-toneladas">Toneladas a cargar</label>
                             <input type="number" id="calc-toneladas" class="form-control"
                                    value="{% if lotes %}{{ lotes.0.toneladas_disponibles|floatformat:0 }}{% else %}14{% endif %}"
                                    min="1" max="30" step="1" onchange="recalcularCotizacionEnVivo()" oninput="recalcularCotizacionEnVivo()">
                         </div>
                         <div class="form-group">
-                            <label for="calc-distancia-km">Distancia al campo (km)</label>
+                            <label for="calc-distancia-km">Distancia a tranquera (km)</label>
                             <input type="number" id="calc-distancia-km" class="form-control"
                                    value="{% if lotes %}{{ lotes.0.distancia_sugerida_km|default:160 }}{% else %}160{% endif %}"
                                    min="20" max="1500" step="10"
@@ -519,7 +563,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="calc-camion-id">Camión con Flete Calzado (Retorno Vacío en Ruta)</label>
+                        <label for="calc-camion-id">Camión con retorno vacío disponible</label>
                         <select id="calc-camion-id" class="form-control" onchange="recalcularCotizacionEnVivo()">
                             {% for cam in camiones %}
                             <option value="{{ cam.id }}">
@@ -529,20 +573,20 @@
                         </select>
                     </div>
 
-                    <!-- Análisis de Cubicaje (Peso vs Volumen) -->
+                    <!-- Visualizador de Cubicaje (Peso vs Volumen) -->
                     <div class="cubicaje-box">
-                        <div style="font-size: 0.82rem; font-weight: 700; display: flex; justify-content: space-between;">
-                            <span>Análisis de Cubicaje (Peso vs. Volumen):</span>
-                            <span id="res-volumen-m3" style="color: var(--color-primario);">84.8 m³</span>
+                        <div style="font-size: 0.85rem; font-weight: 700; display: flex; justify-content: space-between;">
+                            <span>Cubicaje en Batea (Peso vs. Volumen):</span>
+                            <span id="res-volumen-m3" class="font-mono" style="color: var(--color-primario);">84.8 m³</span>
                         </div>
-                        <div style="font-size: 0.78rem; color: var(--texto-secundario); margin-top: 0.2rem;">
-                            Factor limitante del camión: <strong id="res-limitante">VOLUMEN</strong>
+                        <div style="font-size: 0.80rem; color: var(--texto-secundario); margin-top: 0.2rem;">
+                            Factor limitante de carga: <strong id="res-limitante">VOLUMEN FÍSICO</strong>
                         </div>
 
                         <div class="progress-row">
                             <div class="progress-label">
-                                <span>Ocupación de Volumen en Acoplado (máx 85–90 m³)</span>
-                                <span id="pct-vol-label">99%</span>
+                                <span>Volumen Ocupado (máx 85–90 m³)</span>
+                                <span id="pct-vol-label" class="font-mono">99%</span>
                             </div>
                             <div class="progress-bar-bg">
                                 <div id="bar-volumen" class="progress-bar-fill volume-alert" style="width: 95%;"></div>
@@ -551,8 +595,8 @@
 
                         <div class="progress-row">
                             <div class="progress-label">
-                                <span>Ocupación de Peso Bruto (máx 30 tn)</span>
-                                <span id="pct-peso-label">46%</span>
+                                <span>Peso en Balanza (máx 30 tn)</span>
+                                <span id="pct-peso-label" class="font-mono">46%</span>
                             </div>
                             <div class="progress-bar-bg">
                                 <div id="bar-peso" class="progress-bar-fill" style="width: 46%;"></div>
@@ -560,53 +604,53 @@
                         </div>
                     </div>
 
-                    <!-- Tarjeta Clave #2: Comparador Visual Lado a Lado -->
+                    <!-- Tarjeta Clave #2: Comparador Visual Rojo vs Verde -->
                     <div class="comparison-grid">
                         <div class="comp-box comp-bad">
-                            <div class="comp-badge-header">Flete Tradicional (Rojo / No cierra)</div>
-                            <div id="res-flete-tradicional" class="comp-price">$1.111.000</div>
+                            <div class="comp-badge-header">Flete Tradicional (Tarifa Plena)</div>
+                            <div id="res-flete-tradicional" class="comp-price font-mono">$1.111.000</div>
                             <div class="comp-desc">
-                                Tarifa plena FADEEAC (<span id="res-incidencia-pct">78% del costo</span>) · <strong>Inviable</strong>
+                                Tarifa FADEEAC (<span id="res-incidencia-pct">78% del total</span>) · <strong>No cierra el negocio</strong>
                             </div>
                         </div>
                         <div class="comp-box comp-good">
-                            <div class="comp-badge-header">Con Flete Calzado (Verde / Cierra)</div>
-                            <div id="res-flete-calzado" class="comp-price">$519.000</div>
+                            <div class="comp-badge-header">Con Flete Calzado Moñái</div>
+                            <div id="res-flete-calzado" class="comp-price font-mono">$519.000</div>
                             <div class="comp-desc">
-                                <strong id="res-descuento-pct">-45% por Retorno</strong> · <strong>Rentable</strong>
+                                <strong id="res-descuento-pct">-45% por retorno</strong> · <strong>¡Negocio rentable!</strong>
                             </div>
                         </div>
                     </div>
 
                     <div class="savings-banner">
-                        Ahorro logístico directo en este viaje: <strong id="res-ahorro">$592.000 ARS</strong>
+                        Ahorro directo en este viaje: <strong id="res-ahorro" class="font-mono">$592.000 ARS</strong>
                     </div>
 
-                    <!-- Desglose Transparente de Costos y Comisión -->
+                    <!-- Desglose Financiero Transparente -->
                     <div class="cost-breakdown-box">
                         <div class="breakdown-row">
-                            <span>Valor del subproducto en planta:</span>
-                            <strong id="res-subtotal-prod">$308.000</strong>
+                            <span>Subproducto en planta:</span>
+                            <strong id="res-subtotal-prod" class="font-mono">$308.000</strong>
                         </div>
                         <div class="breakdown-row">
-                            <span>Modalidad del flete pactada:</span>
+                            <span>Modalidad pactada:</span>
                             <strong id="res-modalidad">100% Comprador</strong>
                         </div>
                         <div class="breakdown-row">
-                            <span>Comisión Moñái (2,5% vendedor + 2,5% gestión flete):</span>
-                            <strong id="res-comision">$20.675</strong>
+                            <span>Comisión Moñái (2,5% + 2,5%):</span>
+                            <strong id="res-comision" class="font-mono">$20.675</strong>
                         </div>
                         <hr class="breakdown-divider">
                         <div class="breakdown-row breakdown-total">
-                            <strong>Total Puesto en Destino (en Garantía):</strong>
-                            <strong id="res-total-comprador">$840.000</strong>
+                            <strong>Total puesto en campo (en Garantía):</strong>
+                            <strong id="res-total-comprador" class="font-mono">$840.000</strong>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="calc-comprador">Tu Establecimiento Comprador</label>
-                            <input type="text" id="calc-comprador" class="form-control" value="Avícola San Isidro SRL">
+                            <label for="calc-comprador">Nombre de tu Establecimiento</label>
+                            <input type="text" id="calc-comprador" class="form-control" value="Granja Avícola San Isidro SRL">
                         </div>
                         <div class="form-group">
                             <label for="calc-destino">Localidad de Descarga</label>
@@ -615,7 +659,7 @@
                     </div>
 
                     <button id="btn-confirmar-reserva" class="btn-primary" onclick="confirmarReservaConGarantia()">
-                        Reservar con Pago en Garantía + Emitir Certificado
+                        Reservar Lote con Pago en Garantía (Escrow) →
                     </button>
                 </aside>
 
@@ -630,22 +674,22 @@
             <div class="role-workspace-header">
                 <div>
                     <span class="role-badge-pill">PORTAL AGROINDUSTRIA VENDEDORA</span>
-                    <h2 class="workspace-title">Publicación de Excedentes y Certificados de Disposición Final</h2>
+                    <h2 class="workspace-title">Salida de Planta y Certificados de Trazabilidad Ambiental</h2>
                     <p class="workspace-subtitle">
-                        Publicá tus lotes de aserrín, cascarilla o descarte cítrico, definí quién absorbe el flete según tu urgencia de acopio y descargá tus certificados auditables.
+                        Publicá lotes para liberar espacio de silos, elegí quién absorbe el flete según urgencia de acopio y descargá tus Remitos Circulares oficiales.
                     </p>
                 </div>
             </div>
 
             <div class="main-grid">
 
-                <!-- Columna Izquierda: Publicar Nuevo Lote con Calculadora de Cubicaje en Planta -->
+                <!-- Columna Izquierda: Publicar Nuevo Lote con Cubicaje en Planta -->
                 <div class="calculator-panel" style="position:static;">
                     <div class="panel-header">
                         <span class="step-num">Gestión de Salida de Planta</span>
-                        <h3 style="font-size: 1.22rem; margin-top: 0.2rem;">Publicar Nuevo Lote de Subproducto</h3>
-                        <p style="font-size: 0.85rem; color: var(--texto-secundario);">
-                            Completá los datos del lote para conectarlo automáticamente con compradores cercanos y camiones de retorno.
+                        <h3 style="font-size: 1.25rem; margin-top: 0.25rem; font-family: var(--fuente-display);">Publicar Nuevo Excedente</h3>
+                        <p style="font-size: 0.88rem; color: var(--texto-secundario);">
+                            Ingresá las toneladas y densidad para calcular automáticamente las bateas necesarias.
                         </p>
                     </div>
 
@@ -661,18 +705,18 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="pub-titulo">Denominación del Subproducto</label>
+                                <label for="pub-titulo">Denominación del Lote</label>
                                 <input type="text" id="pub-titulo" class="form-control" placeholder="Ej: Cascarilla de Arroz Seca (Silo Norte)" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="pub-empresa">Planta o Razón Social Vendedora</label>
-                                <input type="text" id="pub-empresa" class="form-control" value="Aserradero Santa Rosa SRL" required>
+                                <label for="pub-empresa">Razón Social o Planta Vendedora</label>
+                                <input type="text" id="pub-empresa" class="form-control" value="Molino Arrocero San Lorenzo SRL" required>
                             </div>
                             <div class="form-group">
-                                <label for="pub-localidad">Localidad de Planta (NEA)</label>
+                                <label for="pub-localidad">Localidad de Planta</label>
                                 <input type="text" id="pub-localidad" class="form-control" value="Saladas" required>
                             </div>
                         </div>
@@ -680,28 +724,28 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="pub-toneladas">Toneladas Disponibles (tn)</label>
-                                <input type="number" id="pub-toneladas" class="form-control" value="15" min="1" max="120" step="1" oninput="actualizarPreviewCubicajePublicacion()" required>
+                                <input type="number" id="pub-toneladas" class="form-control font-mono" value="15" min="1" max="120" step="1" oninput="actualizarPreviewCubicajePublicacion()" required>
                             </div>
                             <div class="form-group">
-                                <label for="pub-densidad">Densidad Volumétrica (kg/m³)</label>
-                                <input type="number" id="pub-densidad" class="form-control" value="165" min="80" max="900" step="5" oninput="actualizarPreviewCubicajePublicacion()" required>
+                                <label for="pub-densidad">Densidad (kg/m³)</label>
+                                <input type="number" id="pub-densidad" class="form-control font-mono" value="165" min="80" max="900" step="5" oninput="actualizarPreviewCubicajePublicacion()" required>
                             </div>
                         </div>
 
                         <div class="cubicaje-box">
-                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.84rem;">
-                                <span>Volumen físico a evacuar de planta:</span>
-                                <strong id="pub-volumen-preview" style="color:var(--color-primario);">90.9 m³ (1 equipo Batea)</strong>
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.86rem;">
+                                <span>Volumen físico a evacuar:</span>
+                                <strong id="pub-volumen-preview" class="font-mono" style="color:var(--color-primario);">90.9 m³ (1 equipo Batea de 90 m³)</strong>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="pub-precio">Precio por Tonelada en Planta ($ ARS)</label>
-                                <input type="number" id="pub-precio" class="form-control" value="22000" min="0" step="500" required>
+                                <label for="pub-precio">Precio por Tonelada ($ ARS)</label>
+                                <input type="number" id="pub-precio" class="form-control font-mono" value="22000" min="0" step="500" required>
                             </div>
                             <div class="form-group">
-                                <label for="pub-modalidad">Estrategia de Absorción del Flete</label>
+                                <label for="pub-modalidad">Estrategia de Absorción de Flete</label>
                                 <select id="pub-modalidad" class="form-control">
                                     <option value="COMPRADOR">100% a cargo del Comprador</option>
                                     <option value="COMPARTIDO_50_50">50% Vendedor / 50% Comprador (Flete Compartido)</option>
@@ -711,12 +755,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="pub-usos">Aplicaciones Productivas Recomendadas</label>
+                            <label for="pub-usos">Aplicaciones Recomendadas</label>
                             <input type="text" id="pub-usos" class="form-control" value="Cama para galpones avícolas, sustrato de vivero y biomasa térmica" required>
                         </div>
 
                         <button type="submit" class="btn-primary">
-                            Publicar Lote y Activar Match de Retorno
+                            Publicar Lote y Activar Match con Camiones de Retorno
                         </button>
                     </form>
                 </div>
@@ -724,21 +768,22 @@
                 <!-- Columna Derecha: Tarjeta Clave #3 — Certificado Oficial de Trazabilidad Ambiental -->
                 <div>
                     <div class="certificado-oficial-card" id="tarjeta-certificado-activo">
+                        <div class="cert-watermark" aria-hidden="true">MOÑÁI</div>
                         <div class="cert-seal-header">
                             <div>
                                 <span class="cert-seal-badge">
                                     PAGO EN GARANTÍA (ESCROW ARS) · REMITO CIRCULAR AUDITABLE
                                 </span>
-                                <h3 style="font-size: 1.35rem; margin-top: 0.45rem; font-family: var(--fuente-display);">
+                                <h3 style="font-size: 1.38rem; margin-top: 0.45rem; font-family: var(--fuente-display);">
                                     Certificado Oficial de Trazabilidad Ambiental y Disposición Final
                                 </h3>
-                                <p style="font-size: 0.85rem; color: var(--texto-secundario); margin-top: 0.2rem;">
-                                    Comprobante inmutable para auditorías ambientales, bancos y normativas provinciales que acredita la reinserción productiva del subproducto sin quema a cielo abierto.
+                                <p style="font-size: 0.88rem; color: var(--texto-secundario); margin-top: 0.25rem;">
+                                    Comprobante institucional emitido bajo estándares de economía circular del NEA. Acredita la reutilización productiva del residuo agroindustrial sin quema a cielo abierto.
                                 </p>
                             </div>
                             <div class="cert-number-box">
                                 <span>Certificado N.°</span>
-                                <strong id="cert-id">
+                                <strong id="cert-id" class="font-mono">
                                     {% if certificados_recientes %}
                                         #MN-2026-{{ certificados_recientes.0.id|stringformat:"04d" }}
                                     {% else %}
@@ -757,7 +802,7 @@
                                     {% elif lotes %}
                                         {{ lotes.0.empresa_vendedora }} ({{ lotes.0.localidad_origen }}, {{ lotes.0.provincia }})
                                     {% else %}
-                                        Molino Arrocero San Lorenzo (Saladas, Corrientes)
+                                        Molino Arrocero San Lorenzo SRL (Saladas, Corrientes)
                                     {% endif %}
                                 </strong>
                             </div>
@@ -768,20 +813,20 @@
                                     {% if certificados_recientes %}
                                         {{ certificados_recientes.0.comprador_nombre }} ({{ certificados_recientes.0.localidad_destino }})
                                     {% else %}
-                                        Avícola San Isidro SRL (Goya, Corrientes)
+                                        Granja Avícola San Isidro SRL (Goya, Corrientes)
                                     {% endif %}
                                 </strong>
                             </div>
 
                             <div class="cert-field">
-                                <span>Biomasa Recuperada (Economía Circular)</span>
+                                <span>Biomasa Recuperada</span>
                                 <strong id="cert-subproducto">
                                     {% if certificados_recientes %}
                                         {{ certificados_recientes.0.lote.titulo }} — {{ certificados_recientes.0.volumen_m3_calculado }} m³
                                     {% elif lotes %}
                                         {{ lotes.0.titulo }} — {{ lotes.0.toneladas_disponibles|floatformat:0 }} tn ({{ lotes.0.volumen_total_m3 }} m³)
                                     {% else %}
-                                        Cascarilla de Arroz Seca — 14 tn (84.8 m³)
+                                        Cascarilla de Arroz Seca — 15 tn (90.9 m³)
                                     {% endif %}
                                 </strong>
                             </div>
@@ -794,47 +839,54 @@
                                     {% elif camiones %}
                                         {{ camiones.0.transportista }}
                                     {% else %}
-                                        Transporte Litoral Express
+                                        Transporte Litoral Express (Batea 90 m³)
                                     {% endif %}
                                 </strong>
                             </div>
 
                             <div class="cert-field">
-                                <span>Ahorro Logístico vs. Tarifa FADEEAC</span>
-                                <strong id="cert-ahorro" style="color: var(--color-exito);">
+                                <span>Ahorro Logístico Generado</span>
+                                <strong id="cert-ahorro" class="font-mono" style="color: var(--color-exito);">
                                     {% if certificados_recientes %}
                                         ${{ certificados_recientes.0.ahorro_logistico_ars|floatformat:0 }} ARS
                                     {% else %}
-                                        $592.000 ARS
+                                        $630.000 ARS (-45%)
                                     {% endif %}
                                 </strong>
                             </div>
 
                             <div class="cert-field">
-                                <span>Monto Resguardado en Garantía (Escrow ARS)</span>
-                                <strong id="cert-total">
+                                <span>Monto Custodiado en Garantía (Escrow)</span>
+                                <strong id="cert-total" class="font-mono">
                                     {% if certificados_recientes %}
-                                        ${{ certificados_recientes.0.flete_calzado_ars|floatformat:0 }} ARS (Custodia activa)
+                                        ${{ certificados_recientes.0.flete_calzado_ars|floatformat:0 }} ARS
                                     {% else %}
-                                        $840.000 ARS
+                                        $770.000 ARS (Custodia activa)
                                     {% endif %}
                                 </strong>
                             </div>
                         </div>
 
-                        <div style="margin-top: 1rem;">
-                            <div style="font-size: 0.78rem; font-weight: 700; color: var(--color-blockchain);">
-                                Sello Inmutable de Auditoría Ambiental (Blockchain Invisible — <span id="cert-red">{% if certificados_recientes %}{{ certificados_recientes.0.red_blockchain }}{% else %}Hedera Testnet (HCS) / Stellar Escrow{% endif %}</span>):
+                        <!-- Bloque de Verificación Criptográfica y Hedera HCS -->
+                        <div class="cert-hash-section">
+                            <div style="font-size: 0.80rem; font-weight: 700; color: var(--color-blockchain); display:flex; justify-content:space-between; align-items:center;">
+                                <span>Sello de Auditoría Inmutable (Hedera Hashgraph · Topic HCS 0.0.4829104):</span>
+                                <span class="font-mono" style="font-size:0.75rem; color:var(--texto-suave);">$0,0001 USD / tx</span>
                             </div>
-                            <div id="cert-hash" class="hash-box">{% if certificados_recientes %}{{ certificados_recientes.0.hash_certificado }}{% else %}0x8f4e2b91c04d7a19e3b82d51a6f09c3e7d12b4a8 (Topic HCS 0.0.4829104){% endif %}</div>
+                            <div id="cert-hash" class="hash-box font-mono">{% if certificados_recientes %}{{ certificados_recientes.0.hash_certificado }}{% else %}0x8afb5ee71262172013ebea4918f0c3a8e91f42a1760628000419283710{% endif %}</div>
                         </div>
 
-                        <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:0.85rem;">
-                            <button type="button" class="btn-primary" style="width:auto;" onclick="window.print()">
-                                Imprimir / Descargar Certificado Oficial PDF
+                        <div class="cert-actions-row">
+                            <button type="button" class="btn-primary" style="width:auto;" onclick="imprimirCertificadoOficial()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;" aria-hidden="true">
+                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                    <rect x="6" y="14" width="12" height="8"></rect>
+                                </svg>
+                                Imprimir / Descargar Certificado A4
                             </button>
                             <button type="button" class="chip-btn" onclick="cambiarVistaRol('vista-comprador')">
-                                Ir al Cotizador
+                                Volver al Cotizador
                             </button>
                         </div>
                     </div>
@@ -850,47 +902,47 @@
 
             <div class="role-workspace-header">
                 <div>
-                    <span class="role-badge-pill">PORTAL TRANSPORTE Y FLOTAS DE RETORNO</span>
-                    <h2 class="workspace-title">Bolsa de Flete Calzado y Cargas de Regreso en el NEA</h2>
+                    <span class="role-badge-pill">PORTAL TRANSPORTE Y FLOTAS REGIONALES</span>
+                    <h2 class="workspace-title">Bolsa de Retornos Vacíos y Cargas Compatibles</h2>
                     <p class="workspace-subtitle">
-                        Convertí tus tramos de vuelta vacíos en viajes rentables con ventana de carga confirmada (sin estadía) y cobro garantizado al descargar.
+                        Monetizá tus kilómetros de vuelta en las rutas del NEA. Sin estadías prolongadas y con cobro asegurado al descargar.
                     </p>
                 </div>
                 <div class="workspace-header-actions">
-                    <span class="workspace-stat-pill">{{ camiones|length }} unidades de retorno activas</span>
+                    <span class="workspace-stat-pill">{{ camiones|length }} camiones de retorno activos</span>
                 </div>
             </div>
 
             <div class="main-grid">
 
-                <!-- Columna Izquierda: Unidades de Retorno y Cargas Compatibles en su Corredor -->
+                <!-- Columna Izquierda: Unidades Activas y Cargas Compatibles en Ruta -->
                 <div class="lotes-list">
                     {% for cam in camiones %}
                     <article class="lote-card truck-route-card" style="cursor:default;">
                         <div class="lote-header">
                             <span class="badge-cat">{{ cam.transportista }}</span>
-                            <span class="badge-recomendado">
-                                Bonificación Retorno: -{{ cam.descuento_retorno_pct|floatformat:0 }}% vs FADEEAC
+                            <span class="badge-recomendado font-mono">
+                                Retorno: -{{ cam.descuento_retorno_pct|floatformat:0 }}% vs FADEEAC
                             </span>
                         </div>
 
                         <h3 class="lote-title">{{ cam.origen_viaje }} → {{ cam.destino_viaje }}</h3>
                         <div class="lote-origin">
-                            Corredor de paso: <strong>{{ cam.pasa_por }}</strong> · Ventana: <strong>{{ cam.fecha_disponible }}</strong>
+                            Corredor de paso: <strong>{{ cam.pasa_por }}</strong> · Salida: <strong>{{ cam.fecha_disponible }}</strong>
                         </div>
 
                         <div class="lote-metrics">
                             <div class="metric-item">
-                                <span>Carrocería</span>
+                                <span>Tipo de Carrocería</span>
                                 <strong>{{ cam.tipo_carroceria }}</strong>
                             </div>
                             <div class="metric-item">
                                 <span>Capacidad Volumen</span>
-                                <strong>{{ cam.capacidad_max_m3|floatformat:0 }} m³ máx</strong>
+                                <strong class="font-mono">{{ cam.capacidad_max_m3|floatformat:0 }} m³ máx</strong>
                             </div>
                             <div class="metric-item">
-                                <span>Recupero Estimado</span>
-                                <strong style="color:var(--color-exito);">
+                                <span>Recupero Neto Estimado</span>
+                                <strong class="font-mono" style="color:var(--color-exito);">
                                     ${{ cam.ingreso_estimado_retorno_ars|default:580000|floatformat:0 }} ARS
                                 </strong>
                             </div>
@@ -898,14 +950,14 @@
 
                         {% if cam.lotes_compatibles_ruta %}
                         <div class="lote-uso">
-                            <strong>Cargas listas para levantar en este corredor ({{ cam.lotes_compatibles_ruta|length }}):</strong>
-                            <div style="margin-top:0.35rem; display:grid; gap:0.3rem;">
+                            <strong>Cargas compatibles en este corredor ({{ cam.lotes_compatibles_ruta|length }}):</strong>
+                            <div style="margin-top:0.4rem; display:grid; gap:0.35rem;">
                                 {% for lc in cam.lotes_compatibles_ruta %}
-                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
-                                    <span>• <strong>{{ lc.titulo }}</strong> ({{ lc.localidad_origen }} · {{ lc.toneladas_disponibles|floatformat:0 }} tn / {{ lc.volumen_total_m3 }} m³)</span>
-                                    <button type="button" class="chip-btn" style="padding:0.2rem 0.6rem; min-height:28px; font-size:0.74rem;"
+                                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.84rem; padding:0.4rem 0.6rem; background:var(--bg-bloque-suave); border-radius:var(--radio-xs);">
+                                    <span>• <strong>{{ lc.titulo }}</strong> ({{ lc.localidad_origen }} · {{ lc.toneladas_disponibles|floatformat:0 }} tn)</span>
+                                    <button type="button" class="chip-btn" style="padding:0.25rem 0.65rem; min-height:30px; font-size:0.78rem;"
                                             onclick="calzarCamionConLote('{{ lc.id }}', '{{ cam.id }}', '{{ lc.toneladas_disponibles|floatformat:0 }}')">
-                                        Calzar viaje →
+                                        Calzar carga →
                                     </button>
                                 </div>
                                 {% endfor %}
@@ -913,48 +965,48 @@
                         </div>
                         {% else %}
                         <div class="lote-uso">
-                            <strong>Corredor habilitado:</strong> Apto para calzar lotes de Saladas, Bella Vista o Virasoro según desvío mínimo.
+                            <strong>Corredor habilitado:</strong> Apto para levantar cargas de Saladas, Bella Vista o Virasoro con desvío mínimo de ruta.
                         </div>
                         {% endif %}
                     </article>
                     {% endfor %}
                 </div>
 
-                <!-- Columna Derecha: Publicar Camión con Retorno Vacío -->
+                <!-- Columna Derecha: Publicar Camión de Retorno -->
                 <aside class="calculator-panel" style="position:static;">
                     <div class="panel-header">
-                        <span class="step-num">Alta Rápida de Flota / Fletero</span>
-                        <h3 style="font-size: 1.22rem; margin-top: 0.2rem;">Publicar Camión que Regresa Vacío</h3>
-                        <p style="font-size: 0.85rem; color: var(--texto-secundario);">
-                            Registrá tu tramo de vuelta con solo los datos de ruta y carrocería para recibir cargas compatibles sin demoras en planta.
+                        <span class="step-num">Alta Rápida de Camión / Fletero</span>
+                        <h3 style="font-size: 1.25rem; margin-top: 0.25rem; font-family: var(--fuente-display);">Publicar Viaje de Regreso Vacío</h3>
+                        <p style="font-size: 0.88rem; color: var(--texto-secundario);">
+                            Registrá tu ruta para que la plataforma te conecte con subproductos listos para cargar.
                         </p>
                     </div>
 
                     <form onsubmit="enviarNuevoCamion(event)">
                         <div class="form-group">
-                            <label for="cam-transportista">Empresa de Transporte o Chofer</label>
-                            <input type="text" id="cam-transportista" class="form-control" placeholder="Ej: Transporte Don Horacio (Unidad #04)" required>
+                            <label for="cam-transportista">Empresa o Chofer</label>
+                            <input type="text" id="cam-transportista" class="form-control" placeholder="Ej: Transporte Don Horacio (Batea #02)" required>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="cam-origen">Descarga / Origen de Regreso</label>
+                                <label for="cam-origen">Origen de Regreso</label>
                                 <input type="text" id="cam-origen" class="form-control" value="Corrientes Capital" required>
                             </div>
                             <div class="form-group">
-                                <label for="cam-destino">Destino Final de Regreso</label>
+                                <label for="cam-destino">Destino Final</label>
                                 <input type="text" id="cam-destino" class="form-control" value="Goya / Reconquista" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="cam-pasa-por">Localidades de paso en ruta (Corredor NEA)</label>
+                            <label for="cam-pasa-por">Localidades de paso (Corredor NEA)</label>
                             <input type="text" id="cam-pasa-por" class="form-control" value="Empedrado, Saladas, San Roque, Bella Vista" required>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="cam-carroceria">Tipo de Carrocería / Acoplado</label>
+                                <label for="cam-carroceria">Carrocería / Acoplado</label>
                                 <select id="cam-carroceria" class="form-control">
                                     <option value="Batea Cerealera con Lona (85 m3)">Batea Cerealera con Lona (85 m³)</option>
                                     <option value="Semirremolque Baranda Volcable (90 m3)">Semirremolque Baranda Volcable (90 m³)</option>
@@ -963,24 +1015,24 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="cam-fecha">Fecha y Ventana de Salida</label>
-                                <input type="text" id="cam-fecha" class="form-control" value="Hoy — 17:00 hs" required>
+                                <label for="cam-fecha">Fecha y Ventana</label>
+                                <input type="text" id="cam-fecha" class="form-control" value="Hoy — 18:00 hs" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="cam-cap-m3">Volumen Máx. (m³)</label>
-                                <input type="number" id="cam-cap-m3" class="form-control" value="85" min="30" max="120" required>
+                                <label for="cam-cap-m3">Capacidad (m³)</label>
+                                <input type="number" id="cam-cap-m3" class="form-control font-mono" value="85" min="30" max="120" required>
                             </div>
                             <div class="form-group">
-                                <label for="cam-descuento">Descuento de Retorno (%)</label>
-                                <input type="number" id="cam-descuento" class="form-control" value="45" min="20" max="60" required>
+                                <label for="cam-descuento">Descuento Retorno (%)</label>
+                                <input type="number" id="cam-descuento" class="form-control font-mono" value="45" min="20" max="60" required>
                             </div>
                         </div>
 
                         <button type="submit" class="btn-primary">
-                            Publicar Camión en Bolsa de Retornos
+                            Publicar Retorno y Activar Notificaciones
                         </button>
                     </form>
                 </aside>
@@ -990,9 +1042,155 @@
 
     </main>
 
-    <!-- Modales de compatibilidad ocultos -->
-    <div id="modal-certificado" class="cert-modal-backdrop" style="display:none;"></div>
-    <div id="modal-publicar" class="cert-modal-backdrop" style="display:none;"></div>
+    <!-- =================================================================== -->
+    <!-- MODAL 1: INICIO DE SESIÓN / IDENTIFICACIÓN SENCILLA POR ROL         -->
+    <!-- =================================================================== -->
+    <div id="modal-login" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div>
+                    <span class="role-badge-pill">ACCESO ACCESIBLE Y SENCILLO</span>
+                    <h3 id="login-modal-title" style="font-size: 1.35rem; font-family: var(--fuente-display); margin-top: 0.35rem;">
+                        ¿Cómo vas a operar en Moñái?
+                    </h3>
+                    <p style="font-size: 0.88rem; color: var(--texto-secundario); margin-top: 0.2rem;">
+                        Elegí tu rol para precargar tus datos y adaptar las distancias de tu establecimiento.
+                    </p>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="cerrarModalLogin()" aria-label="Cerrar ventana">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Selector Rápido de Rol en 1 Clic -->
+                <div class="login-roles-grid">
+                    <button type="button" class="login-role-option" onclick="identificarseComoRol('comprador', 'Don Aníbal Gómez', 'Granja Avícola San Isidro', 'Goya, Corrientes')">
+                        <div class="login-role-badge">01 · COMPRADOR</div>
+                        <div class="login-role-name">Productor Agropecuario</div>
+                        <p class="login-role-hint">Avícola, feedlot o biomasa. Insumos puestos en campo a mitad de flete.</p>
+                        <span class="login-role-sample">Ejemplo: Granja Avícola San Isidro (Goya)</span>
+                    </button>
+
+                    <button type="button" class="login-role-option" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo SRL', 'Saladas, Corrientes')">
+                        <div class="login-role-badge">02 · VENDEDOR</div>
+                        <div class="login-role-name">Agroindustria Generadora</div>
+                        <p class="login-role-hint">Molino, aserradero o citrícola. Despacho urgente y Certificado Ambiental.</p>
+                        <span class="login-role-sample">Ejemplo: Molino San Lorenzo (Saladas)</span>
+                    </button>
+
+                    <button type="button" class="login-role-option" onclick="identificarseComoRol('logistica', 'Horacio Giménez', 'Transporte Don Horacio', 'Corrientes Capital')">
+                        <div class="login-role-badge">03 · LOGÍSTICA</div>
+                        <div class="login-role-name">Transporte / Chofer</div>
+                        <p class="login-role-hint">Camión con retorno vacío. Cobro en garantía al descargar sin estadía.</p>
+                        <span class="login-role-sample">Ejemplo: Transporte Don Horacio (RN 12)</span>
+                    </button>
+                </div>
+
+                <div class="login-divider">
+                    <span>o ingresá tus datos manualmente</span>
+                </div>
+
+                <!-- Formulario Simple Manual sin Contraseñas Complicadas -->
+                <form onsubmit="guardarIdentificacionManual(event)" class="login-manual-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="login-nombre">Tu Nombre o Razón Social</label>
+                            <input type="text" id="login-nombre" class="form-control" placeholder="Ej: Establecimiento La Tranquera" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-rol-select">Tipo de Usuario</label>
+                            <select id="login-rol-select" class="form-control">
+                                <option value="comprador">Soy Comprador (Productor Rural)</option>
+                                <option value="vendedor">Soy Vendedor (Industria Generadora)</option>
+                                <option value="logistica">Soy Logística (Fletero / Camionero)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-localidad">Localidad o Zona del NEA</label>
+                        <input type="text" id="login-localidad" class="form-control" placeholder="Ej: Goya, Saladas, Mercedes, Virasoro..." required>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.75rem;">
+                        <button type="button" class="chip-btn" onclick="cerrarModalLogin()">Cancelar</button>
+                        <button type="submit" class="btn-primary" style="width:auto; padding:0.6rem 1.4rem;">
+                            Guardar y Entrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 2: CONFIRMACIÓN DE RESERVA DEL COMPRADOR (ESCROW VOUCHER)     -->
+    <!-- =================================================================== -->
+    <div id="modal-reserva-exito" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="voucher-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div>
+                    <span class="cert-seal-badge" style="background:var(--color-exito-bg); color:var(--color-exito);">
+                        OPERACIÓN EN CUSTODIA (ESCROW ARS) · CONFIRMADA
+                    </span>
+                    <h3 id="voucher-title" style="font-size: 1.35rem; font-family: var(--fuente-display); margin-top: 0.35rem;">
+                        Comprobante de Reserva con Pago en Garantía
+                    </h3>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="cerrarModalReserva()" aria-label="Cerrar ventana">✕</button>
+            </div>
+
+            <div class="modal-body" id="voucher-body">
+                <div class="voucher-success-box">
+                    <div class="voucher-success-icon">✓</div>
+                    <div>
+                        <strong style="display:block; font-size:1.05rem;">¡Flete Calzado y Lote Reservados Exitosamente!</strong>
+                        <span style="font-size:0.86rem; color:var(--texto-secundario);">
+                            Tus fondos en pesos quedaron retenidos en garantía. Se liberarán recién cuando el camión descargue el subproducto en tu campo.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="cert-grid" style="margin-top:1rem;">
+                    <div class="cert-field">
+                        <span>Código de Reserva / Escrow</span>
+                        <strong id="voucher-id" class="font-mono">#MN-RES-0001</strong>
+                    </div>
+                    <div class="cert-field">
+                        <span>Subproducto y Cantidad</span>
+                        <strong id="voucher-subproducto">Cascarilla de Arroz — 15 tn</strong>
+                    </div>
+                    <div class="cert-field">
+                        <span>Industria Vendedora</span>
+                        <strong id="voucher-vendedor">Molino San Lorenzo (Saladas)</strong>
+                    </div>
+                    <div class="cert-field">
+                        <span>Camión de Retorno Calzado</span>
+                        <strong id="voucher-camion">Transporte Litoral Express</strong>
+                    </div>
+                    <div class="cert-field">
+                        <span>Ahorro Logístico Directo</span>
+                        <strong id="voucher-ahorro" class="font-mono" style="color:var(--color-exito);">$630.000 ARS</strong>
+                    </div>
+                    <div class="cert-field">
+                        <span>Total Puesto en Destino</span>
+                        <strong id="voucher-total" class="font-mono">$770.000 ARS</strong>
+                    </div>
+                </div>
+
+                <div style="margin-top:1rem; font-size:0.80rem; color:var(--texto-suave);">
+                    Sello de Trazabilidad Hedera HCS: <span id="voucher-hash" class="font-mono" style="word-break:break-all;">0x8afb5ee7...</span>
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:0.75rem; margin-top:1.25rem;">
+                    <button type="button" class="chip-btn" onclick="irACertificadoVendedor()">
+                        Ver Certificado Ambiental
+                    </button>
+                    <button type="button" class="btn-primary" style="width:auto; padding:0.6rem 1.4rem;" onclick="imprimirVoucherReserva()">
+                        Imprimir Recibo PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="{% static 'js/app.js' %}"></script>
 </body>

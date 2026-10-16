@@ -528,3 +528,40 @@ def enriquecer_camiones_con_cargas(
         )
 
     return lista_camiones
+
+
+PERFILES_USUARIO_DEMO = [
+    {
+        "id": "usr-comprador",
+        "rol": "comprador",
+        "nombre": "Don Aníbal Gómez",
+        "organizacion": "Granja Avícola San Isidro SRL",
+        "localidad": "Goya, Corrientes",
+        "actividad": "Producción Avícola",
+        "descripcion": "Busca cascarilla o aserrín para cama de galpón puesta en tranquera.",
+        "codigo_perfil": "AVICOLA",
+        "codigo_localidad": "GOYA",
+    },
+    {
+        "id": "usr-vendedor",
+        "rol": "vendedor",
+        "nombre": "Ing. Carlos Romero",
+        "organizacion": "Molino Arrocero San Lorenzo SRL",
+        "localidad": "Saladas, Corrientes",
+        "actividad": "Molino Arrocero",
+        "descripcion": "Genera 15 tn/día de cascarilla seca y necesita evacuar galpón sin multas.",
+        "codigo_perfil": "ARROZ",
+        "codigo_localidad": "SALADAS",
+    },
+    {
+        "id": "usr-logistica",
+        "rol": "logistica",
+        "nombre": "Horacio Giménez",
+        "organizacion": "Transporte Don Horacio (Batea 85 m³)",
+        "localidad": "Corrientes Capital",
+        "actividad": "Transportista Independiente",
+        "descripcion": "Regresa vacío por RN 12 hacia Goya/Reconquista y busca calzar carga.",
+        "codigo_perfil": "LOGISTICA",
+        "codigo_localidad": "CORRIENTES",
+    },
+]

@@ -17,7 +17,118 @@ function formatoARS(valor) {
 }
 
 /* =============================================================================
-   CASOS REALES PRECARGADOS PARA LA PSEUDO-DEMOSTRACIÓN DE LA LANDING
+   1. GESTIÓN DE SESIÓN Y PERFIL DE USUARIO ACCESIBLE (PRODUCTOR RURAL)
+   ============================================================================= */
+let usuarioActivo = {
+    rol: "comprador",
+    nombre: "Don Aníbal Gómez",
+    organizacion: "Granja Avícola San Isidro SRL",
+    localidad: "Goya, Corrientes",
+};
+
+function abrirModalLogin() {
+    const modal = document.getElementById("modal-login");
+    if (modal) {
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+}
+
+function cerrarModalLogin() {
+    const modal = document.getElementById("modal-login");
+    if (modal) {
+        modal.style.display = "none";
+        document.body.style.overflow = "";
+    }
+}
+
+function identificarseComoRol(rol, nombre, organizacion, localidad) {
+    usuarioActivo = { rol, nombre, organizacion, localidad };
+    guardarYActualizarSesion();
+    cerrarModalLogin();
+
+    // Navegar directamente a la vista de su rol para máxima conveniencia
+    if (rol === "comprador") cambiarVistaRol("vista-comprador");
+    else if (rol === "vendedor") cambiarVistaRol("vista-vendedor");
+    else if (rol === "logistica") cambiarVistaRol("vista-logistica");
+}
+
+function guardarIdentificacionManual(event) {
+    event.preventDefault();
+    const nombre = document.getElementById("login-nombre")?.value || "Usuario Productor";
+    const rol = document.getElementById("login-rol-select")?.value || "comprador";
+    const localidad = document.getElementById("login-localidad")?.value || "Goya, Corrientes";
+
+    usuarioActivo = {
+        rol,
+        nombre,
+        organizacion: nombre,
+        localidad,
+    };
+    guardarYActualizarSesion();
+    cerrarModalLogin();
+
+    if (rol === "comprador") cambiarVistaRol("vista-comprador");
+    else if (rol === "vendedor") cambiarVistaRol("vista-vendedor");
+    else if (rol === "logistica") cambiarVistaRol("vista-logistica");
+}
+
+function guardarYActualizarSesion() {
+    try {
+        localStorage.setItem("monai_usuario_activo", JSON.stringify(usuarioActivo));
+    } catch (e) {}
+    aplicarDatosSesionEnUI();
+}
+
+function restaurarSesionGuardada() {
+    try {
+        const raw = localStorage.getItem("monai_usuario_activo");
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.rol) {
+                usuarioActivo = parsed;
+            }
+        }
+    } catch (e) {}
+    aplicarDatosSesionEnUI();
+}
+
+function aplicarDatosSesionEnUI() {
+    const label = document.getElementById("session-user-label");
+    const pill = document.getElementById("session-role-pill");
+
+    if (label) {
+        label.textContent = usuarioActivo.nombre || "Identificarme";
+    }
+    if (pill) {
+        const rolMap = {
+            comprador: "Comprador",
+            vendedor: "Vendedor",
+            logistica: "Logística",
+        };
+        pill.textContent = rolMap[usuarioActivo.rol] || "Usuario";
+    }
+
+    // Prefill de campos según el usuario activo
+    const inputComprador = document.getElementById("calc-comprador");
+    const inputDestino = document.getElementById("calc-destino");
+    const inputEmpresa = document.getElementById("pub-empresa");
+    const inputLocalidad = document.getElementById("pub-localidad");
+    const inputTransportista = document.getElementById("cam-transportista");
+
+    if (usuarioActivo.rol === "comprador") {
+        if (inputComprador) inputComprador.value = usuarioActivo.organizacion || usuarioActivo.nombre;
+        if (inputDestino) inputDestino.value = usuarioActivo.localidad;
+    } else if (usuarioActivo.rol === "vendedor") {
+        if (inputEmpresa) inputEmpresa.value = usuarioActivo.organizacion || usuarioActivo.nombre;
+        if (inputLocalidad) inputLocalidad.value = usuarioActivo.localidad;
+    } else if (usuarioActivo.rol === "logistica") {
+        if (inputTransportista) inputTransportista.value = usuarioActivo.organizacion || usuarioActivo.nombre;
+    }
+}
+
+/* =============================================================================
+   2. CASOS REALES PRECARGADOS PARA LA PSEUDO-DEMOSTRACIÓN DE LA LANDING
    ============================================================================= */
 const CASOS_DEMO_LANDING = [
     {
@@ -51,44 +162,44 @@ const CASOS_DEMO_LANDING = [
         actor: "Aserradero Río Paraná SRL · Destino: Cama Avícola y Pellets de Biomasa",
         modalidad: "Flete: 50% y 50% Compartido",
         densidad: "Densidad: 210 kg/m³",
-        volumenM3: "57.1 m³",
-        volumenPctTexto: "67% Volumen acoplado",
-        volumenPctNum: 67,
-        pesoTn: "12 tn",
-        pesoPctTexto: "43% Capacidad",
-        pesoPctNum: 43,
+        volumenM3: "66.7 m³",
+        volumenPctTexto: "74% Volumen acoplado",
+        volumenPctNum: 74,
+        pesoTn: "14 tn",
+        pesoPctTexto: "47% Capacidad",
+        pesoPctNum: 47,
         explicacionTrampa:
             "El aserrín seco ocupa gran volumen con bajo peso. Al dividir 50/50 un camión de retorno (-48%), el aserradero libera su playa colapsada y el productor recibe insumo a mitad de costo.",
-        precioRojo: "$1.148.000",
+        precioRojo: "$1.300.000",
         descRojo: "Flete tradicional consume más del 80% del valor del aserrín en planta.",
         descuentoPct: "-48%",
-        precioVerde: "$507.000",
+        precioVerde: "$676.000",
         descVerde: "Semirremolque baranda volcable en retorno hacia Mercedes/Curuzú Cuatiá.",
-        ahorro: "$641.000 ARS",
+        ahorro: "$624.000 ARS",
         distanciaKm: 165,
-        toneladas: 12,
+        toneladas: 14,
     },
     {
         indice: 2,
         loteIndex: 2,
         ruta: "Bella Vista, Corrientes → Goya, Corrientes (85 km)",
         actor: "Jugos del Litoral SA · Destino: Fibra y Energía para Feedlot Bovino",
-        modalidad: "Flete: 100% Vendedor (Urgencia 48hs)",
+        modalidad: "Flete: 100% Vendedor (Urgencia 48 hs)",
         densidad: "Densidad: 650 kg/m³",
         volumenM3: "36.9 m³",
-        volumenPctTexto: "43% Volumen batea",
-        volumenPctNum: 43,
+        volumenPctTexto: "41% Volumen",
+        volumenPctNum: 41,
         pesoTn: "24 tn",
         pesoPctTexto: "80% Capacidad Peso",
         pesoPctNum: 80,
         explicacionTrampa:
             "La cáscara húmeda de citrus fermenta en 48 hs generando multas ambientales. La juguera absorbe el Flete Calzado (-45%) porque le sale más barato que el pasivo ambiental.",
-        precioRojo: "$552.000",
+        precioRojo: "$950.000",
         descRojo: "Contratar batea estanca de urgencia a tarifa plena frena la evacuación diaria.",
         descuentoPct: "-45%",
-        precioVerde: "$258.000",
+        precioVerde: "$520.000",
         descVerde: "Flete absorbido por la citrícola con camión de retorno + Certificado Ambiental Hedera.",
-        ahorro: "$294.000 ARS",
+        ahorro: "$430.000 ARS",
         distanciaKm: 85,
         toneladas: 24,
     },
@@ -146,7 +257,7 @@ function abrirCasoDemoEnCotizador() {
 }
 
 /* =============================================================================
-   1. MODO CLARO / MODO OSCURO SENCILLO DE ENTENDER
+   3. MODO CLARO / MODO OSCURO SENCILLO DE ENTENDER
    ============================================================================= */
 function aplicarTema(tema) {
     const html = document.documentElement;
@@ -180,7 +291,7 @@ function alternarTema() {
 }
 
 /* =============================================================================
-   2. NAVEGACIÓN POR TIPO DE USUARIO (CON VIEW TRANSITIONS SI ESTÁ DISPONIBLE)
+   4. NAVEGACIÓN POR TIPO DE USUARIO (CON VIEW TRANSITIONS SI DISPONIBLE)
    ============================================================================= */
 function ejecutarCambioVista(panelId) {
     document.querySelectorAll(".user-view-panel").forEach((panel) => {
@@ -204,29 +315,21 @@ function cambiarVistaRol(panelId) {
     }
 }
 
-// Alias de compatibilidad
-function cambiarPestana(panelId) {
-    const mapa = {
-        "panel-oportunidades": "vista-comprador",
-        "panel-cotizador": "vista-comprador",
-        "panel-publicar": "vista-vendedor",
-        "panel-certificado": "vista-vendedor",
-    };
-    cambiarVistaRol(mapa[panelId] || panelId);
-}
-
 /* =============================================================================
-   3. RECOMENDADOR Y SELECCIÓN DE LOTES (VISTA COMPRADOR)
+   5. SELECCIÓN DE LOTES Y FILTRADO EN CLIENTE (CARRIL 2)
    ============================================================================= */
 function seleccionarLote(loteId, toneladasDefault, distanciaSugerida) {
-    document.querySelectorAll(".lote-card[data-lote-id]").forEach((card) => {
-        card.classList.toggle("selected", Number(card.dataset.loteId) === Number(loteId));
+    document.querySelectorAll("#contenedor-tarjetas-lotes .lote-card").forEach((card) => {
+        const coincide = card.getAttribute("data-lote-id") === String(loteId);
+        card.classList.toggle("selected", coincide);
     });
 
-    const inputLote = document.getElementById("calc-lote-id");
+    const selectLote = document.getElementById("calc-lote-id");
+    const inputLote = document.getElementById("calc-lote-id-hidden");
     const inputTn = document.getElementById("calc-toneladas");
     const inputKm = document.getElementById("calc-distancia-km");
 
+    if (selectLote) selectLote.value = String(loteId);
     if (inputLote) inputLote.value = String(loteId);
     if (inputTn && toneladasDefault) inputTn.value = toneladasDefault;
     if (inputKm && distanciaSugerida) inputKm.value = distanciaSugerida;
@@ -283,7 +386,7 @@ function filtrarTarjetasEnCliente(texto) {
 }
 
 /* =============================================================================
-   4. COTIZADOR PESO/VOLUMEN Y FLETE CALZADO (CARRIL 3 - /api/cotizar/)
+   6. COTIZADOR PESO/VOLUMEN Y FLETE CALZADO (CARRIL 3 - /api/cotizar/)
    ============================================================================= */
 async function recalcularCotizacionEnVivo() {
     const loteId = document.getElementById("calc-lote-id")?.value;
@@ -307,45 +410,54 @@ async function recalcularCotizacionEnVivo() {
 
         const c = data.cotizacion;
 
-        document.getElementById("res-lote-titulo").textContent = c.lote_titulo;
-        document.getElementById("res-origen").textContent = `${c.empresa_vendedora} (${c.origen})`;
-        document.getElementById("res-modalidad").textContent = c.modalidad_flete_texto;
+        const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        };
 
-        document.getElementById("res-volumen-m3").textContent = `${c.volumen_m3} m³ (Densidad: ${c.densidad_kg_m3} kg/m³)`;
-        document.getElementById("res-limitante").textContent = c.factor_limitante;
-        document.getElementById("pct-vol-label").textContent = `${c.ocupacion_volumen_pct}%`;
-        document.getElementById("pct-peso-label").textContent = `${c.ocupacion_peso_pct}%`;
-        document.getElementById("bar-volumen").style.width = `${c.ocupacion_volumen_pct}%`;
-        document.getElementById("bar-peso").style.width = `${c.ocupacion_peso_pct}%`;
+        setTxt("res-lote-titulo", c.lote_titulo);
+        setTxt("res-origen", `${c.vendedor} (${c.localidad_origen})`);
+        setTxt("res-volumen-m3", `${c.volumen_m3} m³`);
+        setTxt("res-limitante", c.factor_limitante.toUpperCase());
+        setTxt("pct-vol-label", `${c.porcentaje_volumen_camion}%`);
+        setTxt("pct-peso-label", `${c.porcentaje_peso_camion}%`);
 
-        document.getElementById("res-flete-tradicional").textContent = formatoARS(c.flete_tradicional_fadeeac_ars);
-        document.getElementById("res-incidencia-pct").textContent = `${c.incidencia_flete_tradicional_pct}% del total`;
-        document.getElementById("res-flete-calzado").textContent = formatoARS(c.flete_calzado_ars);
-        document.getElementById("res-descuento-pct").textContent = `-${c.descuento_retorno_pct}% por Retorno`;
-        document.getElementById("res-ahorro").textContent = `${formatoARS(c.ahorro_logistico_ars)} ARS`;
+        const barVol = document.getElementById("bar-volumen");
+        const barPeso = document.getElementById("bar-peso");
+        if (barVol) barVol.style.width = `${Math.min(100, c.porcentaje_volumen_camion)}%`;
+        if (barPeso) barPeso.style.width = `${Math.min(100, c.porcentaje_peso_camion)}%`;
 
-        document.getElementById("res-subtotal-prod").textContent = formatoARS(c.subtotal_subproducto_ars);
-        document.getElementById("res-comision").textContent = formatoARS(c.comision_total_plataforma_ars);
-        document.getElementById("res-total-comprador").textContent = formatoARS(c.total_comprador_subruta_ars);
+        setTxt("res-flete-tradicional", formatoARS(c.flete_tradicional_fadeeac_ars));
+        setTxt("res-incidencia-pct", `${c.incidencia_flete_tradicional_pct}% del total`);
+        setTxt("res-flete-calzado", formatoARS(c.flete_calzado_ars));
+        setTxt("res-descuento-pct", `-${c.descuento_aplicado_pct}% por Retorno`);
+        setTxt("res-ahorro", `${formatoARS(c.ahorro_logistico_ars)} ARS`);
+
+        setTxt("res-subtotal-prod", formatoARS(c.subtotal_subproducto_ars));
+        setTxt("res-modalidad", c.modalidad_flete);
+        setTxt("res-comision", formatoARS(c.comision_total_plataforma_ars));
+        setTxt("res-total-comprador", formatoARS(c.total_comprador_subruta_ars));
     } catch (err) {
-        console.error("Error al cotizar flete:", err);
+        console.error("Error en cotización en vivo:", err);
     }
 }
 
 /* =============================================================================
-   5. RESERVA CON GARANTÍA Y CERTIFICADO AMBIENTAL (CARRIL 4 - /api/reservar/)
+   7. RESERVA CON PAGO EN GARANTÍA (ESCROW) Y VOUCHER DEL COMPRADOR (CARRIL 4)
    ============================================================================= */
+let ultimoCertificadoEmitido = null;
+
 async function confirmarReservaConGarantia() {
     const loteId = document.getElementById("calc-lote-id")?.value;
     const camionId = document.getElementById("calc-camion-id")?.value;
     const distanciaKm = document.getElementById("calc-distancia-km")?.value || 160;
     const toneladas = document.getElementById("calc-toneladas")?.value || 14;
-    const compradorNombre = document.getElementById("calc-comprador")?.value || "Granja Avícola San Isidro";
-    const destino = document.getElementById("calc-destino")?.value || "Goya, Corrientes";
+    const compradorNombre = document.getElementById("calc-comprador")?.value || usuarioActivo.organizacion || "Granja Avícola San Isidro";
+    const destino = document.getElementById("calc-destino")?.value || usuarioActivo.localidad || "Goya, Corrientes";
 
     const btn = document.getElementById("btn-confirmar-reserva");
     btn.disabled = true;
-    btn.textContent = "Sellando Garantía y Certificado Circular...";
+    btn.textContent = "Resguardando Fondos en Garantía y Sellando Hedera...";
 
     try {
         const res = await fetch("/api/reservar/", {
@@ -362,27 +474,53 @@ async function confirmarReservaConGarantia() {
         });
         const data = await res.json();
         if (data.ok) {
-            mostrarModalCertificado(data.certificado);
+            ultimoCertificadoEmitido = data.certificado;
+            actualizarCertificadoEnPortalVendedor(data.certificado);
+            mostrarModalVoucherReserva(data.certificado);
         }
     } catch (err) {
         alert("No se pudo procesar la reserva. Verificá la conexión.");
     } finally {
         btn.disabled = false;
-        btn.textContent = "Reservar con Pago en Garantía + Emitir Certificado";
+        btn.textContent = "Reservar Lote con Pago en Garantía (Escrow) →";
     }
 }
 
-function mostrarModalCertificado(cert) {
-    document.getElementById("cert-id").textContent = `#MN-2026-${String(cert.id).padStart(4, "0")}`;
-    document.getElementById("cert-vendedor").textContent = `${cert.vendedor} (${cert.origen})`;
-    document.getElementById("cert-comprador").textContent = `${cert.comprador} (${cert.destino})`;
-    document.getElementById("cert-subproducto").textContent = `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`;
-    document.getElementById("cert-transportista").textContent = cert.transportista;
-    document.getElementById("cert-ahorro").textContent = `${formatoARS(cert.ahorro_logistico_ars)} ARS`;
-    document.getElementById("cert-total").textContent = `${formatoARS(cert.total_comprador_ars)} ARS`;
-    document.getElementById("cert-hash").textContent = cert.hash_certificado;
-    document.getElementById("cert-red").textContent = cert.red_blockchain;
+function mostrarModalVoucherReserva(cert) {
+    const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
 
+    setTxt("voucher-id", `#MN-RES-${String(cert.id).padStart(4, "0")}`);
+    setTxt("voucher-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
+    setTxt("voucher-vendedor", `${cert.vendedor} (${cert.origen})`);
+    setTxt("voucher-camion", cert.transportista);
+    setTxt("voucher-ahorro", `${formatoARS(cert.ahorro_logistico_ars)} ARS`);
+    setTxt("voucher-total", `${formatoARS(cert.total_comprador_ars)} ARS (Custodia activa)`);
+    setTxt("voucher-hash", cert.hash_certificado);
+
+    const modal = document.getElementById("modal-reserva-exito");
+    if (modal) {
+        modal.style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+}
+
+function cerrarModalReserva() {
+    const modal = document.getElementById("modal-reserva-exito");
+    if (modal) {
+        modal.style.display = "none";
+        document.body.style.overflow = "";
+    }
+}
+
+function imprimirVoucherReserva() {
+    window.print();
+}
+
+function irACertificadoVendedor() {
+    cerrarModalReserva();
     cambiarVistaRol("vista-vendedor");
     setTimeout(() => {
         const card = document.getElementById("tarjeta-certificado-activo");
@@ -390,8 +528,29 @@ function mostrarModalCertificado(cert) {
     }, 140);
 }
 
+function actualizarCertificadoEnPortalVendedor(cert) {
+    const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    };
+
+    setTxt("cert-id", `#MN-2026-${String(cert.id).padStart(4, "0")}`);
+    setTxt("cert-vendedor", `${cert.vendedor} (${cert.origen})`);
+    setTxt("cert-comprador", `${cert.comprador} (${cert.destino})`);
+    setTxt("cert-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
+    setTxt("cert-transportista", cert.transportista);
+    setTxt("cert-ahorro", `${formatoARS(cert.ahorro_logistico_ars)} ARS`);
+    setTxt("cert-total", `${formatoARS(cert.total_comprador_ars)} ARS`);
+    setTxt("cert-hash", cert.hash_certificado);
+    setTxt("cert-red", cert.red_blockchain);
+}
+
+function imprimirCertificadoOficial() {
+    window.print();
+}
+
 /* =============================================================================
-   6. PUBLICACIÓN DE EXCEDENTE (VENDEDOR) Y ALTA DE CAMIÓN (LOGÍSTICA)
+   8. PUBLICACIÓN DE EXCEDENTE (VENDEDOR) Y ALTA DE CAMIÓN (LOGÍSTICA)
    ============================================================================= */
 function sugerirValoresPorSector(sector) {
     const inputDensidad = document.getElementById("pub-densidad");
@@ -426,7 +585,7 @@ function actualizarPreviewCubicajePublicacion() {
     if (preview && dens > 0) {
         const m3 = ((tn * 1000) / dens).toFixed(1);
         const equipos = Math.max(1, Math.ceil(parseFloat(m3) / 90));
-        preview.textContent = `${m3} m³ (${equipos} ${equipos === 1 ? "equipo Batea" : "equipos Batea"})`;
+        preview.textContent = `${m3} m³ (${equipos} ${equipos === 1 ? "equipo Batea de 90 m³" : "equipos Batea de 90 m³"})`;
     }
 }
 
@@ -440,18 +599,23 @@ async function enviarNuevoLote(event) {
         toneladas_disponibles: document.getElementById("pub-toneladas").value,
         densidad_kg_m3: document.getElementById("pub-densidad").value,
         precio_tonelada_ars: document.getElementById("pub-precio").value,
-        usos_recomendados: document.getElementById("pub-usos").value,
         modalidad_flete: document.getElementById("pub-modalidad").value,
+        usos_recomendados: document.getElementById("pub-usos").value,
     };
 
-    const res = await fetch("/api/publicar/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (data.ok) {
-        window.location.href = "/?rol=comprador";
+    try {
+        const res = await fetch("/api/publicar/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (data.ok) {
+            alert(data.mensaje || "Lote publicado exitosamente.");
+            window.location.href = "/?rol=comprador";
+        }
+    } catch (err) {
+        alert("Error al publicar el lote. Verificá los campos.");
     }
 }
 
@@ -466,6 +630,7 @@ async function enviarNuevoCamion(event) {
         fecha_disponible: document.getElementById("cam-fecha").value,
         capacidad_max_m3: document.getElementById("cam-cap-m3").value,
         descuento_retorno_pct: document.getElementById("cam-descuento").value,
+        capacidad_max_tn: 30,
     };
 
     try {
@@ -476,27 +641,36 @@ async function enviarNuevoCamion(event) {
         });
         const data = await res.json();
         if (data.ok) {
+            alert(data.mensaje || "Camión de retorno registrado exitosamente.");
             window.location.href = "/?rol=logistica";
         }
-    } catch (e) {
-        window.location.href = "/?rol=logistica";
+    } catch (err) {
+        alert("Error al registrar el camión. Verificá los campos.");
     }
 }
 
+/* =============================================================================
+   9. INICIALIZACIÓN AL CARGAR EL DOCUMENTO
+   ============================================================================= */
 document.addEventListener("DOMContentLoaded", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-    aplicarTema(currentTheme);
-    actualizarPreviewCubicajePublicacion();
+    // Restaurar sesión de usuario
+    restaurarSesionGuardada();
+
+    // Sincronizar tema actual
+    const temaGuardado = localStorage.getItem("monai-theme") || "light";
+    aplicarTema(temaGuardado);
+
+    // Iniciar caso demo en landing
+    seleccionarCasoDemoLanding(0);
+
+    // Calcular primer lote en cotizador
     recalcularCotizacionEnVivo();
 
-    // Si la URL trae ?rol=comprador / vendedor / logistica, o ?perfil=..., abrir esa vista automáticamente
-    const params = new URLSearchParams(window.location.search);
-    const rolParam = (params.get("rol") || "").toLowerCase();
-    if (rolParam === "comprador" || params.has("perfil") || params.has("localidad") || params.has("q")) {
-        ejecutarCambioVista("vista-comprador");
-    } else if (rolParam === "vendedor") {
-        ejecutarCambioVista("vista-vendedor");
-    } else if (rolParam === "logistica") {
-        ejecutarCambioVista("vista-logistica");
-    }
+    // Escuchar atajo de teclado para cerrar modales con ESC
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            cerrarModalLogin();
+            cerrarModalReserva();
+        }
+    });
 });

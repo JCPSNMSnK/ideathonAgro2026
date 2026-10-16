@@ -17,6 +17,7 @@ from mercado.services.recomendador import (
     PERFILES_PRODUCTIVOS,
     LOCALIDADES_COMPRADOR_NEA,
     CASOS_DEMO_LANDING,
+    PERFILES_USUARIO_DEMO,
     obtener_perfil_por_codigo,
     obtener_localidad_por_codigo,
     obtener_lotes_recomendados,
@@ -54,6 +55,7 @@ def home_demo(request):
     context = {
         "rol_activo": rol_activo,
         "casos_demo_landing": CASOS_DEMO_LANDING,
+        "usuarios_demo": PERFILES_USUARIO_DEMO,
         "perfiles": PERFILES_PRODUCTIVOS,
         "perfil_actual": perfil_actual_obj["codigo"],
         "perfil_actual_obj": perfil_actual_obj,

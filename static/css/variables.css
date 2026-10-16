@@ -4,6 +4,7 @@
    MÓDULO CARRIL 1 — Identidad Visual y Sistema de Diseño Editorial Agro-Fintech
    Responsable: Luciana Avalos (Dirección de Arte, Identidad Visual y UI de Producto)
    Producto: Moñái — Economía Circular y Logística de Flete Calzado del NEA (2026)
+   Inspiración: Moñái, mito guaraní protector de campos, sembrados y caminos
    ============================================================================= */
 
 :root {
@@ -20,57 +21,63 @@
     }
 
     /* =========================================================================
-       PALETA MODO CLARO (Editorial Crema Pergamino, Verde Monte y Rojo Tierra Colorada)
+       PALETA MODO CLARO (Crema Pergamino, Verde Monte y Rojo Tierra Colorada)
+       Diseñada para alta legibilidad bajo luz solar directa en el campo (WCAG AAA)
        ========================================================================= */
-    --bg-pagina: #F6F0E2;
-    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(27, 77, 46, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(180, 83, 9, 0.07), transparent 60%);
-    --bg-tarjeta: #FFFDF8;
-    --bg-tarjeta-hover: #FAF5E8;
-    --bg-bloque-suave: #EDE4D0;
-    --bg-elevado: #E2D6BC;
-    --bg-glass: rgba(255, 253, 248, 0.86);
-    --bg-header: rgba(255, 253, 248, 0.88);
+    --bg-pagina: #FAF6ED;
+    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(22, 66, 40, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(154, 52, 18, 0.06), transparent 60%);
+    --bg-tarjeta: #FFFFFF;
+    --bg-tarjeta-hover: #F8F4EA;
+    --bg-bloque-suave: #F0E8D7;
+    --bg-elevado: #E5DBCA;
+    --bg-glass: rgba(255, 255, 255, 0.90);
+    --bg-header: rgba(250, 246, 237, 0.92);
 
-    /* Colores Institucionales y Semánticos */
-    --color-primario: #164228;
+    /* Colores Institucionales y de Marca */
+    --color-primario: #164228;           /* Verde Monte Profundo */
     --color-primario-hover: #0F2E1C;
-    --color-primario-suave: rgba(22, 66, 40, 0.12);
-    --color-secundario: #246A40;
-    --color-acento: #9A3412;
+    --color-primario-suave: rgba(22, 66, 40, 0.10);
+    --color-secundario: #1F5A38;
+    --color-acento: #9A3412;             /* Terracota / Tierra Colorada */
     --color-acento-hover: #7C2D12;
     --color-acento-bg: rgba(154, 52, 18, 0.10);
-    --color-crema-dorado: #C8B692;
+    --color-crema-dorado: #C4AD85;
 
-    /* Rentabilidad Logística: Verde (Flete Calzado) vs Rojo (Flete Tradicional) */
-    --color-exito: #157347;
-    --color-exito-bg: #E4F5EC;
-    --color-exito-borde: #75C99B;
+    /* Rentabilidad Logística */
+    --color-exito: #146C36;              /* Verde Rentable Flete Calzado */
+    --color-exito-bg: #E3F5EB;
+    --color-exito-borde: #5CB883;
 
-    --color-peligro: #B91C1C;
-    --color-peligro-bg: #FCE8E8;
-    --color-peligro-borde: #F29B9B;
+    --color-peligro: #BA1A1A;            /* Rojo Tierra Alerta Flete Tradicional */
+    --color-peligro-bg: #FDE8E8;
+    --color-peligro-borde: #F08080;
 
-    /* Trazabilidad Ambiental y Hedera Hashgraph */
+    /* Trazabilidad y Blockchain */
     --color-blockchain: #164228;
-    --color-blockchain-bg: #E6F0EA;
-    --color-blockchain-borde: #75C99B;
+    --color-blockchain-bg: #E5F0E9;
+    --color-blockchain-borde: #70BD92;
 
-    /* Jerarquía Tipográfica de Color */
-    --texto-principal: #141F17;
-    --texto-secundario: #425246;
-    --texto-suave: #68776C;
-    --texto-sobre-primario: #FAF5E8;
+    /* Jerarquía Tipográfica y Contraste */
+    --texto-principal: #121E15;          /* Contraste 13.8:1 sobre fondo crema */
+    --texto-secundario: #2D3D32;         /* Contraste 8.2:1 */
+    --texto-suave: #4A5B4F;              /* Contraste 4.9:1 */
+    --texto-sobre-primario: #FAF6ED;
 
-    /* Bordes, Radios y Elevación */
-    --borde-color: #D8CBB0;
-    --borde-fuerte: #C2B292;
+    /* Bordes y Sombras Táctiles */
+    --borde-color: #D6C8AC;
+    --borde-fuerte: #BFAFA0;
     --radio-xs: 6px;
     --radio-sm: 10px;
     --radio-md: 14px;
     --radio-lg: 20px;
     --radio-xl: 26px;
-    --sombra-suave: 0 4px 20px -2px rgba(20, 31, 23, 0.06), 0 2px 6px -1px rgba(20, 31, 23, 0.04);
-    --sombra-destacada: 0 18px 40px -10px rgba(22, 66, 40, 0.14), 0 4px 12px -2px rgba(20, 31, 23, 0.06);
+    --sombra-suave: 0 4px 18px -2px rgba(18, 30, 21, 0.07), 0 2px 6px -1px rgba(18, 30, 21, 0.04);
+    --sombra-destacada: 0 16px 36px -8px rgba(22, 66, 40, 0.16), 0 4px 12px -2px rgba(18, 30, 21, 0.06);
+
+    /* Modales y Superposiciones */
+    --modal-backdrop: rgba(15, 25, 18, 0.70);
+    --modal-bg: #FFFFFF;
+    --modal-border: #D6C8AC;
 
     /* Familias Tipográficas */
     --fuente-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -80,49 +87,54 @@
 
 /* =============================================================================
    PALETA MODO OSCURO ([data-theme="dark"] — Noche de Monte y Crema Luminoso)
+   Diseñada para uso descansado en cabina de camión o noche rural
    ============================================================================= */
 :root:has(> head > meta[name="color-scheme"][content="dark"]),
 :root[data-theme="dark"],
 [data-theme="dark"] {
-    --bg-pagina: #0D1510;
-    --bg-gradiente: radial-gradient(1100px 550px at 15% -10%, rgba(46, 139, 82, 0.14), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(185, 28, 28, 0.10), transparent 60%);
-    --bg-tarjeta: #142018;
-    --bg-tarjeta-hover: #1A291F;
-    --bg-bloque-suave: #1C2C21;
-    --bg-elevado: #25392B;
-    --bg-glass: rgba(20, 32, 24, 0.88);
-    --bg-header: rgba(20, 32, 24, 0.88);
+    --bg-pagina: #0C140E;
+    --bg-gradiente: radial-gradient(1100px 550px at 15% -10%, rgba(46, 139, 82, 0.16), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(185, 28, 28, 0.10), transparent 60%);
+    --bg-tarjeta: #132017;
+    --bg-tarjeta-hover: #192A1F;
+    --bg-bloque-suave: #1A2B20;
+    --bg-elevado: #22372A;
+    --bg-glass: rgba(19, 32, 23, 0.90);
+    --bg-header: rgba(12, 20, 14, 0.92);
 
     --color-primario: #34A861;
     --color-primario-hover: #46C075;
-    --color-primario-suave: rgba(52, 168, 97, 0.18);
+    --color-primario-suave: rgba(52, 168, 97, 0.20);
     --color-secundario: #22C55E;
     --color-acento: #EA580C;
     --color-acento-hover: #F97316;
-    --color-acento-bg: rgba(234, 88, 12, 0.16);
-    --color-crema-dorado: #3A4F40;
+    --color-acento-bg: rgba(234, 88, 12, 0.18);
+    --color-crema-dorado: #3D5344;
 
     --color-exito: #4ADE80;
-    --color-exito-bg: rgba(34, 197, 94, 0.14);
-    --color-exito-borde: rgba(74, 222, 128, 0.4);
+    --color-exito-bg: rgba(34, 197, 94, 0.16);
+    --color-exito-borde: rgba(74, 222, 128, 0.45);
 
     --color-peligro: #F87171;
-    --color-peligro-bg: rgba(239, 68, 68, 0.15);
-    --color-peligro-borde: rgba(248, 113, 113, 0.42);
+    --color-peligro-bg: rgba(239, 68, 68, 0.18);
+    --color-peligro-borde: rgba(248, 113, 113, 0.45);
 
     --color-blockchain: #86EFAC;
-    --color-blockchain-bg: rgba(34, 197, 94, 0.12);
-    --color-blockchain-borde: rgba(134, 239, 172, 0.35);
+    --color-blockchain-bg: rgba(34, 197, 94, 0.14);
+    --color-blockchain-borde: rgba(134, 239, 172, 0.38);
 
-    --texto-principal: #F5EFE2;
-    --texto-secundario: #C4BCAA;
-    --texto-suave: #8D8675;
-    --texto-sobre-primario: #0D1510;
+    --texto-principal: #F6EFE2;          /* Crema luminoso */
+    --texto-secundario: #C8BFAB;
+    --texto-suave: #9A9280;
+    --texto-sobre-primario: #0C140E;
 
-    --borde-color: #26382C;
-    --borde-fuerte: #354D3C;
-    --sombra-suave: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
-    --sombra-destacada: 0 20px 45px -10px rgba(0, 0, 0, 0.65);
+    --borde-color: #243729;
+    --borde-fuerte: #324B39;
+    --sombra-suave: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+    --sombra-destacada: 0 20px 45px -10px rgba(0, 0, 0, 0.7);
+
+    --modal-backdrop: rgba(0, 0, 0, 0.82);
+    --modal-bg: #132017;
+    --modal-border: #324B39;
 }
 
 /* =============================================================================
@@ -131,37 +143,61 @@
 :root:has(> head > meta[name="color-scheme"][content="light"]),
 :root[data-theme="light"],
 [data-theme="light"] {
-    --bg-pagina: #F6F0E2;
-    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(27, 77, 46, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(180, 83, 9, 0.07), transparent 60%);
-    --bg-tarjeta: #FFFDF8;
-    --bg-tarjeta-hover: #FAF5E8;
-    --bg-bloque-suave: #EDE4D0;
-    --bg-elevado: #E2D6BC;
-    --bg-glass: rgba(255, 253, 248, 0.86);
-    --bg-header: rgba(255, 253, 248, 0.88);
+    --bg-pagina: #FAF6ED;
+    --bg-gradiente: radial-gradient(1200px 600px at 15% -10%, rgba(22, 66, 40, 0.08), transparent 65%), radial-gradient(900px 500px at 90% 0%, rgba(154, 52, 18, 0.06), transparent 60%);
+    --bg-tarjeta: #FFFFFF;
+    --bg-tarjeta-hover: #F8F4EA;
+    --bg-bloque-suave: #F0E8D7;
+    --bg-elevado: #E5DBCA;
+    --bg-glass: rgba(255, 255, 255, 0.90);
+    --bg-header: rgba(250, 246, 237, 0.92);
     --color-primario: #164228;
     --color-primario-hover: #0F2E1C;
-    --color-primario-suave: rgba(22, 66, 40, 0.12);
-    --color-secundario: #246A40;
+    --color-primario-suave: rgba(22, 66, 40, 0.10);
+    --color-secundario: #1F5A38;
     --color-acento: #9A3412;
     --color-acento-hover: #7C2D12;
     --color-acento-bg: rgba(154, 52, 18, 0.10);
-    --color-crema-dorado: #C8B692;
-    --color-exito: #157347;
-    --color-exito-bg: #E4F5EC;
-    --color-exito-borde: #75C99B;
-    --color-peligro: #B91C1C;
-    --color-peligro-bg: #FCE8E8;
-    --color-peligro-borde: #F29B9B;
+    --color-crema-dorado: #C4AD85;
+    --color-exito: #146C36;
+    --color-exito-bg: #E3F5EB;
+    --color-exito-borde: #5CB883;
+    --color-peligro: #BA1A1A;
+    --color-peligro-bg: #FDE8E8;
+    --color-peligro-borde: #F08080;
     --color-blockchain: #164228;
-    --color-blockchain-bg: #E6F0EA;
-    --color-blockchain-borde: #75C99B;
-    --texto-principal: #141F17;
-    --texto-secundario: #425246;
-    --texto-suave: #68776C;
-    --texto-sobre-primario: #FAF5E8;
-    --borde-color: #D8CBB0;
-    --borde-fuerte: #C2B292;
-    --sombra-suave: 0 4px 20px -2px rgba(20, 31, 23, 0.06), 0 2px 6px -1px rgba(20, 31, 23, 0.04);
-    --sombra-destacada: 0 18px 40px -10px rgba(22, 66, 40, 0.14), 0 4px 12px -2px rgba(20, 31, 23, 0.06);
+    --color-blockchain-bg: #E5F0E9;
+    --color-blockchain-borde: #70BD92;
+    --texto-principal: #121E15;
+    --texto-secundario: #2D3D32;
+    --texto-suave: #4A5B4F;
+    --texto-sobre-primario: #FAF6ED;
+    --borde-color: #D6C8AC;
+    --borde-fuerte: #BFAFA0;
+    --sombra-suave: 0 4px 18px -2px rgba(18, 30, 21, 0.07), 0 2px 6px -1px rgba(18, 30, 21, 0.04);
+    --sombra-destacada: 0 16px 36px -8px rgba(22, 66, 40, 0.16), 0 4px 12px -2px rgba(18, 30, 21, 0.06);
+    --modal-backdrop: rgba(15, 25, 18, 0.70);
+    --modal-bg: #FFFFFF;
+    --modal-border: #D6C8AC;
+}
+
+/* =============================================================================
+   TOKENS PARA IMPRESIÓN OFICIAL (A4 - Remito Circular y Certificado)
+   ============================================================================= */
+@media print {
+    :root {
+        --bg-pagina: #FFFFFF !important;
+        --bg-tarjeta: #FFFFFF !important;
+        --bg-bloque-suave: #F7F7F7 !important;
+        --texto-principal: #000000 !important;
+        --texto-secundario: #222222 !important;
+        --texto-suave: #444444 !important;
+        --color-primario: #164228 !important;
+        --color-exito: #146C36 !important;
+        --color-peligro: #000000 !important;
+        --borde-color: #333333 !important;
+        --borde-fuerte: #000000 !important;
+        --sombra-suave: none !important;
+        --sombra-destacada: none !important;
+    }
 }
