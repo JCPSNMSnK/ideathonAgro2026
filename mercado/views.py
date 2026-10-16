@@ -29,6 +29,25 @@ from mercado.services.recomendador import (
     eliminar_camion_existente,
 )
 from mercado.services.calculadora_flete import cotizar_operacion_completa
+
+
+def _parametros_modo_transporte(datos) -> dict:
+    """
+    Lee de la query string o del JSON los parámetros opcionales del modo de transporte:
+    modo_transporte (VEHICULO_PROPIO, IDA, IDA_Y_VUELTA, VUELTA), tipo_vehiculo_propio,
+    costo_km_vehiculo_propio_ars, toneladas_contraparte y densidad_contraparte_kg_m3.
+    """
+    def numero(clave):
+        valor = datos.get(clave)
+        return float(valor) if valor not in (None, "") else None
+
+    return {
+        "modo_transporte": str(datos.get("modo_transporte") or "VUELTA").upper().strip(),
+        "tipo_vehiculo_propio": str(datos.get("tipo_vehiculo_propio") or "CAMION_CHASIS").upper().strip(),
+        "costo_km_vehiculo_propio_ars": numero("costo_km_vehiculo_propio_ars"),
+        "toneladas_contraparte": numero("toneladas_contraparte"),
+        "densidad_contraparte_kg_m3": numero("densidad_contraparte_kg_m3"),
+    }
 from mercado.services.trazabilidad_blockchain import (
     registrar_operacion_con_garantia,
     liberar_pago_en_garantia,
@@ -108,12 +127,16 @@ def api_cotizar_flete(request):
     except (ValueError, TypeError):
         toneladas = float(lote.toneladas_disponibles)
 
-    resultado = cotizar_operacion_completa(
-        lote=lote,
-        camion=camion,
-        distancia_km=distancia_km,
-        toneladas_solicitadas=toneladas,
-    )
+    try:
+        resultado = cotizar_operacion_completa(
+            lote=lote,
+            camion=camion,
+            distancia_km=distancia_km,
+            toneladas_solicitadas=toneladas,
+            **_parametros_modo_transporte(request.GET),
+        )
+    except (ValueError, TypeError) as e:
+        return JsonResponse({"ok": False, "mensaje": str(e)}, status=400)
     return JsonResponse({"ok": True, "cotizacion": resultado})
 
 
@@ -155,12 +178,16 @@ def api_reservar_con_garantia(request):
     localidad_destino = str(data.get("localidad_destino", "Goya, Corrientes")).strip()[:150]
     ventana_carga = str(data.get("ventana_carga", "Turno Confirmado (Sin demora de estadía)")).strip()[:100]
 
-    cotizacion = cotizar_operacion_completa(
-        lote=lote,
-        camion=camion,
-        distancia_km=distancia_km,
-        toneladas_solicitadas=toneladas,
-    )
+    try:
+        cotizacion = cotizar_operacion_completa(
+            lote=lote,
+            camion=camion,
+            distancia_km=distancia_km,
+            toneladas_solicitadas=toneladas,
+            **_parametros_modo_transporte(data),
+        )
+    except (ValueError, TypeError) as e:
+        return JsonResponse({"ok": False, "mensaje": str(e)}, status=400)
 
     operacion = registrar_operacion_con_garantia(
         lote=lote,

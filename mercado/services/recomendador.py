@@ -389,6 +389,29 @@ def obtener_lotes_recomendados(
     return lotes
 
 
+MODALIDADES_FLETE_VALIDAS = {"COMPRADOR", "VENDEDOR", "COMPARTIDO_50_50", "MUTUO_ACUERDO"}
+
+
+def _resolver_modalidad_flete(modalidad_raw, porcentaje_raw):
+    """
+    Valida la modalidad de pago del flete. En MUTUO_ACUERDO el vendedor debe publicar
+    en su lote qué porcentaje del flete paga (0 a 100); en las demás no se guarda.
+    """
+    modalidad = (str(modalidad_raw or "COMPRADOR")).upper().strip()
+    if modalidad not in MODALIDADES_FLETE_VALIDAS:
+        raise ValueError(f"Modalidad de flete inválida: {modalidad}")
+    if modalidad != "MUTUO_ACUERDO":
+        return modalidad, None
+    if porcentaje_raw in (None, ""):
+        raise ValueError(
+            "En flete a mutuo acuerdo el vendedor debe publicar qué porcentaje del flete paga."
+        )
+    porcentaje = float(porcentaje_raw)
+    if not 0.0 <= porcentaje <= 100.0:
+        raise ValueError("El porcentaje del flete que paga el vendedor debe estar entre 0 y 100.")
+    return modalidad, round(porcentaje, 2)
+
+
 def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
     """
     Registra un nuevo lote de subproducto publicado por una agroindustria,
@@ -419,6 +442,10 @@ def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
         datos.get("perfiles_comprador", "").strip() or defaults["perfiles_comprador"]
     )
 
+    modalidad_flete, porcentaje_flete_vendedor = _resolver_modalidad_flete(
+        datos.get("modalidad_flete"), datos.get("porcentaje_flete_vendedor")
+    )
+
     return LoteSubproducto.objects.create(
         titulo=datos["titulo"].strip(),
         categoria=categoria,
@@ -432,7 +459,8 @@ def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
         carroceria_requerida=carroceria_requerida,
         usos_recomendados=usos_recomendados,
         perfiles_comprador=perfiles_comprador,
-        modalidad_flete=(datos.get("modalidad_flete") or "COMPRADOR").strip(),
+        modalidad_flete=modalidad_flete,
+        porcentaje_flete_vendedor=porcentaje_flete_vendedor,
     )
 
 
@@ -602,8 +630,11 @@ def editar_lote_existente(lote_id: int, datos: dict) -> LoteSubproducto:
         lote.densidad_kg_m3 = max(50, int(datos["densidad_kg_m3"]))
     if "precio_tonelada_ars" in datos and datos["precio_tonelada_ars"] is not None:
         lote.precio_tonelada_ars = max(0.0, float(datos["precio_tonelada_ars"]))
-    if "modalidad_flete" in datos and datos["modalidad_flete"]:
-        lote.modalidad_flete = str(datos["modalidad_flete"]).upper().strip()
+    if datos.get("modalidad_flete") or "porcentaje_flete_vendedor" in datos:
+        lote.modalidad_flete, lote.porcentaje_flete_vendedor = _resolver_modalidad_flete(
+            datos.get("modalidad_flete") or lote.modalidad_flete,
+            datos.get("porcentaje_flete_vendedor", lote.porcentaje_flete_vendedor),
+        )
     if "usos_recomendados" in datos and datos["usos_recomendados"]:
         lote.usos_recomendados = str(datos["usos_recomendados"]).strip()
     lote.save()
