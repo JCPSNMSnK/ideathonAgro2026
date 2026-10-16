@@ -1,4 +1,4 @@
-# SubRuta — Del Subproducto al Mercado con Flete Calzado
+# Moñái — Del Subproducto al Mercado con Flete Calzado
 
 > **Ideathon NEA Tech 2026 (Corrientes)**  
 > **Vertical:** Agro  
@@ -13,7 +13,7 @@
 
 ## 2. Resumen del Producto (en 4 líneas)
 1. **Problema:** En el NEA sobran toneladas de subproductos útiles (aserrín, cascarilla de arroz, descarte cítrico), pero el negocio se cae porque ocupan mucho volumen por su bajo valor y contratar un flete común come hasta el 80% del margen.
-2. **Solución:** **SubRuta** conecta industrias vendedoras y productores compradores recomendando oportunidades según su actividad y calculando el costo exacto por peso/volumen junto con camiones que vuelven vacíos (**Flete Calzado**, hasta 45% más barato).
+2. **Solución:** **Moñái** conecta industrias vendedoras y productores compradores recomendando oportunidades según su actividad y calculando el costo exacto por peso/volumen junto con camiones que vuelven vacíos (**Flete Calzado**, hasta 45% más barato).
 3. **Modelo de Negocio:** Cobramos una comisión baja por operación cerrada (**2,5% sobre el beneficio neto del vendedor + 2,5% sobre la gestión del Flete Calzado**), alcanzando el punto de equilibrio con solo 28 viajes mensuales (**SUPUESTO**).
 4. **Blockchain Invisible:** El productor opera en pesos de forma simple y, por detrás, sellamos en **Hedera/Stellar** el pago en garantía (*escrow*) y el Certificado de Trazabilidad Ambiental que demuestra el destino sustentable del subproducto.
 
@@ -41,7 +41,7 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
 *Copiá y pegá este bloque si vas a pedirle a una IA que programe, diseñe pantallas o arme presentaciones sobre nuestro proyecto:*
 
 ```markdown
-### Contexto del Proyecto: SubRuta (Ideathon NEA Tech 2026)
+### Contexto del Proyecto: Moñái (Ideathon NEA Tech 2026)
 - **Qué es:** Plataforma web/móvil que transforma subproductos agroindustriales en negocios rentables conectando oferta agroindustrial, demanda productiva y camiones de retorno ("Flete Calzado").
 - **Foco geográfico inicial:** Región NEA (Corrientes, Misiones, Chaco, Formosa), con casos testigo en Saladas (Corrientes) para los sectores foresto-industrial (aserrín/chips), arrocero (cascarilla/afrechillo) y citrícola (bagazo/cáscara húmeda), y proyección de escalabilidad a Región Pampeana y Cuyo.
 - **Problema central:** Los subproductos tienen bajo precio por tonelada y alta relación volumen/peso (cubicaje). Un flete tradicional a tarifa plena hace inviable su traslado a más de 100 km. Hoy se comercializan de boca en boca, en grupos cerrados de WhatsApp y en negro, sin garantías de pago ni trazabilidad ambiental.

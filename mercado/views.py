@@ -140,6 +140,9 @@ def api_reservar_con_garantia(request):
                 "id": operacion.id,
                 "hash_certificado": operacion.hash_certificado,
                 "red_blockchain": operacion.red_blockchain,
+                "hashscan_url": getattr(
+                    operacion, "hashscan_url", "https://hashscan.io/testnet/mainnet"
+                ),
                 "estado_garantia": operacion.estado_garantia,
                 "vendedor": lote.empresa_vendedora,
                 "origen": f"{lote.localidad_origen}, {lote.provincia}",

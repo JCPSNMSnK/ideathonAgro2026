@@ -132,4 +132,6 @@ def registrar_operacion_con_garantia(
         red_blockchain=sello["red_blockchain"],
         hash_certificado=sello["hash_certificado"],
     )
+    operacion.hashscan_url = sello["hashscan_url"]
+    operacion.hedera_block = sello["hedera_block"]
     return operacion

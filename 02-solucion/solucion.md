@@ -1,7 +1,7 @@
 # 02. La Solución
 
 ## 1. Idea Elegida
-**SubRuta** es una plataforma web/móvil que conecta a las agroindustrias generadoras de subproductos con productores compradores, integrando dos motores clave:
+**Moñái** es una plataforma web/móvil que conecta a las agroindustrias generadoras de subproductos con productores compradores, integrando dos motores clave:
 1. **Recomendador de Oportunidades Productivas:** Traduce el "residuo" de una industria en un "insumo" claro para el comprador según su actividad (ej. le avisa a un productor avícola o ganadero que a 120 km hay cascarilla de arroz, aserrín o pulpa cítrica ideal para su campo).
 2. **Calculadora de Cubicaje (Peso/Volumen) + Match de Flete Calzado:** Cruza la densidad del subproducto ($m^3$ vs. toneladas) con las tarifas de referencia **FADEEAC/CATAC 2026** y busca camiones que regresan vacíos por esa ruta (**Flete Calzado**), reduciendo el costo logístico entre un **40% y un 50%**.
 

@@ -9,7 +9,7 @@ El software hace la inteligencia (cálculo de peso/volumen y cruce de rutas), pe
 ---
 
 ## 2. Flexibilidad Comercial: ¿Quién paga el flete?
-A diferencia de un e-commerce rígido, en el agro quien paga el flete depende de la urgencia de cada punta. **SubRuta** permite configurar en cada lote 3 modalidades:
+A diferencia de un e-commerce rígido, en el agro quien paga el flete depende de la urgencia de cada punta. **Moñái** permite configurar en cada lote 3 modalidades:
 * **Flete 100% a cargo del Comprador:** Cuando el productor ganadero o avícola busca activamente fibra o cama de pollo barata.
 * **Flete 100% a cargo del Vendedor:** Cuando la agroindustria (ej. citrícola o aserradero) tiene el galpón colapsado y prefiere absorber el flete calzado antes que pagar una multa ambiental o un servicio de descarte.
 * **Flete Compartido (50% y 50% o negociable):** Ambas puntas dividen el costo del camión de retorno para destrabar el negocio.
@@ -43,8 +43,8 @@ Para operar durante los primeros 6 a 12 meses en el NEA con una estructura livia
 ### A. Ejemplo de 1 viaje promedio en el NEA (250 km)
 * **Valor del lote de subproducto en planta** (beneficio del vendedor): **$500.000 ARS** *(SUPUESTO)*.
 * **Flete Tradicional a tarifa plena FADEEAC (~250 km):** ~$1.400.000 ARS *(Dato basado en escala FADEEAC 2026)*.
-* **Flete Calzado en SubRuta (con 45% de descuento por retorno):** **~$770.000 ARS** *(Ahorro generado al usuario: **$630.000 ARS**)*.
-* **Ingreso de SubRuta en ese viaje:**
+* **Flete Calzado en Moñái (con 45% de descuento por retorno):** **~$770.000 ARS** *(Ahorro generado al usuario: **$630.000 ARS**)*.
+* **Ingreso de Moñái en ese viaje:**
   * 2,5% sobre el beneficio del vendedor ($500.000) = **$12.500 ARS**.
   * 2,5% sobre el Flete Calzado gestionado ($770.000) = **$19.250 ARS**.
   * **Ganancia neta de la plataforma por camión:** **$31.750 ARS**.

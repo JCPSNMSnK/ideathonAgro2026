@@ -604,6 +604,9 @@ function mostrarModalVoucherReserva(cert) {
     setTxt("voucher-ahorro", `${formatoARS(cert.ahorro_logistico_ars)} ARS`);
     setTxt("voucher-total", `${formatoARS(cert.total_comprador_ars)} ARS (Custodia activa)`);
     setTxt("voucher-hash", cert.hash_certificado);
+    setTxt("voucher-red", cert.red_blockchain || "Hedera Testnet (HCS)");
+    const vLink = document.getElementById("voucher-hashscan-link");
+    if (vLink && cert.hashscan_url) vLink.href = cert.hashscan_url;
 
     const modal = document.getElementById("modal-reserva-exito");
     if (modal) {
@@ -648,6 +651,8 @@ function actualizarCertificadoEnPortalVendedor(cert) {
     setTxt("cert-total", `${formatoARS(cert.total_comprador_ars)} ARS`);
     setTxt("cert-hash", cert.hash_certificado);
     setTxt("cert-red", cert.red_blockchain);
+    const cLink = document.getElementById("cert-hashscan-link");
+    if (cLink && cert.hashscan_url) cLink.href = cert.hashscan_url;
 }
 
 function imprimirCertificadoOficial() {

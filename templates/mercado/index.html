@@ -980,8 +980,8 @@
 
                         <!-- Bloque de Verificación Criptográfica y Hedera HCS -->
                         <div class="cert-hash-section">
-                            <div style="font-size: 0.80rem; font-weight: 700; color: var(--color-blockchain); display:flex; justify-content:space-between; align-items:center;">
-                                <span>Sello de Auditoría Inmutable (Hedera Hashgraph · Topic HCS 0.0.4829104):</span>
+                            <div style="font-size: 0.80rem; font-weight: 700; color: var(--color-blockchain); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                                <span>Sello de Auditoría Inmutable (<span id="cert-red">{% if certificados_recientes %}{{ certificados_recientes.0.red_blockchain }}{% else %}Hedera Testnet · Topic HCS 0.0.4829104{% endif %}</span>):</span>
                                 <span class="font-mono" style="font-size:0.75rem; color:var(--texto-suave);">$0,0001 USD / tx</span>
                             </div>
                             <div id="cert-hash" class="hash-box font-mono">{% if certificados_recientes %}{{ certificados_recientes.0.hash_certificado }}{% else %}0x8afb5ee71262172013ebea4918f0c3a8e91f42a1760628000419283710{% endif %}</div>
@@ -996,6 +996,9 @@
                                 </svg>
                                 Imprimir / Descargar Certificado A4
                             </button>
+                            <a id="cert-hashscan-link" href="https://hashscan.io/testnet/mainnet" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration:none;">
+                                🔗 Verificar Bloque en Hedera HashScan (Testnet) ↗
+                            </a>
                             <button type="button" class="chip-btn" onclick="cambiarVistaRol('vista-comprador')">
                                 Volver al Cotizador
                             </button>
@@ -1332,10 +1335,14 @@
                 </div>
 
                 <div style="margin-top:1rem; font-size:0.80rem; color:var(--texto-suave);">
-                    Sello de Trazabilidad Hedera HCS: <span id="voucher-hash" class="font-mono" style="word-break:break-all;">0x8afb5ee7...</span>
+                    <div>Red de Consenso: <strong id="voucher-red" style="color:var(--texto-principal);">Hedera Testnet (HCS)</strong></div>
+                    <div style="margin-top:0.25rem;">Sello Criptográfico: <span id="voucher-hash" class="font-mono" style="word-break:break-all;">0x8afb5ee7...</span></div>
                 </div>
 
                 <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:0.75rem; margin-top:1.25rem;">
+                    <a id="voucher-hashscan-link" href="https://hashscan.io/testnet/mainnet" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration:none;">
+                        🔗 Verificar en Hedera HashScan ↗
+                    </a>
                     <button type="button" class="chip-btn" onclick="irACertificadoVendedor()">
                         Ver Certificado Ambiental
                     </button>
