@@ -6,4 +6,5 @@ urlpatterns = [
     path("api/cotizar/", views.api_cotizar_flete, name="api_cotizar_flete"),
     path("api/reservar/", views.api_reservar_con_garantia, name="api_reservar_con_garantia"),
     path("api/publicar/", views.api_publicar_lote, name="api_publicar_lote"),
+    path("api/publicar-camion/", views.api_publicar_camion, name="api_publicar_camion"),
 ]

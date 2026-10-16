@@ -1,38 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 /* =============================================================================
-   MÓDULO CARRIL 1 (Responsable sugerida: Luciana Avalos — Diseño Gráfico)
-   =============================================================================
-   Archivo central de identidad visual (Design Tokens).
-   Cambiando estos valores se actualiza automáticamente toda la estética de la app.
-*/
+   MÓDULO CARRIL 1 — Identidad Visual y Sistema de Diseño Editorial Agro-Fintech
+   Responsable: Luciana Avalos (Dirección de Arte, Identidad Visual y UI de Producto)
+   Producto: Moñái — Economía Circular y Logística de Flete Calzado del NEA (2026)
+   Inspiración: Moñái, mito guaraní protector de campos, sembrados y caminos
+   ============================================================================= */
+
 :root {
-    /* Paleta Regional NEA (Monte, Tierra Colorada, Citrus y Río) */
-    --color-primario: #1b4332;       /* Verde monte profundo */
-    --color-primario-hover: #2d6a4f; /* Verde hoja */
-    --color-acento: #d97706;         /* Ámbar / Citrus / Madera */
-    --color-exito: #15803d;          /* Verde ahorro Flete Calzado */
-    --color-exito-bg: #dcfce7;
-    --color-peligro: #b91c1c;        /* Rojo alerta Flete Muerto / Inviable */
-    --color-peligro-bg: #fee2e2;
-    --color-blockchain: #1e3a8a;     /* Azul sello de garantía y trazabilidad */
-    --color-blockchain-bg: #dbeafe;
+    color-scheme: light dark;
 
-    /* Fondos y Superficies */
-    --bg-pagina: #f8faf7;
-    --bg-tarjeta: #ffffff;
-    --bg-bloque-suave: #f1f5f0;
+    &:has(> head > meta[name="color-scheme"][content="dark"]),
+    &[data-theme="dark"] {
+        color-scheme: dark;
+    }
 
-    /* Textos */
-    --texto-principal: #111827;
-    --texto-secundario: #4b5563;
-    --texto-suave: #6b7280;
+    &:has(> head > meta[name="color-scheme"][content="light"]),
+    &[data-theme="light"] {
+        color-scheme: light;
+    }
 
-    /* Bordes y Sombras */
-    --borde-color: #dce3da;
-    --radio-md: 12px;
-    --radio-lg: 16px;
-    --sombra-suave: 0 4px 16px rgba(27, 67, 50, 0.07);
-    --sombra-destacada: 0 10px 28px rgba(27, 67, 50, 0.14);
+    /* =========================================================================
+       PALETA MODO CLARO (Editorial Crema Pergamino, Verde Monte y Rojo Tierra)
+       Calma, contraste visual limpio y descanso para la vista en el campo
+       ========================================================================= */
+    --bg-pagina: #FBF8F2;
+    --bg-gradiente: radial-gradient(1100px 550px at 50% -10%, rgba(24, 78, 46, 0.05), transparent 70%);
+    --bg-tarjeta: #FFFFFF;
+    --bg-tarjeta-hover: #FAF7F0;
+    --bg-bloque-suave: #F3EFE6;
+    --bg-elevado: #EAE4D6;
+    --bg-glass: rgba(255, 255, 255, 0.92);
+    --bg-header: rgba(251, 248, 242, 0.94);
 
-    /* Tipografía */
-    --fuente-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Colores Institucionales y de Marca */
+    --color-primario: #184E2E;           /* Verde Monte Profundo */
+    --color-primario-hover: #123C23;
+    --color-primario-suave: rgba(24, 78, 46, 0.08);
+    --color-secundario: #2D7248;
+    --color-acento: #9A3412;             /* Terracota / Tierra Colorada */
+    --color-acento-hover: #7C2D12;
+    --color-acento-bg: rgba(154, 52, 18, 0.08);
+    --color-crema-dorado: #C4AD85;
+
+    /* Rentabilidad Logística */
+    --color-exito: #15803D;              /* Verde Rentabilidad Flete Calzado */
+    --color-exito-bg: #EDF9F1;
+    --color-exito-borde: #A7F3D0;
+
+    --color-peligro: #DC2626;            /* Rojo Alerta Flete Tradicional */
+    --color-peligro-bg: #FEF2F2;
+    --color-peligro-borde: #FECACA;
+
+    /* Trazabilidad y Blockchain */
+    --color-blockchain: #184E2E;
+    --color-blockchain-bg: #EAF4EE;
+    --color-blockchain-borde: #86EFAC;
+
+    /* Jerarquía Tipográfica y Contraste */
+    --texto-principal: #111814;          /* Contraste 15:1 */
+    --texto-secundario: #4B554F;         /* Contraste 7:1 */
+    --texto-suave: #6E7A73;              /* Contraste 4.5:1 */
+    --texto-sobre-primario: #FFFFFF;
+
+    /* Bordes y Sombras Sutiles */
+    --borde-color: rgba(0, 0, 0, 0.08);
+    --borde-fuerte: rgba(0, 0, 0, 0.16);
+    --radio-xs: 6px;
+    --radio-sm: 10px;
+    --radio-md: 14px;
+    --radio-lg: 20px;
+    --radio-xl: 26px;
+    --sombra-suave: 0 2px 8px -1px rgba(17, 24, 20, 0.05), 0 1px 3px rgba(17, 24, 20, 0.03);
+    --sombra-destacada: 0 12px 28px -6px rgba(24, 78, 46, 0.12), 0 4px 10px -2px rgba(17, 24, 20, 0.04);
+
+    /* Modales y Superposiciones */
+    --modal-backdrop: rgba(17, 24, 20, 0.65);
+    --modal-bg: #FFFFFF;
+    --modal-border: rgba(0, 0, 0, 0.12);
+
+    /* Badges de Categoría y Modalidad Semánticos (Modo Claro) */
+    --badge-arroz-bg: rgba(24, 78, 46, 0.08);
+    --badge-arroz-text: #184E2E;
+    --badge-arroz-borde: rgba(24, 78, 46, 0.22);
+
+    --badge-madera-bg: rgba(180, 83, 9, 0.08);
+    --badge-madera-text: #B45309;
+    --badge-madera-borde: rgba(180, 83, 9, 0.22);
+
+    --badge-citrus-bg: rgba(217, 119, 6, 0.08);
+    --badge-citrus-text: #C2410C;
+    --badge-citrus-borde: rgba(217, 119, 6, 0.22);
+
+    --badge-compartido-bg: rgba(99, 102, 241, 0.08);
+    --badge-compartido-text: #4F46E5;
+    --badge-compartido-borde: rgba(99, 102, 241, 0.22);
+
+    /* Familias Tipográficas */
+    --fuente-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --fuente-display: 'Fraunces', Georgia, serif;
+    --fuente-mono: 'JetBrains Mono', monospace;
+}
+
+/* =============================================================================
+   PALETA MODO OSCURO ([data-theme="dark"] — Obsidian Slate Profesional)
+   Contraste limpio, descanso ocular y acentos esmeralda/ámbar equilibrados
+   ============================================================================= */
+:root:has(> head > meta[name="color-scheme"][content="dark"]),
+:root[data-theme="dark"],
+[data-theme="dark"] {
+    --bg-pagina: #0B0F12;
+    --bg-gradiente: radial-gradient(900px 450px at 50% -10%, rgba(16, 185, 129, 0.06), transparent 70%);
+    --bg-tarjeta: #13181D;
+    --bg-tarjeta-hover: #192026;
+    --bg-bloque-suave: #1A2228;
+    --bg-elevado: #242E36;
+    --bg-glass: rgba(19, 24, 29, 0.92);
+    --bg-header: rgba(11, 15, 18, 0.94);
+
+    --color-primario: #10B981;           /* Esmeralda nítido de alta visibilidad */
+    --color-primario-hover: #34D399;
+    --color-primario-suave: rgba(16, 185, 129, 0.12);
+    --color-secundario: #34D399;
+    --color-acento: #FB923C;
+    --color-acento-hover: #F97316;
+    --color-acento-bg: rgba(251, 146, 60, 0.12);
+    --color-crema-dorado: #475569;
+
+    --color-exito: #34D399;
+    --color-exito-bg: rgba(16, 185, 129, 0.12);
+    --color-exito-borde: rgba(52, 211, 153, 0.30);
+
+    --color-peligro: #F87171;
+    --color-peligro-bg: rgba(239, 68, 68, 0.12);
+    --color-peligro-borde: rgba(248, 113, 113, 0.30);
+
+    --color-blockchain: #34D399;
+    --color-blockchain-bg: rgba(16, 185, 129, 0.10);
+    --color-blockchain-borde: rgba(52, 211, 153, 0.25);
+
+    --texto-principal: #F1F5F9;          /* Blanco nítido slate */
+    --texto-secundario: #94A3B8;         /* Gris pizarra equilibrado */
+    --texto-suave: #64748B;              /* Pizarra medio para metadatos */
+    --texto-sobre-primario: #0B0F12;
+
+    --borde-color: rgba(255, 255, 255, 0.09);
+    --borde-fuerte: rgba(255, 255, 255, 0.16);
+    --sombra-suave: 0 4px 16px rgba(0, 0, 0, 0.45);
+    --sombra-destacada: 0 16px 36px rgba(0, 0, 0, 0.65);
+
+    --modal-backdrop: rgba(0, 0, 0, 0.80);
+    --modal-bg: #13181D;
+    --modal-border: rgba(255, 255, 255, 0.12);
+
+    /* Badges de Categoría y Modalidad Semánticos (Modo Oscuro) */
+    --badge-arroz-bg: rgba(16, 185, 129, 0.14);
+    --badge-arroz-text: #6EE7B7;
+    --badge-arroz-borde: rgba(52, 211, 153, 0.28);
+
+    --badge-madera-bg: rgba(245, 158, 11, 0.14);
+    --badge-madera-text: #FCD34D;
+    --badge-madera-borde: rgba(251, 191, 36, 0.28);
+
+    --badge-citrus-bg: rgba(251, 146, 60, 0.14);
+    --badge-citrus-text: #FDBA74;
+    --badge-citrus-borde: rgba(251, 146, 60, 0.28);
+
+    --badge-compartido-bg: rgba(129, 140, 248, 0.14);
+    --badge-compartido-text: #C7D2FE;
+    --badge-compartido-borde: rgba(129, 140, 248, 0.28);
+}
+
+/* =============================================================================
+   PALETA MODO CLARO EXPLÍCITA ([data-theme="light"])
+   ============================================================================= */
+:root:has(> head > meta[name="color-scheme"][content="light"]),
+:root[data-theme="light"],
+[data-theme="light"] {
+    --bg-pagina: #FBF8F2;
+    --bg-gradiente: radial-gradient(1100px 550px at 50% -10%, rgba(24, 78, 46, 0.05), transparent 70%);
+    --bg-tarjeta: #FFFFFF;
+    --bg-tarjeta-hover: #FAF7F0;
+    --bg-bloque-suave: #F3EFE6;
+    --bg-elevado: #EAE4D6;
+    --bg-glass: rgba(255, 255, 255, 0.92);
+    --bg-header: rgba(251, 248, 242, 0.94);
+    --color-primario: #184E2E;
+    --color-primario-hover: #123C23;
+    --color-primario-suave: rgba(24, 78, 46, 0.08);
+    --color-secundario: #2D7248;
+    --color-acento: #9A3412;
+    --color-acento-hover: #7C2D12;
+    --color-acento-bg: rgba(154, 52, 18, 0.08);
+    --color-crema-dorado: #C4AD85;
+    --color-exito: #15803D;
+    --color-exito-bg: #EDF9F1;
+    --color-exito-borde: #A7F3D0;
+    --color-peligro: #DC2626;
+    --color-peligro-bg: #FEF2F2;
+    --color-peligro-borde: #FECACA;
+    --color-blockchain: #184E2E;
+    --color-blockchain-bg: #EAF4EE;
+    --color-blockchain-borde: #86EFAC;
+    --texto-principal: #111814;
+    --texto-secundario: #4B554F;
+    --texto-suave: #6E7A73;
+    --texto-sobre-primario: #FFFFFF;
+    --borde-color: rgba(0, 0, 0, 0.08);
+    --borde-fuerte: rgba(0, 0, 0, 0.16);
+    --sombra-suave: 0 2px 8px -1px rgba(17, 24, 20, 0.05), 0 1px 3px rgba(17, 24, 20, 0.03);
+    --sombra-destacada: 0 12px 28px -6px rgba(24, 78, 46, 0.12), 0 4px 10px -2px rgba(17, 24, 20, 0.04);
+    --modal-backdrop: rgba(17, 24, 20, 0.65);
+    --modal-bg: #FFFFFF;
+    --modal-border: rgba(0, 0, 0, 0.12);
+
+    --badge-arroz-bg: rgba(24, 78, 46, 0.08);
+    --badge-arroz-text: #184E2E;
+    --badge-arroz-borde: rgba(24, 78, 46, 0.22);
+    --badge-madera-bg: rgba(180, 83, 9, 0.08);
+    --badge-madera-text: #B45309;
+    --badge-madera-borde: rgba(180, 83, 9, 0.22);
+    --badge-citrus-bg: rgba(217, 119, 6, 0.08);
+    --badge-citrus-text: #C2410C;
+    --badge-citrus-borde: rgba(217, 119, 6, 0.22);
+    --badge-compartido-bg: rgba(99, 102, 241, 0.08);
+    --badge-compartido-text: #4F46E5;
+    --badge-compartido-borde: rgba(99, 102, 241, 0.22);
+}
+
+/* =============================================================================
+   TOKENS PARA IMPRESIÓN OFICIAL (A4 - Remito Circular y Certificado)
+   ============================================================================= */
+@media print {
+    :root {
+        --bg-pagina: #FFFFFF !important;
+        --bg-tarjeta: #FFFFFF !important;
+        --bg-bloque-suave: #F7F7F7 !important;
+        --texto-principal: #000000 !important;
+        --texto-secundario: #222222 !important;
+        --texto-suave: #444444 !important;
+        --color-primario: #184E2E !important;
+        --color-exito: #15803D !important;
+        --color-peligro: #000000 !important;
+        --borde-color: #333333 !important;
+        --borde-fuerte: #000000 !important;
+        --sombra-suave: none !important;
+        --sombra-destacada: none !important;
+    }
 }
