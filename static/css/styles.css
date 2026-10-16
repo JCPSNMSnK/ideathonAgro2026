@@ -1,0 +1,442 @@
+/* =============================================================================
+   ESTILOS DE COMPONENTES — SubRuta (Ideathon NEA Tech 2026)
+   ============================================================================= */
+@import url('variables.css');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--fuente-base);
+    background-color: var(--bg-pagina);
+    color: var(--texto-principal);
+    line-height: 1.5;
+}
+
+/* Encabezado */
+.navbar {
+    background: var(--color-primario);
+    color: #ffffff;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.brand-box {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.brand-badge {
+    background: var(--color-acento);
+    color: #fff;
+    font-weight: 800;
+    padding: 0.45rem 0.75rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.brand-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.brand-subtitle {
+    font-size: 0.85rem;
+    opacity: 0.88;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.db-pill {
+    background: rgba(255, 255, 255, 0.14);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+/* Cinta de los 4 pasos de la Demo */
+.demo-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.step-card {
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-left: 5px solid var(--color-primario);
+    border-radius: var(--radio-md);
+    padding: 0.85rem 1rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.step-num {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--color-acento);
+}
+
+.step-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+}
+
+/* Barra de filtro Recomendador (Paso 1 y 2) */
+.filter-bar {
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.filter-controls {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.chip-btn {
+    text-decoration: none;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--borde-color);
+    color: var(--texto-principal);
+    background: var(--bg-bloque-suave);
+    transition: all 0.18s ease;
+    cursor: pointer;
+}
+
+.chip-btn:hover,
+.chip-btn.active {
+    background: var(--color-primario);
+    color: #fff;
+    border-color: var(--color-primario);
+}
+
+/* Grilla Principal: Izquierda Catálogo / Derecha Calculadora en vivo */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 980px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tarjetas de Subproductos */
+.lotes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.lote-card {
+    background: var(--bg-tarjeta);
+    border: 2px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.25rem;
+    box-shadow: var(--sombra-suave);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.lote-card:hover,
+.lote-card.selected {
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.lote-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+}
+
+.badge-cat {
+    background: var(--bg-bloque-suave);
+    color: var(--color-primario);
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+}
+
+.badge-flete {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.lote-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+
+.lote-origin {
+    font-size: 0.88rem;
+    color: var(--texto-secundario);
+    margin-bottom: 0.75rem;
+}
+
+.lote-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    background: var(--bg-bloque-suave);
+    padding: 0.75rem;
+    border-radius: var(--radio-md);
+    margin-bottom: 0.75rem;
+}
+
+.metric-item span {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+}
+
+.metric-item strong {
+    font-size: 0.95rem;
+    color: var(--texto-principal);
+}
+
+.lote-uso {
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
+    background: #f0fdf4;
+    border-left: 3px solid var(--color-exito);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.85rem;
+}
+
+/* Panel Calculadora (Paso 3) */
+.calculator-panel {
+    background: var(--bg-tarjeta);
+    border: 2px solid var(--color-primario);
+    border-radius: var(--radio-lg);
+    padding: 1.5rem;
+    box-shadow: var(--sombra-destacada);
+    position: sticky;
+    top: 1.25rem;
+}
+
+.panel-header {
+    border-bottom: 1px solid var(--borde-color);
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.85rem;
+}
+
+.form-group label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+}
+
+.form-control {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--borde-color);
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: inherit;
+}
+
+/* Barras de Cubicaje (Peso vs Volumen) */
+.cubicaje-box {
+    background: var(--bg-bloque-suave);
+    border-radius: var(--radio-md);
+    padding: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.progress-row {
+    margin-top: 0.5rem;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.progress-bar-bg {
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--color-primario);
+    transition: width 0.3s ease;
+}
+
+.progress-bar-fill.volume-alert {
+    background: var(--color-acento);
+}
+
+/* Comparador Lado a Lado: Flete Muerto vs Flete Calzado */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin: 1rem 0;
+}
+
+.comp-box {
+    padding: 0.95rem;
+    border-radius: var(--radio-md);
+}
+
+.comp-bad {
+    background: var(--color-peligro-bg);
+    border: 1px solid #fca5a5;
+    color: var(--color-peligro);
+}
+
+.comp-good {
+    background: var(--color-exito-bg);
+    border: 2px solid var(--color-exito);
+    color: var(--color-exito);
+}
+
+.comp-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin: 0.25rem 0;
+}
+
+.savings-banner {
+    background: var(--color-primario);
+    color: #fff;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radio-md);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.savings-banner strong {
+    font-size: 1.2rem;
+    color: #fde047;
+}
+
+/* Botones */
+.btn-primary {
+    width: 100%;
+    background: var(--color-primario);
+    color: #fff;
+    border: none;
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--color-primario-hover);
+}
+
+.btn-secondary {
+    background: var(--color-acento);
+    color: #fff;
+    border: none;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Certificado Blockchain Invisible (Modal / Tarjeta) */
+.cert-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.72);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.cert-modal {
+    background: #fff;
+    max-width: 640px;
+    width: 100%;
+    border-radius: var(--radio-lg);
+    border-top: 8px solid var(--color-primario);
+    padding: 1.75rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.hash-box {
+    background: var(--color-blockchain-bg);
+    color: var(--color-blockchain);
+    font-family: monospace;
+    font-size: 0.82rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    word-break: break-all;
+    margin: 0.75rem 0;
+}

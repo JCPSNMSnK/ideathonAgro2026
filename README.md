@@ -51,3 +51,32 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
   3. Cierre con Garantía y Certificado Circular: retención de pago hasta confirmar entrega y emisión de un Certificado de Disposición Final (trazabilidad ambiental).
 - **Regla de diseño y código:** Cero jerga cripto para el usuario final. Interfaz limpia, pensada para productores y transportistas que usan el celular con baja señal. Toda la complejidad de cálculo de cubicaje y registro en blockchain (Hedera/Stellar) ocurre en el backend de forma transparente.
 ```
+
+---
+
+## 6. Arquitectura Modular para Desarrollo en Paralelo (Sin conflictos en Git)
+
+Para que los 4 integrantes trabajen en simultáneo sin pisarse archivos, el proyecto está dividido en **4 carriles independientes**:
+
+| Integrante | Carril / Responsabilidad | Archivos asignados para editar |
+| :--- | :--- | :--- |
+| **Luciana Avalos** *(Diseño Gráfico)* | **Carril 1:** Identidad visual (Tapé / Jopói / Cachapé / Jangada), paleta de colores NEA, tarjetas UI y Certificado Ambiental. | • [`static/css/variables.css`](./static/css/variables.css)<br>• [`static/css/styles.css`](./static/css/styles.css) |
+| **Joel Marcori** *(Lic. en Sistemas)* | **Carril 2:** Recomendador de subproductos según perfil del comprador (Avícola, Ganadero, Biomasa, Vivero) y publicación de lotes. | • [`mercado/services/recomendador.py`](./mercado/services/recomendador.py) |
+| **Giovanni Piazza** *(Lic. en Sistemas)* | **Carril 3:** Motor matemático de Peso vs. Volumen ($m^3$), tarifas oficiales FADEEAC 2026, descuento por Flete Calzado y comisión (2,5%). | • [`mercado/services/calculadora_flete.py`](./mercado/services/calculadora_flete.py) |
+| **Julio Pintos** *(Lic. en Sistemas)* | **Carril 4:** Pago en Garantía (*Escrow*), Certificado de Trazabilidad Ambiental (*Blockchain Invisible*), conexión a Supabase y Deploy. | • [`mercado/services/trazabilidad_blockchain.py`](./mercado/services/trazabilidad_blockchain.py)<br>• [`supabase/init_supabase.sql`](./supabase/init_supabase.sql) |
+
+### Cómo levantar el proyecto en 1 minuto (Local o con Supabase)
+```bash
+# 1. Crear y activar entorno virtual
+python -m venv .venv
+.\.venv\Scripts\activate   # En Windows
+
+# 2. Instalar dependencias
+pip install -r requirements.txt
+
+# 3. Migrar tablas y levantar servidor (precarga automáticamente los datos de Saladas/NEA)
+python manage.py migrate
+python manage.py runserver
+```
+> **Modo híbrido Supabase / Local:** Si crean un archivo `.env` con `DATABASE_URL` apuntando a **Supabase (PostgreSQL)**, el proyecto se conecta a la nube compartida por todo el equipo. Si `DATABASE_URL` está vacío (o se corta el Wi-Fi en el salón), usa automáticamente SQLite local con los mismos datos del NEA precargados.
+
