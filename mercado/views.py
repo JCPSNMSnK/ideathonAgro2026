@@ -15,6 +15,9 @@ from mercado.models import LoteSubproducto, CamionRetorno, OperacionTrazabilidad
 from mercado.services.seed_data import asegurar_datos_iniciales_nea
 from mercado.services.recomendador import (
     PERFILES_PRODUCTIVOS,
+    LOCALIDADES_COMPRADOR_NEA,
+    obtener_perfil_por_codigo,
+    obtener_localidad_por_codigo,
     obtener_lotes_recomendados,
     crear_nuevo_lote,
 )
@@ -30,13 +33,24 @@ def home_demo(request):
     asegurar_datos_iniciales_nea()
 
     perfil_actual = request.GET.get("perfil", "TODOS").upper()
-    lotes = obtener_lotes_recomendados(perfil_actual)
+    localidad_actual = request.GET.get("localidad", "GOYA").upper()
+    q = request.GET.get("q", "").strip()
+
+    perfil_actual_obj = obtener_perfil_por_codigo(perfil_actual)
+    localidad_actual_obj = obtener_localidad_por_codigo(localidad_actual)
+
+    lotes = obtener_lotes_recomendados(perfil_actual, localidad_actual, q)
     camiones = CamionRetorno.objects.filter(disponible=True)
     certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:5]
 
     context = {
         "perfiles": PERFILES_PRODUCTIVOS,
-        "perfil_actual": perfil_actual,
+        "perfil_actual": perfil_actual_obj["codigo"],
+        "perfil_actual_obj": perfil_actual_obj,
+        "localidades_comprador": LOCALIDADES_COMPRADOR_NEA,
+        "localidad_actual": localidad_actual_obj["codigo"],
+        "localidad_actual_obj": localidad_actual_obj,
+        "busqueda_q": q,
         "lotes": lotes,
         "camiones": camiones,
         "certificados_recientes": certificados_recientes,
