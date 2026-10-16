@@ -18,7 +18,8 @@
         })();
     </script>
     <title>Moñái — Logística Circular y Flete Calzado del NEA</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}?v={% now 'U' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v={% now 'U' %}">
 </head>
 <body>
 
@@ -1346,6 +1347,6 @@
         </div>
     </div>
 
-    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/app.js' %}?v={% now 'U' %}"></script>
 </body>
 </html>
