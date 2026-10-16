@@ -116,6 +116,12 @@ def registrar_operacion_con_garantia(
 
     sello = generar_sello_blockchain_invisible(payload_onchain)
 
+    # Actualizar stock disponible del lote en Supabase (dejando mínimo 2 tn para seguir probando en demo)
+    tn_actuales = float(lote.toneladas_disponibles)
+    tn_compradas = float(cotizacion["toneladas"])
+    lote.toneladas_disponibles = max(2.0, round(tn_actuales - tn_compradas, 2))
+    lote.save(update_fields=["toneladas_disponibles"])
+
     operacion = OperacionTrazabilidad.objects.create(
         lote=lote,
         camion=camion,
@@ -134,4 +140,17 @@ def registrar_operacion_con_garantia(
     )
     operacion.hashscan_url = sello["hashscan_url"]
     operacion.hedera_block = sello["hedera_block"]
+    operacion.toneladas_restantes_lote = float(lote.toneladas_disponibles)
     return operacion
+
+
+def liberar_pago_en_garantia(operacion_id: int) -> OperacionTrazabilidad:
+    """
+    Confirma la recepción conforme del camión en destino y libera los fondos
+    del Escrow al Vendedor y al Transportista, actualizando el registro en Supabase.
+    """
+    operacion = OperacionTrazabilidad.objects.get(id=operacion_id)
+    operacion.estado_garantia = "DESCARGA_CONFIRMADA_PAGO_LIBERADO"
+    operacion.save(update_fields=["estado_garantia"])
+    return operacion
+

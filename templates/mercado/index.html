@@ -722,7 +722,30 @@
                         </div>
                     </div>
 
-                    <!-- Datos de Entrega -->
+                    <!-- Selector Rápido de Comprador y Ventana de Carga (Sin Estadía FADEEAC) -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="calc-preset-comprador">Autocompletar Comprador del NEA</label>
+                            <select id="calc-preset-comprador" class="form-control" onchange="aplicarPresetComprador(this.value)">
+                                <option value="Granja Avícola San Isidro SRL|Goya, Corrientes|155">Granja Avícola San Isidro (Goya · 155 km)</option>
+                                <option value="Establecimiento Ganadero El Ceibo|San Roque, Corrientes|95">Ganadera El Ceibo (San Roque · 95 km)</option>
+                                <option value="Feedlot Las Tres Marías SA|Mercedes, Corrientes|140">Feedlot Las Tres Marías (Mercedes · 140 km)</option>
+                                <option value="Secadero Yerbales del Sur SRL|Santo Tomé, Corrientes|75">Secadero Yerbales del Sur (Santo Tomé · 75 km)</option>
+                                <option value="Vivero Forestal Iberá|Bella Vista, Corrientes|65">Vivero Forestal Iberá (Bella Vista · 65 km)</option>
+                                <option value="CUSTOM">✏️ Escribir otro establecimiento...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="calc-ventana-carga">Turno de Carga (Sin Estadía)</label>
+                            <select id="calc-ventana-carga" class="form-control">
+                                <option value="Mañana 08:00 a 10:00 hs (Sin demora)">Mañana 08:00–10:00 hs (Confirmado)</option>
+                                <option value="Tarde 14:00 a 16:00 hs (Sin demora)">Tarde 14:00–16:00 hs (Confirmado)</option>
+                                <option value="Prioridad Evacuación 48 hs">Urgencia 48 hs (Carga inmediata)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Datos de Entrega Editables -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="calc-comprador">Establecimiento o Productor</label>
@@ -794,17 +817,18 @@
 
             <div class="main-grid">
 
-                <!-- Columna Izquierda: Publicar Nuevo Lote con Cubicaje en Planta -->
+                <!-- Columna Izquierda: Publicar / Editar Lote con Cubicaje en Planta -->
                 <div class="calculator-panel" style="position:static;">
                     <div class="panel-header">
-                        <span class="step-num">Gestión de Salida de Planta</span>
-                        <h3 style="font-size: 1.25rem; margin-top: 0.25rem; font-family: var(--fuente-display);">Publicar Nuevo Excedente</h3>
+                        <span class="step-num" id="pub-form-badge">Gestión de Salida de Planta (Alta / Modificación)</span>
+                        <h3 id="pub-form-title" style="font-size: 1.25rem; margin-top: 0.25rem; font-family: var(--fuente-display);">Publicar Nuevo Excedente</h3>
                         <p style="font-size: 0.88rem; color: var(--texto-secundario);">
                             Ingresá las toneladas y densidad para calcular automáticamente las bateas necesarias.
                         </p>
                     </div>
 
                     <form onsubmit="enviarNuevoLote(event)">
+                        <input type="hidden" id="pub-lote-edit-id" value="">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="pub-categoria">Sector Agroindustrial</label>
@@ -813,6 +837,7 @@
                                     <option value="MADERA">Foresto-Industria (Aserrín / Viruta / Chips)</option>
                                     <option value="CITRUS">Sector Citrícola (Bagazo / Cáscara húmeda)</option>
                                     <option value="ALGODON">Sector Algodonero (Semilla / Cascarilla)</option>
+                                    <option value="OTRO">Otro Subproducto Regional</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -835,7 +860,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="pub-toneladas">Toneladas Disponibles (tn)</label>
-                                <input type="number" id="pub-toneladas" class="form-control font-mono" value="15" min="1" max="120" step="1" oninput="actualizarPreviewCubicajePublicacion()" required>
+                                <input type="number" id="pub-toneladas" class="form-control font-mono" value="15" min="1" max="120" step="0.5" oninput="actualizarPreviewCubicajePublicacion()" required>
                             </div>
                             <div class="form-group">
                                 <label for="pub-densidad">Densidad (kg/m³)</label>
@@ -870,9 +895,14 @@
                             <input type="text" id="pub-usos" class="form-control" value="Cama para galpones avícolas, sustrato de vivero y biomasa térmica" required>
                         </div>
 
-                        <button type="submit" class="btn-primary">
-                            Publicar Lote y Activar Match con Camiones de Retorno
-                        </button>
+                        <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
+                            <button type="submit" id="pub-btn-submit" class="btn-primary" style="flex:1;">
+                                Publicar Lote y Activar Match con Camiones de Retorno
+                            </button>
+                            <button type="button" id="pub-btn-cancel-edit" class="chip-btn" style="display:none;" onclick="cancelarEdicionLote()">
+                                Cancelar Edición
+                            </button>
+                        </div>
                     </form>
                 </div>
 
@@ -882,7 +912,7 @@
                         <div class="cert-watermark" aria-hidden="true">MOÑÁI</div>
                         <div class="cert-seal-header">
                             <div>
-                                <span class="cert-seal-badge">
+                                <span class="cert-seal-badge" id="cert-estado-badge">
                                     PAGO EN GARANTÍA (ESCROW ARS) · REMITO CIRCULAR AUDITABLE
                                 </span>
                                 <h3 style="font-size: 1.38rem; margin-top: 0.45rem; font-family: var(--fuente-display);">
@@ -970,7 +1000,7 @@
                                 <span>Monto Custodiado en Garantía (Escrow)</span>
                                 <strong id="cert-total" class="font-mono">
                                     {% if certificados_recientes %}
-                                        ${{ certificados_recientes.0.flete_calzado_ars|floatformat:0 }} ARS
+                                        ${{ certificados_recientes.0.flete_calzado_ars|floatformat:0 }} ARS ({{ certificados_recientes.0.estado_garantia }})
                                     {% else %}
                                         $770.000 ARS (Custodia activa)
                                     {% endif %}
@@ -989,22 +1019,56 @@
 
                         <div class="cert-actions-row">
                             <button type="button" class="btn-primary" style="width:auto;" onclick="imprimirCertificadoOficial()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px; margin-right:4px;" aria-hidden="true">
-                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                                    <rect x="6" y="14" width="12" height="8"></rect>
-                                </svg>
                                 Imprimir / Descargar Certificado A4
+                            </button>
+                            <button type="button" class="btn-secondary" style="width:auto;" onclick="confirmarDescargaYLiberarEscrow()">
+                                ✅ Confirmar Descarga y Liberar Pago (Escrow)
                             </button>
                             <a id="cert-hashscan-link" href="https://hashscan.io/testnet/mainnet" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration:none;">
                                 🔗 Verificar Bloque en Hedera HashScan (Testnet) ↗
                             </a>
-                            <button type="button" class="chip-btn" onclick="cambiarVistaRol('vista-comprador')">
-                                Volver al Cotizador
-                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Panel ABM de Lotes Publicados en Planta (Editar / Dar de Baja) -->
+            <div class="calculator-panel" style="position:static; margin-top:1.75rem;">
+                <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+                    <div>
+                        <span class="step-num">ABM DE OFERTA AGROINDUSTRIAL EN SUPABASE</span>
+                        <h3 style="font-size: 1.2rem; margin-top: 0.2rem; font-family: var(--fuente-display);">
+                            Lotes Activos en Planta ({{ todos_los_lotes|length }}) — Editar o Dar de Baja
+                        </h3>
+                    </div>
+                </div>
+                <div style="display:grid; gap:0.65rem;">
+                    {% for item in todos_los_lotes %}
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; padding:0.75rem 1rem; background:var(--bg-bloque-suave); border:1px solid var(--borde-color); border-radius:var(--radio-md);">
+                        <div>
+                            <strong style="font-size:0.95rem;">{{ item.titulo }}</strong>
+                            <div style="font-size:0.82rem; color:var(--texto-secundario);">
+                                🏭 {{ item.empresa_vendedora }} ({{ item.localidad_origen }}) ·
+                                <strong>{{ item.toneladas_disponibles|floatformat:1 }} tn</strong> ·
+                                {{ item.densidad_kg_m3 }} kg/m³ ·
+                                <strong>${{ item.precio_tonelada_ars|floatformat:0 }}/tn</strong> ·
+                                Flete: {{ item.get_modalidad_flete_display }}
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button type="button" class="chip-btn"
+                                    onclick="cargarLoteEnFormularioEdicion('{{ item.id }}', '{{ item.titulo|escapejs }}', '{{ item.categoria }}', '{{ item.empresa_vendedora|escapejs }}', '{{ item.localidad_origen|escapejs }}', '{{ item.toneladas_disponibles }}', '{{ item.densidad_kg_m3 }}', '{{ item.precio_tonelada_ars }}', '{{ item.modalidad_flete }}', '{{ item.usos_recomendados|escapejs }}')">
+                                ✏️ Editar
+                            </button>
+                            <button type="button" class="chip-btn" style="color:var(--color-peligro); border-color:var(--color-peligro);"
+                                    onclick="eliminarLoteABM('{{ item.id }}', '{{ item.titulo|escapejs }}')">
+                                🗑️ Baja
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
             </div>
         </section>
 
@@ -1063,9 +1127,19 @@
                     <article class="lote-card truck-route-card" style="cursor:default;">
                         <div class="lote-header">
                             <span class="badge-cat" style="font-size:0.78rem;">🚛 {{ cam.transportista }}</span>
-                            <span class="badge-flete-savings font-mono">
-                                Retorno: -{{ cam.descuento_retorno_pct|floatformat:0 }}% vs FADEEAC
-                            </span>
+                            <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+                                <span class="badge-flete-savings font-mono">
+                                    Retorno: -{{ cam.descuento_retorno_pct|floatformat:0 }}% vs FADEEAC
+                                </span>
+                                <button type="button" class="chip-btn" style="padding:0.2rem 0.55rem; font-size:0.74rem;"
+                                        onclick="cargarCamionEnFormularioEdicion('{{ cam.id }}', '{{ cam.transportista|escapejs }}', '{{ cam.origen_viaje|escapejs }}', '{{ cam.destino_viaje|escapejs }}', '{{ cam.pasa_por|escapejs }}', '{{ cam.tipo_carroceria|escapejs }}', '{{ cam.fecha_disponible|escapejs }}', '{{ cam.capacidad_max_m3|floatformat:0 }}', '{{ cam.descuento_retorno_pct|floatformat:0 }}')">
+                                    ✏️ Editar
+                                </button>
+                                <button type="button" class="chip-btn" style="padding:0.2rem 0.55rem; font-size:0.74rem; color:var(--color-peligro); border-color:var(--color-peligro);"
+                                        onclick="eliminarCamionABM('{{ cam.id }}', '{{ cam.transportista|escapejs }}')">
+                                    🗑️ Baja
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Ruta Visual GPS -->
@@ -1126,17 +1200,18 @@
                     {% endfor %}
                 </div>
 
-                <!-- Columna Derecha: Publicar Camión de Retorno -->
-                <aside class="calculator-panel" style="position:static;">
+                <!-- Columna Derecha: Publicar / Editar Camión de Retorno -->
+                <aside class="calculator-panel" style="position:static;" id="panel-form-camion">
                     <div class="panel-header">
-                        <span class="step-num">ALTA RÁPIDA PARA CHOFERES Y FLOTAS</span>
-                        <h3 style="font-size: 1.3rem; margin-top: 0.35rem; font-family: var(--fuente-display);">Publicar Viaje de Regreso Vacío</h3>
+                        <span class="step-num" id="cam-form-badge">ABM PARA CHOFERES Y FLOTAS</span>
+                        <h3 id="cam-form-title" style="font-size: 1.3rem; margin-top: 0.35rem; font-family: var(--fuente-display);">Publicar Viaje de Regreso Vacío</h3>
                         <p style="font-size: 0.88rem; color: var(--texto-secundario);">
-                            Ingresá tu ruta de vuelta para que te avisemos cuando haya cargas compatibles en tu camino.
+                            Ingresá o editá tu ruta de vuelta para que te avisemos cuando haya cargas compatibles en tu camino.
                         </p>
                     </div>
 
                     <form onsubmit="enviarNuevoCamion(event)">
+                        <input type="hidden" id="cam-edit-id" value="">
                         <div class="form-group">
                             <label for="cam-transportista">Empresa o Nombre del Chofer</label>
                             <input type="text" id="cam-transportista" class="form-control" placeholder="Ej: Transporte Don Horacio (Batea #02)" required>
@@ -1185,9 +1260,14 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-primary">
-                            Publicar Retorno y Activar Notificaciones →
-                        </button>
+                        <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
+                            <button type="submit" id="cam-btn-submit" class="btn-primary" style="flex:1;">
+                                Publicar Retorno y Activar Notificaciones →
+                            </button>
+                            <button type="button" id="cam-btn-cancel-edit" class="chip-btn" style="display:none;" onclick="cancelarEdicionCamion()">
+                                Cancelar Edición
+                            </button>
+                        </div>
                     </form>
                 </aside>
 
@@ -1198,25 +1278,24 @@
     </main>
 
     <!-- =================================================================== -->
-    <!-- MODAL 1: INICIO DE SESIÓN / IDENTIFICACIÓN SENCILLA POR ROL         -->
+    <!-- MODAL 1: INICIO DE SESIÓN Y ABM DE PERFILES DE USUARIO              -->
     <!-- =================================================================== -->
     <div id="modal-login" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
         <div class="modal-dialog">
             <div class="modal-header">
                 <div>
-                    <span class="role-badge-pill">ACCESO ACCESIBLE Y SENCILLO</span>
+                    <span class="role-badge-pill">GESTIÓN DE PERFILES Y ROLES (ABM USUARIOS)</span>
                     <h3 id="login-modal-title" style="font-size: 1.35rem; font-family: var(--fuente-display); margin-top: 0.35rem;">
                         ¿Cómo vas a operar en Moñái?
                     </h3>
                     <p style="font-size: 0.88rem; color: var(--texto-secundario); margin-top: 0.2rem;">
-                        Elegí tu rol para precargar tus datos y adaptar las distancias de tu establecimiento.
+                        Elegí un perfil precargado o creá, editá y eliminá tus propios usuarios de prueba.
                     </p>
                 </div>
                 <button type="button" class="modal-close-btn" onclick="cerrarModalLogin()" aria-label="Cerrar ventana">✕</button>
             </div>
 
             <div class="modal-body">
-                <!-- Alerta contextual cuando el usuario es redirigido desde una acción privada (ej. reservar lote) -->
                 <div id="login-modal-notice" style="display:none;"></div>
 
                 <!-- Selector Rápido de Rol en 1 Clic -->
@@ -1243,23 +1322,32 @@
                     </button>
                 </div>
 
-                <div class="login-divider">
-                    <span>o ingresá tus datos manualmente</span>
+                <!-- Lista ABM de Usuarios Personalizados Guardados -->
+                <div id="custom-users-abm-container" style="margin-top:0.85rem; display:none;">
+                    <div style="font-size:0.8rem; font-weight:700; color:var(--texto-secundario); margin-bottom:0.4rem;">
+                        Tus Perfiles Guardados (Seleccionar / Editar / Eliminar):
+                    </div>
+                    <div id="custom-users-abm-list" style="display:grid; gap:0.45rem;"></div>
                 </div>
 
-                <!-- Formulario Simple Manual sin Contraseñas Complicadas -->
+                <div class="login-divider">
+                    <span id="login-form-mode-label">o creá / editá un perfil de usuario</span>
+                </div>
+
+                <!-- Formulario Simple ABM de Usuario -->
                 <form onsubmit="guardarIdentificacionManual(event)" class="login-manual-form">
+                    <input type="hidden" id="login-edit-index" value="">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="login-nombre">Tu Nombre o Razón Social</label>
+                            <label for="login-nombre">Nombre o Razón Social</label>
                             <input type="text" id="login-nombre" class="form-control" placeholder="Ej: Establecimiento La Tranquera" required>
                         </div>
                         <div class="form-group">
-                            <label for="login-rol-select">Tipo de Usuario</label>
+                            <label for="login-rol-select">Rol en la Plataforma</label>
                             <select id="login-rol-select" class="form-control">
-                                <option value="comprador">Soy Comprador (Productor Rural)</option>
-                                <option value="vendedor">Soy Vendedor (Industria Generadora)</option>
-                                <option value="logistica">Soy Logística (Fletero / Camionero)</option>
+                                <option value="comprador">Comprador (Productor Rural)</option>
+                                <option value="vendedor">Vendedor (Industria Generadora)</option>
+                                <option value="logistica">Logística (Fletero / Camionero)</option>
                             </select>
                         </div>
                     </div>
@@ -1270,8 +1358,8 @@
 
                     <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.75rem;">
                         <button type="button" class="chip-btn" onclick="cerrarModalLogin()">Cancelar</button>
-                        <button type="submit" class="btn-primary" style="width:auto; padding:0.6rem 1.4rem;">
-                            Guardar y Entrar
+                        <button type="submit" id="login-btn-submit" class="btn-primary" style="width:auto; padding:0.6rem 1.4rem;">
+                            Guardar Perfil y Entrar
                         </button>
                     </div>
                 </form>
@@ -1286,7 +1374,7 @@
         <div class="modal-dialog">
             <div class="modal-header">
                 <div>
-                    <span class="cert-seal-badge" style="background:var(--color-exito-bg); color:var(--color-exito);">
+                    <span id="voucher-estado-badge" class="cert-seal-badge" style="background:var(--color-exito-bg); color:var(--color-exito);">
                         OPERACIÓN EN CUSTODIA (ESCROW ARS) · CONFIRMADA
                     </span>
                     <h3 id="voucher-title" style="font-size: 1.35rem; font-family: var(--fuente-display); margin-top: 0.35rem;">
@@ -1300,8 +1388,8 @@
                 <div class="voucher-success-box">
                     <div class="voucher-success-icon">✓</div>
                     <div>
-                        <strong style="display:block; font-size:1.05rem;">¡Flete Calzado y Lote Reservados Exitosamente!</strong>
-                        <span style="font-size:0.86rem; color:var(--texto-secundario);">
+                        <strong id="voucher-banner-title" style="display:block; font-size:1.05rem;">¡Flete Calzado y Lote Reservados Exitosamente!</strong>
+                        <span id="voucher-banner-desc" style="font-size:0.86rem; color:var(--texto-secundario);">
                             Tus fondos en pesos quedaron retenidos en garantía. Se liberarán recién cuando el camión descargue el subproducto en tu campo.
                         </span>
                     </div>
@@ -1339,14 +1427,17 @@
                     <div style="margin-top:0.25rem;">Sello Criptográfico: <span id="voucher-hash" class="font-mono" style="word-break:break-all;">0x8afb5ee7...</span></div>
                 </div>
 
-                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:0.75rem; margin-top:1.25rem;">
+                <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:0.65rem; margin-top:1.25rem;">
                     <a id="voucher-hashscan-link" href="https://hashscan.io/testnet/mainnet" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration:none;">
                         🔗 Verificar en Hedera HashScan ↗
                     </a>
+                    <button type="button" id="btn-voucher-liberar" class="btn-secondary" onclick="confirmarDescargaYLiberarEscrow()">
+                        ✅ Confirmar Descarga y Liberar Pago
+                    </button>
                     <button type="button" class="chip-btn" onclick="irACertificadoVendedor()">
                         Ver Certificado Ambiental
                     </button>
-                    <button type="button" class="btn-primary" style="width:auto; padding:0.6rem 1.4rem;" onclick="imprimirVoucherReserva()">
+                    <button type="button" class="btn-primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="imprimirVoucherReserva()">
                         Imprimir Recibo PDF
                     </button>
                 </div>

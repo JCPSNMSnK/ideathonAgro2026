@@ -22,7 +22,95 @@ function formatoARS(valor) {
 let usuarioActivo = null;
 let reservaPendiente = false;
 
+function obtenerPerfilesGuardados() {
+    try {
+        const raw = localStorage.getItem("monai_perfiles_guardados");
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function guardarListaPerfiles(lista) {
+    try {
+        localStorage.setItem("monai_perfiles_guardados", JSON.stringify(lista));
+    } catch (e) {}
+}
+
+function renderizarPerfilesABM() {
+    const container = document.getElementById("custom-users-abm-container");
+    const listEl = document.getElementById("custom-users-abm-list");
+    if (!container || !listEl) return;
+
+    const perfiles = obtenerPerfilesGuardados();
+    if (!perfiles.length) {
+        container.style.display = "none";
+        listEl.innerHTML = "";
+        return;
+    }
+
+    const rolEtiqueta = {
+        comprador: "Comprador",
+        vendedor: "Vendedor",
+        logistica: "Logística",
+    };
+
+    container.style.display = "block";
+    listEl.innerHTML = perfiles
+        .map(
+            (p, idx) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; background:var(--bg-bloque-suave); border:1px solid var(--borde-color); border-radius:var(--radio-sm); font-size:0.84rem;">
+            <div>
+                <strong>${p.nombre}</strong> · <span style="color:var(--color-primario); font-weight:700;">${rolEtiqueta[p.rol] || p.rol}</span>
+                <span style="color:var(--texto-secundario);">(${p.localidad})</span>
+            </div>
+            <div style="display:flex; gap:0.35rem;">
+                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem;" onclick="seleccionarPerfilGuardadoABM(${idx})">Usar</button>
+                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem;" onclick="editarPerfilGuardadoABM(${idx})">✏️</button>
+                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem; color:var(--color-peligro);" onclick="eliminarPerfilGuardadoABM(${idx})">🗑️</button>
+            </div>
+        </div>
+    `
+        )
+        .join("");
+}
+
+function seleccionarPerfilGuardadoABM(idx) {
+    const perfiles = obtenerPerfilesGuardados();
+    const p = perfiles[idx];
+    if (!p) return;
+    identificarseComoRol(p.rol, p.nombre, p.organizacion || p.nombre, p.localidad);
+}
+
+function editarPerfilGuardadoABM(idx) {
+    const perfiles = obtenerPerfilesGuardados();
+    const p = perfiles[idx];
+    if (!p) return;
+    const inputIdx = document.getElementById("login-edit-index");
+    const inputNombre = document.getElementById("login-nombre");
+    const selectRol = document.getElementById("login-rol-select");
+    const inputLoc = document.getElementById("login-localidad");
+    const labelMode = document.getElementById("login-form-mode-label");
+    const btnSubmit = document.getElementById("login-btn-submit");
+
+    if (inputIdx) inputIdx.value = String(idx);
+    if (inputNombre) inputNombre.value = p.nombre;
+    if (selectRol) selectRol.value = p.rol;
+    if (inputLoc) inputLoc.value = p.localidad;
+    if (labelMode) labelMode.textContent = `Editando perfil: ${p.nombre}`;
+    if (btnSubmit) btnSubmit.textContent = "Guardar Cambios del Perfil";
+}
+
+function eliminarPerfilGuardadoABM(idx) {
+    const perfiles = obtenerPerfilesGuardados();
+    if (!perfiles[idx]) return;
+    perfiles.splice(idx, 1);
+    guardarListaPerfiles(perfiles);
+    renderizarPerfilesABM();
+}
+
 function abrirModalLogin() {
+    renderizarPerfilesABM();
     const modal = document.getElementById("modal-login");
     if (modal) {
         modal.style.display = "flex";
@@ -36,7 +124,6 @@ function cerrarModalLogin() {
         modal.style.display = "none";
         document.body.style.overflow = "";
     }
-    // Si cancela sin loguearse, resetear alerta de reserva pendiente
     const notice = document.getElementById("login-modal-notice");
     if (notice) notice.style.display = "none";
 }
@@ -91,13 +178,32 @@ function guardarIdentificacionManual(event) {
     const nombre = document.getElementById("login-nombre")?.value || "Usuario Productor";
     const rol = document.getElementById("login-rol-select")?.value || "comprador";
     const localidad = document.getElementById("login-localidad")?.value || "Goya, Corrientes";
+    const editIdxRaw = document.getElementById("login-edit-index")?.value;
 
-    usuarioActivo = {
+    const nuevoPerfil = {
         rol,
         nombre,
         organizacion: nombre,
         localidad,
     };
+
+    const perfiles = obtenerPerfilesGuardados();
+    if (editIdxRaw !== "" && editIdxRaw !== undefined && perfiles[Number(editIdxRaw)]) {
+        perfiles[Number(editIdxRaw)] = nuevoPerfil;
+    } else {
+        perfiles.push(nuevoPerfil);
+    }
+    guardarListaPerfiles(perfiles);
+
+    // Resetear estado de edición del formulario
+    const inputIdx = document.getElementById("login-edit-index");
+    const labelMode = document.getElementById("login-form-mode-label");
+    const btnSubmit = document.getElementById("login-btn-submit");
+    if (inputIdx) inputIdx.value = "";
+    if (labelMode) labelMode.textContent = "o creá / editá un perfil de usuario";
+    if (btnSubmit) btnSubmit.textContent = "Guardar Perfil y Entrar";
+
+    usuarioActivo = nuevoPerfil;
     guardarYActualizarSesion();
     cerrarModalLogin();
 
@@ -529,6 +635,30 @@ async function recalcularCotizacionEnVivo() {
    ============================================================================= */
 let ultimoCertificadoEmitido = null;
 
+function aplicarPresetComprador(valor) {
+    const inputComprador = document.getElementById("calc-comprador");
+    const inputDestino = document.getElementById("calc-destino");
+    const inputKm = document.getElementById("calc-distancia-km");
+
+    if (!valor || valor === "CUSTOM") {
+        if (inputComprador) {
+            inputComprador.value = "";
+            inputComprador.focus();
+        }
+        return;
+    }
+
+    const partes = valor.split("|");
+    if (partes.length >= 2) {
+        if (inputComprador) inputComprador.value = partes[0];
+        if (inputDestino) inputDestino.value = partes[1];
+        if (partes[2] && inputKm) {
+            inputKm.value = partes[2];
+            recalcularCotizacionEnVivo();
+        }
+    }
+}
+
 async function confirmarReservaConGarantia() {
     // Si el usuario no inició sesión, interceptar, guardar intención y abrir modal de acceso
     if (!usuarioActivo) {
@@ -553,6 +683,8 @@ async function confirmarReservaConGarantia() {
     const toneladas = document.getElementById("calc-toneladas")?.value || 14;
     const compradorNombre = document.getElementById("calc-comprador")?.value || (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "Granja Avícola San Isidro SRL");
     const destino = document.getElementById("calc-destino")?.value || (usuarioActivo ? usuarioActivo.localidad : "Goya, Corrientes");
+    const ventanaCarga = document.getElementById("calc-ventana-carga")?.value || "";
+    const destinoConVentana = ventanaCarga ? `${destino} · Turno: ${ventanaCarga}` : destino;
 
     const btn = document.getElementById("btn-confirmar-reserva");
     if (btn) {
@@ -570,7 +702,7 @@ async function confirmarReservaConGarantia() {
                 distancia_km: distanciaKm,
                 toneladas: toneladas,
                 comprador_nombre: compradorNombre,
-                localidad_destino: destino,
+                localidad_destino: destinoConVentana,
             }),
         });
         const data = await res.json();
@@ -591,11 +723,63 @@ async function confirmarReservaConGarantia() {
     }
 }
 
+async function confirmarDescargaYLiberarEscrow() {
+    const opId = ultimoCertificadoEmitido ? ultimoCertificadoEmitido.id : null;
+    try {
+        const res = await fetch("/api/liberar-garantia/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ operacion_id: opId }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            };
+            setTxt("voucher-estado-badge", "PAGO LIBERADO AL VENDEDOR Y FLETERO · DESCARGA CONFIRMADA");
+            setTxt("voucher-banner-title", "✅ ¡Descarga en Campo Confirmada y Fondos Liberados!");
+            setTxt(
+                "voucher-banner-desc",
+                "El pago retenido en garantía (Escrow ARS) fue transferido al establecimiento vendedor y al transportista de retorno. Remito Circular cerrado."
+            );
+            setTxt("cert-estado-badge", "PAGO LIBERADO (ESCROW CERRADO) · REMITO CIRCULAR AUDITABLE");
+
+            const vTotal = document.getElementById("voucher-total");
+            if (vTotal) vTotal.textContent = vTotal.textContent.replace("(Custodia activa)", "(Pago Liberado ✓)");
+            const cTotal = document.getElementById("cert-total");
+            if (cTotal) cTotal.textContent = `${cTotal.textContent.split("(")[0].trim()} (Pago Liberado ✓)`;
+
+            const btnVoucher = document.getElementById("btn-voucher-liberar");
+            if (btnVoucher) {
+                btnVoucher.disabled = true;
+                btnVoucher.textContent = "✓ Pago Liberado";
+            }
+            alert(data.mensaje);
+        }
+    } catch (err) {
+        alert("No se pudo liberar la garantía en este momento.");
+    }
+}
+
 function mostrarModalVoucherReserva(cert) {
     const setTxt = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
     };
+
+    setTxt("voucher-estado-badge", "OPERACIÓN EN CUSTODIA (ESCROW ARS) · CONFIRMADA");
+    setTxt("voucher-banner-title", "¡Flete Calzado y Lote Reservados Exitosamente!");
+    setTxt(
+        "voucher-banner-desc",
+        `Tus fondos quedaron resguardados en garantía. Stock restante en planta actualizado a ${cert.stock_restante_lote_tn ?? "0"} tn.`
+    );
+
+    const btnVoucher = document.getElementById("btn-voucher-liberar");
+    if (btnVoucher) {
+        btnVoucher.disabled = false;
+        btnVoucher.textContent = "✅ Confirmar Descarga y Liberar Pago";
+    }
 
     setTxt("voucher-id", `#MN-RES-${String(cert.id).padStart(4, "0")}`);
     setTxt("voucher-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
@@ -648,7 +832,7 @@ function actualizarCertificadoEnPortalVendedor(cert) {
     setTxt("cert-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
     setTxt("cert-transportista", cert.transportista);
     setTxt("cert-ahorro", `${formatoARS(cert.ahorro_logistico_ars)} ARS`);
-    setTxt("cert-total", `${formatoARS(cert.total_comprador_ars)} ARS`);
+    setTxt("cert-total", `${formatoARS(cert.total_comprador_ars)} ARS (Custodia activa)`);
     setTxt("cert-hash", cert.hash_certificado);
     setTxt("cert-red", cert.red_blockchain);
     const cLink = document.getElementById("cert-hashscan-link");
@@ -660,7 +844,7 @@ function imprimirCertificadoOficial() {
 }
 
 /* =============================================================================
-   8. PUBLICACIÓN DE EXCEDENTE (VENDEDOR) Y ALTA DE CAMIÓN (LOGÍSTICA)
+   8. ABM DE EXCEDENTES (VENDEDOR) Y ABM DE CAMIONES DE RETORNO (LOGÍSTICA)
    ============================================================================= */
 function sugerirValoresPorSector(sector) {
     const inputDensidad = document.getElementById("pub-densidad");
@@ -699,8 +883,67 @@ function actualizarPreviewCubicajePublicacion() {
     }
 }
 
+function cargarLoteEnFormularioEdicion(id, titulo, categoria, empresa, localidad, toneladas, densidad, precio, modalidad, usos) {
+    document.getElementById("pub-lote-edit-id").value = id;
+    document.getElementById("pub-titulo").value = titulo;
+    document.getElementById("pub-categoria").value = categoria;
+    document.getElementById("pub-empresa").value = empresa;
+    document.getElementById("pub-localidad").value = localidad;
+    document.getElementById("pub-toneladas").value = parseFloat(String(toneladas).replace(",", ".")) || 15;
+    document.getElementById("pub-densidad").value = densidad;
+    document.getElementById("pub-precio").value = parseFloat(String(precio).replace(",", ".")) || 20000;
+    document.getElementById("pub-modalidad").value = modalidad;
+    document.getElementById("pub-usos").value = usos;
+
+    const badge = document.getElementById("pub-form-badge");
+    const title = document.getElementById("pub-form-title");
+    const btnSubmit = document.getElementById("pub-btn-submit");
+    const btnCancel = document.getElementById("pub-btn-cancel-edit");
+
+    if (badge) badge.textContent = `MODIFICACIÓN DE LOTE #${id} EN SUPABASE`;
+    if (title) title.textContent = `Editando: ${titulo}`;
+    if (btnSubmit) btnSubmit.textContent = "Guardar Cambios del Lote en Planta";
+    if (btnCancel) btnCancel.style.display = "inline-flex";
+
+    actualizarPreviewCubicajePublicacion();
+    document.getElementById("pub-titulo")?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function cancelarEdicionLote() {
+    document.getElementById("pub-lote-edit-id").value = "";
+    document.getElementById("pub-titulo").value = "";
+
+    const badge = document.getElementById("pub-form-badge");
+    const title = document.getElementById("pub-form-title");
+    const btnSubmit = document.getElementById("pub-btn-submit");
+    const btnCancel = document.getElementById("pub-btn-cancel-edit");
+
+    if (badge) badge.textContent = "Gestión de Salida de Planta (Alta / Modificación)";
+    if (title) title.textContent = "Publicar Nuevo Excedente";
+    if (btnSubmit) btnSubmit.textContent = "Publicar Lote y Activar Match con Camiones de Retorno";
+    if (btnCancel) btnCancel.style.display = "none";
+}
+
+async function eliminarLoteABM(loteId, titulo) {
+    if (!confirm(`¿Confirmás dar de baja el lote "${titulo}" del catálogo activo?`)) return;
+    try {
+        const res = await fetch(`/api/lote/${loteId}/eliminar/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (data.ok) {
+            alert(data.mensaje);
+            window.location.href = "/?rol=vendedor";
+        }
+    } catch (err) {
+        alert("Error al dar de baja el lote.");
+    }
+}
+
 async function enviarNuevoLote(event) {
     event.preventDefault();
+    const editId = document.getElementById("pub-lote-edit-id")?.value;
     const payload = {
         titulo: document.getElementById("pub-titulo").value,
         categoria: document.getElementById("pub-categoria").value,
@@ -713,24 +956,81 @@ async function enviarNuevoLote(event) {
         usos_recomendados: document.getElementById("pub-usos").value,
     };
 
+    const url = editId ? `/api/lote/${editId}/editar/` : "/api/publicar/";
+
     try {
-        const res = await fetch("/api/publicar/", {
+        const res = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (data.ok) {
-            alert(data.mensaje || "Lote publicado exitosamente.");
-            window.location.href = "/?rol=comprador";
+            alert(data.mensaje || "Operación realizada exitosamente.");
+            window.location.href = editId ? "/?rol=vendedor" : "/?rol=comprador";
         }
     } catch (err) {
-        alert("Error al publicar el lote. Verificá los campos.");
+        alert("Error al guardar el lote. Verificá los campos.");
+    }
+}
+
+function cargarCamionEnFormularioEdicion(id, transportista, origen, destino, pasaPor, carroceria, fecha, capM3, descuento) {
+    document.getElementById("cam-edit-id").value = id;
+    document.getElementById("cam-transportista").value = transportista;
+    document.getElementById("cam-origen").value = origen;
+    document.getElementById("cam-destino").value = destino;
+    document.getElementById("cam-pasa-por").value = pasaPor;
+    document.getElementById("cam-carroceria").value = carroceria;
+    document.getElementById("cam-fecha").value = fecha;
+    document.getElementById("cam-cap-m3").value = parseFloat(String(capM3).replace(",", ".")) || 85;
+    document.getElementById("cam-descuento").value = parseFloat(String(descuento).replace(",", ".")) || 45;
+
+    const badge = document.getElementById("cam-form-badge");
+    const title = document.getElementById("cam-form-title");
+    const btnSubmit = document.getElementById("cam-btn-submit");
+    const btnCancel = document.getElementById("cam-btn-cancel-edit");
+
+    if (badge) badge.textContent = `MODIFICACIÓN DE CAMIÓN #${id}`;
+    if (title) title.textContent = `Editando: ${transportista}`;
+    if (btnSubmit) btnSubmit.textContent = "Guardar Cambios del Camión";
+    if (btnCancel) btnCancel.style.display = "inline-flex";
+
+    document.getElementById("cam-transportista")?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function cancelarEdicionCamion() {
+    document.getElementById("cam-edit-id").value = "";
+    const badge = document.getElementById("cam-form-badge");
+    const title = document.getElementById("cam-form-title");
+    const btnSubmit = document.getElementById("cam-btn-submit");
+    const btnCancel = document.getElementById("cam-btn-cancel-edit");
+
+    if (badge) badge.textContent = "Alta / Modificación de Flota en Retorno";
+    if (title) title.textContent = "Publicar Mi Camión con Retorno Vacío";
+    if (btnSubmit) btnSubmit.textContent = "Publicar Retorno y Activar Notificaciones →";
+    if (btnCancel) btnCancel.style.display = "none";
+}
+
+async function eliminarCamionABM(camionId, transportista) {
+    if (!confirm(`¿Confirmás dar de baja el camión de "${transportista}" de la bolsa de retornos?`)) return;
+    try {
+        const res = await fetch(`/api/camion/${camionId}/eliminar/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        const data = await res.json();
+        if (data.ok) {
+            alert(data.mensaje);
+            window.location.href = "/?rol=logistica";
+        }
+    } catch (err) {
+        alert("Error al dar de baja el camión.");
     }
 }
 
 async function enviarNuevoCamion(event) {
     event.preventDefault();
+    const editId = document.getElementById("cam-edit-id")?.value;
     const payload = {
         transportista: document.getElementById("cam-transportista").value,
         origen_viaje: document.getElementById("cam-origen").value,
@@ -743,19 +1043,21 @@ async function enviarNuevoCamion(event) {
         capacidad_max_tn: 30,
     };
 
+    const url = editId ? `/api/camion/${editId}/editar/` : "/api/publicar-camion/";
+
     try {
-        const res = await fetch("/api/publicar-camion/", {
+        const res = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
         const data = await res.json();
         if (data.ok) {
-            alert(data.mensaje || "Camión de retorno registrado exitosamente.");
+            alert(data.mensaje || "Camión actualizado exitosamente.");
             window.location.href = "/?rol=logistica";
         }
     } catch (err) {
-        alert("Error al registrar el camión. Verificá los campos.");
+        alert("Error al guardar el camión. Verificá los campos.");
     }
 }
 

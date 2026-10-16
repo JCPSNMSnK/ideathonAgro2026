@@ -266,6 +266,10 @@ def obtener_localidad_por_codigo(codigo: Optional[str]) -> Dict:
     return LOCALIDADES_COMPRADOR_NEA[0]
 
 
+obtener_perfil_detalle = obtener_perfil_por_codigo
+obtener_localidad_detalle = obtener_localidad_por_codigo
+
+
 def calcular_distancia_estimada_km(localidad_origen: str, codigo_destino: str = "GOYA") -> int:
     """
     Devuelve los kilómetros estimados entre el origen del lote y la localidad del comprador.
@@ -338,6 +342,7 @@ def obtener_lotes_recomendados(
     perfil_comprador: Optional[str] = None,
     localidad_comprador: Optional[str] = "GOYA",
     texto_busqueda: Optional[str] = None,
+    busqueda_q: Optional[str] = None,
 ) -> List[LoteSubproducto]:
     """
     Filtra los lotes por perfil productivo y búsqueda libre, y enriquece cada lote en memoria
@@ -349,8 +354,9 @@ def obtener_lotes_recomendados(
     if codigo_perfil and codigo_perfil != "TODOS":
         qs = qs.filter(perfiles_comprador__icontains=codigo_perfil)
 
-    if texto_busqueda and texto_busqueda.strip():
-        termino = texto_busqueda.strip()
+    termino_raw = texto_busqueda if texto_busqueda is not None else busqueda_q
+    if termino_raw and termino_raw.strip():
+        termino = termino_raw.strip()
         qs = qs.filter(
             Q(titulo__icontains=termino)
             | Q(localidad_origen__icontains=termino)
@@ -530,6 +536,16 @@ def enriquecer_camiones_con_cargas(
     return lista_camiones
 
 
+def obtener_camiones_con_oportunidades(
+    lotes: Optional[Iterable[LoteSubproducto]] = None,
+) -> List[CamionRetorno]:
+    """
+    Devuelve los camiones de retorno disponibles enriquecidos con los lotes compatibles en su ruta.
+    """
+    camiones_qs = CamionRetorno.objects.filter(disponible=True).order_by("-id")
+    return enriquecer_camiones_con_cargas(camiones_qs, lotes)
+
+
 PERFILES_USUARIO_DEMO = [
     {
         "id": "usr-comprador",
@@ -565,3 +581,78 @@ PERFILES_USUARIO_DEMO = [
         "codigo_localidad": "CORRIENTES",
     },
 ]
+
+
+def editar_lote_existente(lote_id: int, datos: dict) -> LoteSubproducto:
+    """
+    Modifica los datos de un lote de subproducto publicado en Supabase.
+    """
+    lote = LoteSubproducto.objects.get(id=lote_id)
+    if "titulo" in datos and datos["titulo"]:
+        lote.titulo = str(datos["titulo"]).strip()
+    if "categoria" in datos and datos["categoria"]:
+        lote.categoria = str(datos["categoria"]).upper().strip()
+    if "empresa_vendedora" in datos and datos["empresa_vendedora"]:
+        lote.empresa_vendedora = str(datos["empresa_vendedora"]).strip()
+    if "localidad_origen" in datos and datos["localidad_origen"]:
+        lote.localidad_origen = str(datos["localidad_origen"]).strip()
+    if "toneladas_disponibles" in datos and datos["toneladas_disponibles"] is not None:
+        lote.toneladas_disponibles = max(1.0, float(datos["toneladas_disponibles"]))
+    if "densidad_kg_m3" in datos and datos["densidad_kg_m3"] is not None:
+        lote.densidad_kg_m3 = max(50, int(datos["densidad_kg_m3"]))
+    if "precio_tonelada_ars" in datos and datos["precio_tonelada_ars"] is not None:
+        lote.precio_tonelada_ars = max(0.0, float(datos["precio_tonelada_ars"]))
+    if "modalidad_flete" in datos and datos["modalidad_flete"]:
+        lote.modalidad_flete = str(datos["modalidad_flete"]).upper().strip()
+    if "usos_recomendados" in datos and datos["usos_recomendados"]:
+        lote.usos_recomendados = str(datos["usos_recomendados"]).strip()
+    lote.save()
+    return lote
+
+
+def eliminar_lote_existente(lote_id: int) -> str:
+    """
+    Da de baja un lote de subproducto de la base de datos.
+    """
+    lote = LoteSubproducto.objects.get(id=lote_id)
+    titulo = lote.titulo
+    lote.delete()
+    return titulo
+
+
+def editar_camion_existente(camion_id: int, datos: dict) -> CamionRetorno:
+    """
+    Modifica los datos o disponibilidad de un camión con Flete Calzado.
+    """
+    camion = CamionRetorno.objects.get(id=camion_id)
+    if "transportista" in datos and datos["transportista"]:
+        camion.transportista = str(datos["transportista"]).strip()
+    if "origen_viaje" in datos and datos["origen_viaje"]:
+        camion.origen_viaje = str(datos["origen_viaje"]).strip()
+    if "destino_viaje" in datos and datos["destino_viaje"]:
+        camion.destino_viaje = str(datos["destino_viaje"]).strip()
+    if "pasa_por" in datos and datos["pasa_por"]:
+        camion.pasa_por = str(datos["pasa_por"]).strip()
+    if "fecha_disponible" in datos and datos["fecha_disponible"]:
+        camion.fecha_disponible = str(datos["fecha_disponible"]).strip()
+    if "tipo_carroceria" in datos and datos["tipo_carroceria"]:
+        camion.tipo_carroceria = str(datos["tipo_carroceria"]).strip()
+    if "capacidad_max_m3" in datos and datos["capacidad_max_m3"] is not None:
+        camion.capacidad_max_m3 = max(20.0, float(datos["capacidad_max_m3"]))
+    if "descuento_retorno_pct" in datos and datos["descuento_retorno_pct"] is not None:
+        camion.descuento_retorno_pct = max(10.0, min(70.0, float(datos["descuento_retorno_pct"])))
+    if "disponible" in datos and datos["disponible"] is not None:
+        camion.disponible = bool(datos["disponible"])
+    camion.save()
+    return camion
+
+
+def eliminar_camion_existente(camion_id: int) -> str:
+    """
+    Da de baja un camión de retorno de la bolsa logística.
+    """
+    camion = CamionRetorno.objects.get(id=camion_id)
+    nombre = camion.transportista
+    camion.delete()
+    return nombre
+
