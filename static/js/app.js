@@ -1437,25 +1437,10 @@ function esRecursoPropio(propietarioRecurso, identidadActor) {
 }
 
 function obtenerIdentidadRol(rol) {
-    if (rol === "comprador") {
-        if (usuarioActivo && usuarioActivo.rol === "comprador" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
-            return usuarioActivo.organizacion || usuarioActivo.nombre;
-        }
-        return "Granja Avícola San Isidro SRL";
+    if (!usuarioActivo || usuarioActivo.rol !== rol) {
+        return "";
     }
-    if (rol === "vendedor") {
-        if (usuarioActivo && usuarioActivo.rol === "vendedor" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
-            return usuarioActivo.organizacion || usuarioActivo.nombre;
-        }
-        return "Molino Arrocero San Lorenzo";
-    }
-    if (rol === "logistica") {
-        if (usuarioActivo && usuarioActivo.rol === "logistica" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
-            return usuarioActivo.organizacion || usuarioActivo.nombre;
-        }
-        return "Transportes Don Horacio";
-    }
-    return "";
+    return usuarioActivo.organizacion || usuarioActivo.nombre || "";
 }
 
 function cambiarActorDemoRol(rol, organizacionNombre) {
@@ -1779,11 +1764,34 @@ function irAPaginaComprasComprador(nuevaPagina) {
 
 function renderizarComprasComprador() {
     const compradorActivo = obtenerIdentidadRol("comprador");
-    const switcher = document.getElementById("switcher-actor-comprador");
-    if (switcher) {
-        Array.from(switcher.options).forEach((opt) => {
-            if (esRecursoPropio(opt.value, compradorActivo)) switcher.value = opt.value;
-        });
+    const badgePend = document.getElementById("badge-compras-pendientes");
+    const container = document.getElementById("lista-compras-comprador");
+
+    if (!compradorActivo) {
+        if (badgePend) {
+            badgePend.textContent = "Iniciar sesión";
+        }
+        const topPag = document.getElementById("paginador-comprador-compras-top");
+        const botPag = document.getElementById("paginador-comprador-compras-bottom");
+        if (topPag) topPag.innerHTML = "";
+        if (botPag) botPag.innerHTML = "";
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-state-card">
+                    <h4>Iniciá sesión como Comprador para ver tus compras y certificados</h4>
+                    <p>Por privacidad comercial y resguardo del contrato en custodia (Escrow), cada establecimiento agropecuario solo puede acceder a sus propias compras y certificados ambientales.</p>
+                    <div style="display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap; margin-top:0.85rem;">
+                        <button type="button" class="btn-primary" style="width:auto; padding:0.65rem 1.35rem;" onclick="abrirModalLogin()">
+                            Iniciar Sesión como Comprador →
+                        </button>
+                        <button type="button" class="btn-secondary" style="width:auto; padding:0.65rem 1.2rem;" onclick="cambiarVentanaPrincipalComprador('nueva')">
+                            Explorar Catálogo Público
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        return;
     }
 
     const misOperaciones = operacionesCertificados.filter((op) =>
@@ -1795,14 +1803,11 @@ function renderizarComprasComprador() {
     if (kpiMisCompras) {
         kpiMisCompras.textContent = `${misOperaciones.length} (${pendientesMias} por firmar)`;
     }
-    const badgePend = document.getElementById("badge-compras-pendientes");
     if (badgePend) {
-        badgePend.textContent = pendientesMias > 0 ? `${pendientesMias} por firmar` : `${misOperaciones.length}`;
+        badgePend.textContent = pendientesMias > 0 ? `${pendientesMias} por firmar` : `${misOperaciones.length} compras`;
     }
 
-    const modo = estadoPaginacion.compradorCompras.filtro;
-    const listaFiltrada =
-        modo === "TODAS" ? operacionesCertificados : misOperaciones;
+    const listaFiltrada = misOperaciones;
 
     const total = listaFiltrada.length;
     const perPage = estadoPaginacion.compradorCompras.perPage;
@@ -1814,16 +1819,15 @@ function renderizarComprasComprador() {
     const start = (page - 1) * perPage;
     const itemsPagina = listaFiltrada.slice(start, start + perPage);
 
-    const container = document.getElementById("lista-compras-comprador");
     if (!container) return;
 
     if (itemsPagina.length === 0) {
         container.innerHTML = `
             <div class="empty-state-card">
-                <h4>No tenés compras registradas bajo "${compradorActivo}" en este filtro</h4>
-                <p>Podés explorar lotes en el Paso 1, cotizar en el Paso 2 y reservar con Pago en Garantía (Escrow), o cambiar a "Todas las Operaciones (Auditoría)".</p>
-                <button type="button" class="btn-primary" style="margin-top:0.65rem;" onclick="cambiarSubTabComprador('paso1')">
-                    Ir al Catálogo de Subproductos →
+                <h4>No tenés compras registradas bajo "${compradorActivo}"</h4>
+                <p>Podés explorar lotes en el Paso 1, cotizar en el Paso 2 y reservar con Pago en Garantía (Escrow).</p>
+                <button type="button" class="btn-primary" style="width:auto; padding:0.65rem 1.35rem; margin-top:0.65rem;" onclick="cambiarVentanaPrincipalComprador('nueva')">
+                    Ir a Nueva Compra →
                 </button>
             </div>
         `;

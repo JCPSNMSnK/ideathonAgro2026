@@ -483,7 +483,7 @@
                         <strong class="window-btn-title">Mis Compras y Certificados</strong>
                         <span class="window-btn-desc">Firmar recepción en tranquera y certificados</span>
                     </div>
-                    <span class="subtab-counter-pill subtab-pill-warning font-mono" id="badge-compras-pendientes">1 por firmar</span>
+                    <span class="subtab-counter-pill subtab-pill-warning font-mono" id="badge-compras-pendientes">Mis compras</span>
                 </button>
             </div>
 
@@ -1126,22 +1126,6 @@
                                 Como <strong>Comprador titular</strong>, tenés la llave del <strong>Pago en Garantía (Escrow)</strong>: cuando el subproducto llega a tu establecimiento, firmás la recepción desde aquí para cerrar el <strong>Certificado de Economía Circular (Hedera HCS)</strong> y liberar los fondos a la planta y al transportista.
                             </p>
                         </div>
-
-                        <!-- Filtro de Propiedad (Mis Compras vs Auditoría General Solo Lectura) -->
-                        <div class="ownership-filter-toggle" role="group" aria-label="Filtrar compras">
-                            <button type="button"
-                                    id="btn-filtro-compras-mias"
-                                    class="ownership-toggle-btn ownership-filter-btn active"
-                                    onclick="cambiarFiltroComprasComprador('MIAS')">
-                                Solo Mis Compras
-                            </button>
-                            <button type="button"
-                                    id="btn-filtro-compras-todas"
-                                    class="ownership-toggle-btn ownership-filter-btn"
-                                    onclick="cambiarFiltroComprasComprador('TODAS')">
-                                Auditoría del Mercado (Solo Lectura)
-                            </button>
-                        </div>
                     </div>
 
                     <!-- Paginador Superior de Mis Compras -->
@@ -1334,7 +1318,7 @@
                 <!-- =============================================================== -->
                 <!-- SUB-PESTAÑA 2 DEL VENDEDOR: PUBLICAR / EDITAR EXCEDENTE         -->
                 <!-- =============================================================== -->
-                <div id="subtab-vendedor-publicar" class="role-subtab-panel" style="display:none;">
+                <div id="subtab-vendedor-publicar" class="role-subtab-panel">
                     <div class="calculator-panel" style="position:static; max-width: 880px; margin: 0 auto;">
                         <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
                             <div>
@@ -1502,7 +1486,7 @@
                 <!-- =============================================================== -->
                 <!-- SUB-PESTAÑA 3 DEL VENDEDOR: MIS CERTIFICADOS AMBIENTALES        -->
                 <!-- =============================================================== -->
-                <div id="subtab-vendedor-certificados" class="role-subtab-panel" style="display:none;">
+                <div id="subtab-vendedor-certificados" class="role-subtab-panel">
                     <div class="vendedor-certificados-layout">
 
                         <!-- Columna Izquierda: Historial Paginado de Certificados de la Planta Vendedora -->
@@ -1516,21 +1500,6 @@
                                     <p style="font-size: 0.84rem; color: var(--texto-secundario);">
                                         Hacé clic en cualquier operación para inspeccionar o imprimir su Certificado Oficial A4. <strong>Nota de seguridad:</strong> el pago en garantía se libera únicamente cuando el comprador firma la recepción en su campo.
                                     </p>
-                                </div>
-
-                                <div class="ownership-filter-toggle" role="group" aria-label="Filtrar certificados vendedor">
-                                    <button type="button"
-                                            id="btn-filtro-cert-vend-mios"
-                                            class="ownership-toggle-btn active"
-                                            onclick="cambiarFiltroCertificadosVendedor('MIOS')">
-                                        Mi Planta
-                                    </button>
-                                    <button type="button"
-                                            id="btn-filtro-cert-vend-todos"
-                                            class="ownership-toggle-btn"
-                                            onclick="cambiarFiltroCertificadosVendedor('TODOS')">
-                                        Todos
-                                    </button>
                                 </div>
                             </div>
 
@@ -1904,7 +1873,7 @@
                 <!-- =============================================================== -->
                 <!-- SUB-PESTAÑA 2 DE LOGÍSTICA: PUBLICAR / EDITAR UNIDAD VACÍA      -->
                 <!-- =============================================================== -->
-                <div id="subtab-logistica-publicar" class="role-subtab-panel" style="display:none;">
+                <div id="subtab-logistica-publicar" class="role-subtab-panel">
                     <div class="calculator-panel" style="position:static; max-width: 820px; margin: 0 auto;" id="panel-form-camion">
                         <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
                             <div>
@@ -1984,7 +1953,7 @@
                 <!-- =============================================================== -->
                 <!-- SUB-PESTAÑA 3 DE LOGÍSTICA: VIAJES CALZADOS Y LIQUIDACIONES     -->
                 <!-- =============================================================== -->
-                <div id="subtab-logistica-viajes" class="role-subtab-panel" style="display:none;">
+                <div id="subtab-logistica-viajes" class="role-subtab-panel">
                     <div class="calculator-panel" style="position:static;">
                         <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
                             <div>
@@ -1995,21 +1964,6 @@
                                 <p style="font-size: 0.86rem; color: var(--texto-secundario);">
                                     El flete queda asegurado en el fondo de garantía antes de que salgas a ruta y se acredita automáticamente cuando el comprador firma la descarga en tranquera.
                                 </p>
-                            </div>
-
-                            <div class="ownership-filter-toggle" role="group" aria-label="Filtrar viajes logística">
-                                <button type="button"
-                                        id="btn-filtro-viajes-mios"
-                                        class="ownership-toggle-btn active"
-                                        onclick="cambiarFiltroViajesLogistica('MIOS')">
-                                    Mis Viajes
-                                </button>
-                                <button type="button"
-                                        id="btn-filtro-viajes-todos"
-                                        class="ownership-toggle-btn"
-                                        onclick="cambiarFiltroViajesLogistica('TODOS')">
-                                    Todos los Corredores
-                                </button>
                             </div>
                         </div>
 
