@@ -5,7 +5,6 @@ Controlador principal que une los 3 servicios modulares:
 - Carril 4 (Julio): trazabilidad_blockchain.py
 """
 import json
-from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
@@ -21,6 +20,7 @@ from mercado.services.recomendador import (
     obtener_perfil_por_codigo,
     obtener_localidad_por_codigo,
     obtener_lotes_recomendados,
+    obtener_datos_mapa_productores,
     crear_nuevo_lote,
     crear_nuevo_camion_retorno,
     enriquecer_camiones_con_cargas,
@@ -51,6 +51,9 @@ def home_demo(request):
     camiones = list(CamionRetorno.objects.filter(disponible=True))
     enriquecer_camiones_con_cargas(camiones, lotes)
     certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:5]
+    nodos_mapa_nea_json = obtener_datos_mapa_productores(
+        lotes, localidad_actual_obj["codigo"]
+    )
 
     context = {
         "rol_activo": rol_activo,
@@ -66,7 +69,7 @@ def home_demo(request):
         "lotes": lotes,
         "camiones": camiones,
         "certificados_recientes": certificados_recientes,
-        "db_mode_label": getattr(settings, "DB_MODE_LABEL", "Supabase / Local"),
+        "nodos_mapa_nea_json": nodos_mapa_nea_json,
     }
     return render(request, "mercado/index.html", context)
 
@@ -104,8 +107,8 @@ def api_cotizar_flete(request):
 def api_reservar_con_garantia(request):
     """
     Endpoint JSON para el Paso 4 de la Demo:
-    Confirma la operación, retiene el Pago en Garantía y genera el
-    Certificado de Trazabilidad Ambiental (Blockchain Invisible).
+    Confirma la operación, retiene el Pago en Garantía, descuenta el sublote reservado
+    del cupo disponible del lote y genera el Certificado de Trazabilidad Ambiental.
     """
     data = json.loads(request.body.decode("utf-8"))
     lote = get_object_or_404(LoteSubproducto, id=data["lote_id"])
@@ -114,7 +117,8 @@ def api_reservar_con_garantia(request):
         or CamionRetorno.objects.filter(disponible=True).first()
     )
     distancia_km = int(data.get("distancia_km", 160))
-    toneladas = float(data.get("toneladas", lote.toneladas_disponibles))
+    toneladas_lote_previas = float(lote.toneladas_disponibles)
+    toneladas = float(data.get("toneladas", toneladas_lote_previas))
     comprador_nombre = data.get("comprador_nombre", "Establecimiento Avícola / Ganadero (Goya)")
     localidad_destino = data.get("localidad_destino", "Goya, Corrientes")
 
@@ -132,6 +136,14 @@ def api_reservar_con_garantia(request):
         comprador_nombre=comprador_nombre,
         localidad_destino=localidad_destino,
     )
+
+    es_sublote = float(toneladas) < toneladas_lote_previas
+    restante = max(0.0, toneladas_lote_previas - float(toneladas))
+    if restante >= 1.0:
+        lote.toneladas_disponibles = round(restante, 1)
+    else:
+        lote.toneladas_disponibles = 15.0
+    lote.save(update_fields=["toneladas_disponibles"])
 
     return JsonResponse(
         {
@@ -154,6 +166,9 @@ def api_reservar_con_garantia(request):
                 "ahorro_logistico_ars": cotizacion["ahorro_logistico_ars"],
                 "comision_plataforma_ars": cotizacion["comision_total_plataforma_ars"],
                 "total_comprador_ars": cotizacion["total_comprador_subruta_ars"],
+                "toneladas_restantes_lote": round(float(lote.toneladas_disponibles), 1),
+                "es_sublote": es_sublote,
+                "credito_ambiental_elegible": True,
                 "fecha": operacion.creado_en.strftime("%d/%m/%Y %H:%M hs"),
             },
         }

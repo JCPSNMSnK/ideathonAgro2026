@@ -12,6 +12,8 @@ Objetivo:
 - Proveer los casos precalculados de la Landing Page (CASOS_DEMO_LANDING) y la
   gestión de camiones con retorno vacío para el rol Logística / Camión.
 """
+import json
+import re
 from typing import Dict, Iterable, List, Optional
 from django.db.models import Q
 from mercado.models import CamionRetorno, LoteSubproducto
@@ -248,6 +250,87 @@ CASOS_DEMO_LANDING: List[Dict] = [
 ]
 
 
+COORDENADAS_NODOS_NEA: Dict[str, Dict] = {
+    "Saladas": {
+        "lat": -28.2539,
+        "lng": -58.6258,
+        "ruta": "RN 12 / RN 118",
+        "zona": "Polo Arrocero y Forestal",
+    },
+    "Bella Vista": {
+        "lat": -28.5089,
+        "lng": -59.0453,
+        "ruta": "RP 27",
+        "zona": "Cuenca Citrícola e Industrial",
+    },
+    "Gobernador Virasoro": {
+        "lat": -28.0500,
+        "lng": -56.0167,
+        "ruta": "RN 14",
+        "zona": "Polo Foresto-Industrial y Biomasa",
+    },
+    "Presidencia Roque Sáenz Peña": {
+        "lat": -26.7852,
+        "lng": -60.4388,
+        "ruta": "RN 16",
+        "zona": "Cuenca Algodonera y Desmotadoras",
+    },
+    "Goya": {
+        "lat": -29.1400,
+        "lng": -59.2626,
+        "ruta": "RN 12 / RP 27",
+        "zona": "Polo Avícola y Ganadero",
+    },
+    "Mercedes": {
+        "lat": -29.1842,
+        "lng": -58.0753,
+        "ruta": "RN 119 / RN 123",
+        "zona": "Polo Ganadero y Arrocero",
+    },
+    "Corrientes": {
+        "lat": -27.4692,
+        "lng": -58.8306,
+        "ruta": "RN 12 / Puente Gral. Belgrano",
+        "zona": "Nodo Logístico y Portuario",
+    },
+    "Reconquista": {
+        "lat": -29.1500,
+        "lng": -59.6500,
+        "ruta": "RN 11",
+        "zona": "Norte Santafesino Agroindustrial",
+    },
+}
+
+
+def obtener_coordenadas_nodo(localidad_texto: Optional[str]) -> Dict:
+    """Devuelve coordenadas (lat, lng), ruta y zona para una localidad o código del NEA."""
+    texto = (localidad_texto or "Saladas").strip()
+    if texto in COORDENADAS_NODOS_NEA:
+        return COORDENADAS_NODOS_NEA[texto]
+
+    texto_lower = texto.lower().replace("_", " ")
+    for nombre_nodo, info in COORDENADAS_NODOS_NEA.items():
+        if nombre_nodo.lower() in texto_lower or texto_lower in nombre_nodo.lower():
+            return info
+
+    if "saenz" in texto_lower or "sáenz" in texto_lower or "chaco" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Presidencia Roque Sáenz Peña"]
+    if "virasoro" in texto_lower or "santo tom" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Gobernador Virasoro"]
+    if "bella vista" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Bella Vista"]
+    if "goya" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Goya"]
+    if "mercedes" in texto_lower or "curuz" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Mercedes"]
+    if "corrientes" in texto_lower or "resistencia" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Corrientes"]
+    if "reconquista" in texto_lower or "santa fe" in texto_lower:
+        return COORDENADAS_NODOS_NEA["Reconquista"]
+
+    return COORDENADAS_NODOS_NEA["Saladas"]
+
+
 def obtener_perfil_por_codigo(codigo: Optional[str]) -> Dict[str, str]:
     """Devuelve el diccionario del perfil productivo activo o TODOS por defecto."""
     codigo_limpio = (codigo or "TODOS").upper().strip()
@@ -334,6 +417,80 @@ def _construir_explicacion_comprador(lote: LoteSubproducto, codigo_perfil: str) 
     return f"{uso_directo} {detalle_cubicaje}"
 
 
+def _enriquecer_metadatos_lote(lote: LoteSubproducto) -> None:
+    """
+    Enriquece el lote en memoria con coordenadas geográficas, indicadores de urgencia,
+    disponibilidad como Lote Futuro (preventa de zafra) y fraccionamiento en sublotes.
+    """
+    nodo = obtener_coordenadas_nodo(lote.localidad_origen)
+    lote.lat = nodo["lat"]
+    lote.lng = nodo["lng"]
+    lote.ruta_corredor = nodo["ruta"]
+    lote.zona_productiva = nodo["zona"]
+
+    humedad_lower = (lote.humedad_estado or "").lower()
+    titulo_lower = (lote.titulo or "").lower()
+    texto_combinado = f"{humedad_lower} {titulo_lower}"
+
+    # 1. Detección de Urgencia
+    palabras_urgencia = ("urgente", "48hs", "48 hs", "24hs", "24 hs", "inmediat")
+    lote.es_urgente = (
+        lote.modalidad_flete == "VENDEDOR"
+        or any(p in texto_combinado for p in palabras_urgencia)
+    )
+    if lote.es_urgente:
+        if lote.categoria == "CITRUS":
+            lote.etiqueta_urgencia = "VENTA INMEDIATA · RIESGO FERMENTACIÓN"
+            lote.motivo_urgencia = "Evacuación crítica en 48 hs para evitar fermentación en planta (Flete 100% Vendedor)"
+        elif lote.modalidad_flete == "VENDEDOR":
+            lote.etiqueta_urgencia = "EVACUACIÓN URGENTE 48 HS"
+            lote.motivo_urgencia = "Liberación inmediata de acopio con flete absorbido por el generador"
+        else:
+            lote.etiqueta_urgencia = "PRIORIDAD DE VACIADO DE SILO"
+            lote.motivo_urgencia = "Despacho prioritario para liberar capacidad operativa en planta"
+    else:
+        lote.etiqueta_urgencia = ""
+        lote.motivo_urgencia = ""
+
+    # 2. Detección de Lote Futuro y Sublotes
+    palabras_futuro = ("futuro", "zafra", "programad", "[futuro", "preventa", "15 días", "15 dias", "quincenal")
+    lote.es_lote_futuro = any(p in texto_combinado for p in palabras_futuro)
+
+    match_fecha = re.search(r"lote futuro\s*\(([^)]+)\)", lote.humedad_estado or "", re.IGNORECASE)
+    if match_fecha:
+        lote.fecha_entrega_futura = match_fecha.group(1).strip()
+    elif lote.es_lote_futuro:
+        lote.fecha_entrega_futura = "Zafra Quincenal · Entrega 15 días"
+    else:
+        lote.fecha_entrega_futura = ""
+
+    match_min_tn = re.search(r"desde\s+(\d+)\s*tn", texto_combinado)
+    tn_disp = max(1.0, float(lote.toneladas_disponibles))
+    sublote_min = int(match_min_tn.group(1)) if match_min_tn else 5
+    lote.sublote_min_tn = min(sublote_min, int(max(1.0, round(tn_disp))))
+    lote.permite_sublotes = tn_disp > 6.0 or lote.es_lote_futuro
+
+    opciones = []
+    for paso in (lote.sublote_min_tn, 10, 15, 20):
+        if 1 <= paso < tn_disp and paso not in opciones:
+            opciones.append(paso)
+    tn_entero = int(round(tn_disp))
+    if tn_entero not in opciones:
+        opciones.append(tn_entero)
+    lote.opciones_sublote_tn = sorted(opciones)
+
+    if lote.es_lote_futuro:
+        lote.cupo_original_tn = 40.0 if tn_disp <= 32.0 else 60.0
+    else:
+        lote.cupo_original_tn = max(tn_disp, 24.0)
+
+    lote.toneladas_totales_emision = lote.cupo_original_tn
+    lote.porcentaje_disponible = min(
+        100, max(12, int(round((tn_disp / lote.cupo_original_tn) * 100)))
+    )
+    lote.cantidad_sublotes_sugeridos = max(1, int(tn_disp // max(1, lote.sublote_min_tn)))
+
+
 def obtener_lotes_recomendados(
     perfil_comprador: Optional[str] = None,
     localidad_comprador: Optional[str] = "GOYA",
@@ -341,7 +498,8 @@ def obtener_lotes_recomendados(
 ) -> List[LoteSubproducto]:
     """
     Filtra los lotes por perfil productivo y búsqueda libre, y enriquece cada lote en memoria
-    con la distancia hacia el campo del comprador y la explicación técnica de cubicaje (m3).
+    con la distancia hacia el campo del comprador, coordenadas, urgencia, lotes futuros/sublotes
+    y la explicación técnica de cubicaje (m3).
     """
     qs = LoteSubproducto.objects.all()
 
@@ -376,6 +534,7 @@ def obtener_lotes_recomendados(
         lote.es_recomendado_destacado = (
             codigo_perfil != "TODOS" and codigo_perfil in perfiles_lote
         )
+        _enriquecer_metadatos_lote(lote)
         lote.explicacion_para_comprador = _construir_explicacion_comprador(
             lote, codigo_perfil
         )
@@ -383,11 +542,84 @@ def obtener_lotes_recomendados(
     return lotes
 
 
+def obtener_datos_mapa_productores(
+    lotes: Iterable[LoteSubproducto],
+    codigo_localidad_comprador: Optional[str] = "GOYA",
+) -> str:
+    """
+    Serializa en JSON las coordenadas del comprador actual y la lista de lotes/productores
+    enriquecidos para renderizar el mapa logístico interactivo del NEA en el frontend.
+    """
+    loc_comprador = obtener_localidad_por_codigo(codigo_localidad_comprador)
+    coord_comprador = obtener_coordenadas_nodo(loc_comprador["nombre"])
+
+    conteo_por_origen: Dict[str, int] = {}
+    productores_data = []
+
+    for lote in lotes:
+        if not hasattr(lote, "lat") or not hasattr(lote, "es_urgente"):
+            _enriquecer_metadatos_lote(lote)
+        distancia_km = getattr(
+            lote,
+            "distancia_sugerida_km",
+            calcular_distancia_estimada_km(lote.localidad_origen, loc_comprador["codigo"]),
+        )
+        clave_origen = (lote.localidad_origen or "Saladas").strip().lower()
+        idx_origen = conteo_por_origen.get(clave_origen, 0)
+        conteo_por_origen[clave_origen] = idx_origen + 1
+
+        # Leve desplazamiento visual si hay múltiples lotes en la misma localidad
+        offset_lat = (idx_origen * 0.018) if idx_origen else 0.0
+        offset_lng = (idx_origen * -0.015) if idx_origen else 0.0
+
+        productores_data.append(
+            {
+                "id": lote.id,
+                "titulo": lote.titulo,
+                "categoria": lote.categoria,
+                "empresa": lote.empresa_vendedora,
+                "localidad": lote.localidad_origen,
+                "provincia": lote.provincia,
+                "lat": round(float(lote.lat) + offset_lat, 4),
+                "lng": round(float(lote.lng) + offset_lng, 4),
+                "ruta": lote.ruta_corredor,
+                "zona": getattr(lote, "zona_productiva", ""),
+                "toneladas": float(lote.toneladas_disponibles),
+                "volumen_m3": float(lote.volumen_total_m3),
+                "densidad": int(lote.densidad_kg_m3),
+                "precio_tn": float(lote.precio_tonelada_ars),
+                "distancia_km": int(distancia_km),
+                "es_urgente": bool(lote.es_urgente),
+                "etiqueta_urgencia": lote.etiqueta_urgencia,
+                "es_lote_futuro": bool(lote.es_lote_futuro),
+                "fecha_entrega_futura": lote.fecha_entrega_futura,
+                "permite_sublotes": bool(lote.permite_sublotes),
+                "sublote_min_tn": int(lote.sublote_min_tn),
+                "opciones_sublote_tn": getattr(lote, "opciones_sublote_tn", [5, 10]),
+                "modalidad_flete": lote.modalidad_flete,
+            }
+        )
+
+    payload = {
+        "comprador": {
+            "codigo": loc_comprador["codigo"],
+            "nombre": loc_comprador["nombre"],
+            "lat": coord_comprador["lat"],
+            "lng": coord_comprador["lng"],
+            "ruta": coord_comprador["ruta"],
+            "zona": coord_comprador["zona"],
+        },
+        "productores": productores_data,
+    }
+    return json.dumps(payload, ensure_ascii=False)
+
+
 def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
     """
     Registra un nuevo lote de subproducto publicado por una agroindustria,
     infiriendo perfiles_comprador, humedad_estado, carroceria_requerida, usos_recomendados
     y densidad_kg_m3 coherentes según la categoría si no vienen especificados.
+    Soporta publicación de Lotes Urgentes y Lotes Futuros fraccionables en sublotes.
     """
     categoria = (datos.get("categoria") or "ARROZ").upper().strip()
     defaults = DEFAULTS_POR_CATEGORIA.get(categoria, DEFAULTS_POR_CATEGORIA["OTRO"])
@@ -402,6 +634,21 @@ def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
     humedad_estado = (
         datos.get("humedad_estado", "").strip() or defaults["humedad_estado"]
     )
+    tipo_publicacion = (datos.get("tipo_publicacion") or "INMEDIATO").upper().strip()
+    es_urgente = bool(datos.get("es_urgente")) or tipo_publicacion == "URGENTE"
+    sublote_min_raw = datos.get("sublote_min_tn")
+    sublote_min_tn = int(float(sublote_min_raw)) if sublote_min_raw not in (None, "", 0, "0") else 5
+
+    if tipo_publicacion == "FUTURO":
+        fecha_disp = (datos.get("fecha_disponibilidad") or "Entrega 15 días").strip()
+        if "futuro" not in humedad_estado.lower():
+            humedad_estado = f"Lote Futuro ({fecha_disp}) · Fraccionable desde {sublote_min_tn} tn"
+    elif es_urgente:
+        if "urgente" not in humedad_estado.lower() and "48hs" not in humedad_estado.lower():
+            humedad_estado = f"{humedad_estado} / Despacho urgente 48hs"
+    elif datos.get("permite_sublotes") and "desde" not in humedad_estado.lower():
+        humedad_estado = f"{humedad_estado} · Sublotes desde {sublote_min_tn} tn"
+
     carroceria_requerida = (
         datos.get("carroceria_requerida", "").strip()
         or defaults["carroceria_requerida"]

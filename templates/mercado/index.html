@@ -43,12 +43,11 @@
                 </div>
                 <div class="brand-text-wrap">
                     <div class="brand-title">Moñái</div>
-                    <div class="brand-subtitle">Logística Circular y Flete Calzado · NEA</div>
                 </div>
             </div>
 
-            <!-- Navegación Central por Tipo de Usuario / Rol -->
-            <nav class="role-switcher" role="tablist" aria-label="Seleccionar perfil de usuario">
+            <!-- Navegación Central por Tipo de Usuario / Rol + Sesión + Tema -->
+            <nav class="role-switcher" role="tablist" aria-label="Navegación y perfil de usuario">
                 <button type="button"
                         class="role-tab-btn active"
                         id="nav-btn-inicio"
@@ -103,51 +102,53 @@
                         onclick="cambiarVistaRol('vista-logistica')">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="1" y="3" width="15" height="13"></rect>
-                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
                         <circle cx="5.5" cy="18.5" r="2.5"></circle>
                         <circle cx="18.5" cy="18.5" r="2.5"></circle>
                     </svg>
                     <span>Logística / Camión</span>
                 </button>
-                <!-- Pestaña Directa para Iniciar Sesión -->
+
+                <!-- Separador sutil dentro de la navbar unificada -->
+                <span class="nav-inline-divider" aria-hidden="true"></span>
+
+                <!-- Único botón accesible de Inicio de Sesión / Perfil Activo -->
                 <button type="button"
                         class="role-tab-btn role-tab-login"
                         id="nav-btn-login"
-                        onclick="abrirModalLogin()">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                        <polyline points="10 17 15 12 10 7"></polyline>
-                        <line x1="15" y1="12" x2="3" y2="12"></line>
-                    </svg>
-                    <span id="nav-login-tab-label">Iniciar Sesión</span>
-                </button>
-            </nav>
-
-            <!-- Acciones de Navegación: Usuario Activo, Conexión y Modo Claro/Oscuro -->
-            <div class="nav-actions">
-                <!-- Botón de Identificación / Sesión de Usuario -->
-                <button type="button" id="btn-user-session" class="user-session-btn btn-iniciar-sesion-navbar" onclick="abrirModalLogin()" aria-label="Iniciar Sesión en Moñái">
+                        onclick="abrirModalLogin()"
+                        aria-label="Iniciar Sesión o ver perfil">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <strong id="session-user-label">Iniciar Sesión</strong>
-                    <span class="session-badge-pill" id="session-role-pill">Ingresar</span>
+                    <span id="nav-login-tab-label">Iniciar Sesión</span>
+                    <span class="session-badge-pill" id="session-role-pill" style="display:none;">Ingresar</span>
                 </button>
 
                 <!-- Botón de Cerrar Sesión (Visible solo con sesión activa) -->
-                <button type="button" id="btn-logout" class="btn-logout-navbar" onclick="cerrarSesion()" style="display:none;" aria-label="Cerrar Sesión Activa">
+                <button type="button"
+                        id="btn-logout"
+                        class="role-tab-btn btn-logout-navbar"
+                        onclick="cerrarSesion()"
+                        style="display:none;"
+                        aria-label="Cerrar Sesión Activa"
+                        title="Cerrar sesión">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
-                    <span>Cerrar Sesión</span>
+                    <span>Salir</span>
                 </button>
 
-                <span class="db-pill">{{ db_mode_label }}</span>
-
-                <button type="button" id="theme-toggle" class="theme-toggle" onclick="alternarTema()" aria-label="Cambiar entre modo claro y oscuro">
+                <!-- Alternador de Tema Claro / Oscuro integrado en la barra -->
+                <button type="button"
+                        id="theme-toggle"
+                        class="role-tab-btn theme-toggle"
+                        onclick="alternarTema()"
+                        aria-label="Cambiar entre modo claro y oscuro"
+                        title="Cambiar tema">
                     <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;" aria-hidden="true">
                         <circle cx="12" cy="12" r="5"></circle>
                         <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -164,7 +165,7 @@
                     </svg>
                     <span id="theme-toggle-text">Modo Oscuro</span>
                 </button>
-            </div>
+            </nav>
         </div>
     </header>
 
@@ -193,7 +194,7 @@
                     En el NEA se acumulan miles de toneladas de cascarilla de arroz, aserrín y citrus porque ocupan mucho volumen. Transportarlos con flete tradicional cuesta hasta el <strong>78% del viaje</strong>. <strong>Moñái</strong> calcula el cubicaje exacto y los calza con camiones que vuelven vacíos por <strong>RN 12, RN 14 y RN 118</strong>, reduciendo el flete a la mitad con cobro en garantía.
                 </p>
 
-                <!-- 3 Píldoras de Valor Cuantitativas -->
+                <!-- 4 Píldoras de Valor Cuantitativas y Certificación de Créditos Circulares -->
                 <div class="hero-value-pills-row">
                     <div class="hero-stat-chip">
                         <span class="stat-highlight">-45% a -50%</span>
@@ -206,6 +207,19 @@
                     <div class="hero-stat-chip">
                         <span class="stat-highlight">Despacho 48 hs</span>
                         <span class="stat-caption">con Remito Ambiental Hedera</span>
+                    </div>
+                    <div class="hero-stat-chip hero-stat-chip-green">
+                        <span class="stat-highlight">Créditos Circulares</span>
+                        <span class="stat-caption">Sellos aptos para beneficios nacionales</span>
+                    </div>
+                </div>
+
+                <!-- Aviso Estratégico: Sellos Ambientales y Créditos de Economía Circular -->
+                <div class="circular-credit-notice-banner" role="note">
+                    <div class="credit-notice-icon" aria-hidden="true">🌱</div>
+                    <div class="credit-notice-content">
+                        <strong>Certificación de Economía Circular y Valorización de Residuos</strong>
+                        <p>Los sellos ambientales emitidos por Moñái acreditan la trazabilidad verificada y no emisión de metano/quema. Están concebidos para calificar como <strong>certificación oficial ante futuros programas nacionales y provinciales de créditos de economía circular, desgravación impositiva y financiamiento verde</strong>.</p>
                     </div>
                 </div>
 
@@ -518,26 +532,145 @@
                     </div>
                 </div>
                 {% endif %}
+            <!-- Selector de Vista: Catálogo de Lotes vs Mapa Interactivo de Productores -->
+            <div class="market-view-toggle-bar">
+                <div class="market-view-toggle-group" role="group" aria-label="Cambiar modo de visualización">
+                    <button type="button"
+                            class="market-view-btn active"
+                            id="btn-vista-catalogo"
+                            onclick="cambiarModoMercado('catalogo')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Catálogo de Lotes ({{ lotes|length }})</span>
+                    </button>
+                    <button type="button"
+                            class="market-view-btn"
+                            id="btn-vista-mapa"
+                            onclick="cambiarModoMercado('mapa')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                            <line x1="8" y1="2" x2="8" y2="18"></line>
+                            <line x1="16" y1="6" x2="16" y2="22"></line>
+                        </svg>
+                        <span>Mapa Interactivo de Productores (NEA)</span>
+                        <span class="map-badge-live">En vivo</span>
+                    </button>
+                </div>
+                <div class="market-view-meta font-mono" id="market-quick-filter-stats">
+                    Mostrando {{ lotes|length }} lotes disponibles · Fraccionables en Sublotes
+                </div>
+            </div>
+
+            <!-- CONTENEDOR DEL MAPA INTERACTIVO DE PRODUCTORES DEL NEA -->
+            <div id="seccion-mapa-productores" class="producers-map-container" style="display: none;">
+                <div class="map-container-header">
+                    <div>
+                        <div class="map-header-tag">CORREDORES DE RETORNO RN 12 · RN 14 · RN 118</div>
+                        <h3 class="map-header-title">Mapa Regional de Agroindustrias y Lotes Disponibles</h3>
+                        <p class="map-header-desc">
+                            Hacé clic en cualquier nodo productor para ver los subproductos disponibles, su nivel de urgencia o disponibilidad futura y cargarlo directamente al cotizador en tranquera.
+                        </p>
+                    </div>
+                    <div class="map-legend-pills">
+                        <span class="legend-pill"><span class="legend-dot dot-buyer"></span> Tu Campo</span>
+                        <span class="legend-pill"><span class="legend-dot dot-urgent"></span> Venta Urgente</span>
+                        <span class="legend-pill"><span class="legend-dot dot-future"></span> Lote Futuro</span>
+                        <span class="legend-pill"><span class="legend-dot dot-producer"></span> Disponible</span>
+                    </div>
+                </div>
+
+                <!-- SVG Interactivo del Corredor NEA con proyección de nodos y rutas -->
+                <div class="interactive-map-stage" id="mapa-stage-wrapper">
+                    <svg id="svg-mapa-nea" viewBox="0 0 880 500" class="map-canvas-svg" preserveAspectRatio="xMidYMid meet" aria-label="Mapa interactivo de corredores del NEA">
+                        <defs>
+                            <linearGradient id="gradRutaCalzada" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="var(--color-primario)" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="var(--color-exito)" stop-opacity="0.9"/>
+                            </linearGradient>
+                            <filter id="mapShadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.25"/>
+                            </filter>
+                        </defs>
+                        <!-- Capa de Corredores Viales (RN 12, RN 14, RN 118, RN 16) -->
+                        <g id="map-routes-layer" class="map-routes-layer"></g>
+                        <!-- Capa de Conexiones Animadas hacia el Comprador -->
+                        <g id="map-flow-layer" class="map-flow-layer"></g>
+                        <!-- Capa de Nodos y Marcadores -->
+                        <g id="map-nodes-layer" class="map-nodes-layer"></g>
+                    </svg>
+
+                    <!-- Ficha Flotante de Detalle al seleccionar nodo en el mapa -->
+                    <div id="map-producer-card" class="map-floating-card" style="display:none;">
+                        <button type="button" class="map-card-close" onclick="cerrarCardMapa()" aria-label="Cerrar ficha">✕</button>
+                        <div id="map-card-content"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Grilla Principal: Catálogo Izquierda / Cotizador Derecha -->
-            <div class="main-grid">
+            <div class="main-grid" id="seccion-grilla-catalogo">
 
                 <!-- Columna Izquierda: Tarjetas de Subproductos (Tarjeta Clave #1) -->
                 <div class="lotes-list" id="contenedor-tarjetas-lotes">
                     {% for lote in lotes %}
-                    <article class="lote-card {% if forloop.first %}selected{% endif %}"
+                    <article class="lote-card {% if forloop.first %}selected{% endif %} {% if lote.es_urgente %}lote-card-urgent{% endif %} {% if lote.es_lote_futuro %}lote-card-future{% endif %}"
                              data-lote-id="{{ lote.id }}"
-                             data-busqueda="{{ lote.titulo|lower }} {{ lote.localidad_origen|lower }} {{ lote.empresa_vendedora|lower }} {{ lote.usos_recomendados|lower }}"
+                             data-busqueda="{{ lote.titulo|lower }} {{ lote.localidad_origen|lower }} {{ lote.empresa_vendedora|lower }} {{ lote.usos_recomendados|lower }} {% if lote.es_urgente %}urgente{% endif %} {% if lote.es_lote_futuro %}futuro zafra{% endif %}"
                              data-distancia-km="{{ lote.distancia_sugerida_km|default:160 }}"
+                             data-sublote-min="{{ lote.sublote_min_tn|default:5 }}"
                              onclick="seleccionarLote('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
                         
+                        <!-- Header de Badges de Estado del Lote -->
                         <div class="lote-header">
-                            <span class="badge-cat badge-cat-{{ lote.categoria|lower }}">{{ lote.get_categoria_display }}</span>
+                            <div class="lote-badges-group">
+                                <span class="badge-cat badge-cat-{{ lote.categoria|lower }}">{{ lote.get_categoria_display }}</span>
+                                {% if lote.es_urgente %}
+                                <span class="badge-urgente-pulse">
+                                    <span class="pulse-dot"></span>
+                                    <span>{{ lote.etiqueta_urgencia|default:"VENTA INMEDIATA · URGENTE 48 HS" }}</span>
+                                </span>
+                                {% endif %}
+                                {% if lote.es_lote_futuro %}
+                                <span class="badge-lote-futuro">
+                                    📅 Lote Futuro ({{ lote.fecha_entrega_futura|default:"Zafra Próxima" }})
+                                </span>
+                                {% endif %}
+                            </div>
+
                             <span class="badge-flete-savings font-mono">
                                 Retorno: -45% Flete Calzado
                             </span>
                         </div>
+
+                        <!-- Banner Específico de Alerta de Urgencia -->
+                        {% if lote.es_urgente %}
+                        <div class="lote-urgente-alert-box">
+                            <span class="alert-icon">⚡</span>
+                            <div>
+                                <strong>{{ lote.etiqueta_urgencia|default:"Despacho Inmediato" }}</strong>: {{ lote.motivo_urgencia|default:"Liberación urgente de acopio. Máxima prioridad logística." }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Banner Específico de Lote Futuro / Sublotes -->
+                        {% if lote.es_lote_futuro %}
+                        <div class="lote-futuro-alert-box">
+                            <span class="alert-icon">🌱</span>
+                            <div style="flex:1;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <strong>Preventa de Cosecha / Zafra Programada:</strong>
+                                    <span class="font-mono" style="font-size:0.78rem; font-weight:700;">{{ lote.toneladas_disponibles|floatformat:0 }} tn disponibles</span>
+                                </div>
+                                <div style="font-size:0.80rem; margin-top:0.2rem;">
+                                    Comprá tu sublote desde solo <strong>{{ lote.sublote_min_tn }} tn</strong> con precio congelado antes del despacho.
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
 
                         <h3 class="lote-title">{{ lote.titulo }}</h3>
                         
@@ -545,6 +678,7 @@
                             <span class="origin-dot">📍</span>
                             <span><strong>{{ lote.empresa_vendedora }}</strong> · {{ lote.localidad_origen }}, {{ lote.provincia }}</span>
                             <span class="lote-dist-pill font-mono">a {{ lote.distancia_sugerida_km|default:160 }} km</span>
+                            <span class="lote-corredor-tag font-mono">{{ lote.ruta_corredor|default:"RN 12" }}</span>
                         </div>
 
                         <div class="lote-metrics">
@@ -562,6 +696,33 @@
                             </div>
                         </div>
 
+                        <!-- Selector Rápido de Sublotes para este Lote -->
+                        <div class="sublotes-quick-selector">
+                            <span class="sublotes-label">Comprar Sublote Fraccionado:</span>
+                            <div class="sublote-chips-row">
+                                {% if lote.opciones_sublote_tn %}
+                                    {% for opc in lote.opciones_sublote_tn %}
+                                    <button type="button"
+                                            class="sublote-chip-btn"
+                                            onclick="event.stopPropagation(); comprarSubloteDirecto('{{ lote.id }}', '{{ opc }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                                        {{ opc }} tn {% if opc < lote.toneladas_disponibles %}(Sublote){% else %}(Total){% endif %}
+                                    </button>
+                                    {% endfor %}
+                                {% else %}
+                                    <button type="button"
+                                            class="sublote-chip-btn"
+                                            onclick="event.stopPropagation(); comprarSubloteDirecto('{{ lote.id }}', '5', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                                        5 tn (Sublote)
+                                    </button>
+                                    <button type="button"
+                                            class="sublote-chip-btn"
+                                            onclick="event.stopPropagation(); comprarSubloteDirecto('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                                        {{ lote.toneladas_disponibles|floatformat:0 }} tn (Total)
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+
                         <div class="lote-uso">
                             <strong>Aplicación recomendada:</strong> {{ lote.usos_recomendados }}
                             {% if lote.explicacion_para_comprador %}
@@ -576,7 +737,7 @@
                             <button type="button"
                                     class="btn-cotizar-lote"
                                     onclick="event.stopPropagation(); seleccionarLoteYEnfocarCotizador('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
-                                Cotizar puesto en mi campo →
+                                {% if lote.es_lote_futuro %}Cotizar Sublote Futuro →{% else %}Cotizar puesto en mi campo →{% endif %}
                             </button>
                         </div>
                     </article>
@@ -620,17 +781,31 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="calc-toneladas">Toneladas a cargar (tn)</label>
+                            <label for="calc-toneladas">
+                                <span>Toneladas a cargar (tn)</span>
+                                <span id="calc-sublote-tag" class="sublote-indicator-tag" style="display:none;">Sublote Fraccionado</span>
+                            </label>
                             <input type="number" id="calc-toneladas" class="form-control font-mono"
                                    value="{% if lotes %}{{ lotes.0.toneladas_disponibles|floatformat:0 }}{% else %}14{% endif %}"
-                                   min="1" max="30" step="1" onchange="recalcularCotizacionEnVivo()" oninput="recalcularCotizacionEnVivo()">
+                                   min="1" max="60" step="1" onchange="recalcularCotizacionEnVivo()" oninput="recalcularCotizacionEnVivo()">
                         </div>
                         <div class="form-group">
                             <label for="calc-distancia-km">Distancia a tu campo (km)</label>
                             <input type="number" id="calc-distancia-km" class="form-control font-mono"
-                                   value="{% if lotes %}{{ lote.distancia_sugerida_km|default:160 }}{% else %}160{% endif %}"
+                                   value="{% if lotes %}{{ lotes.0.distancia_sugerida_km|default:160 }}{% else %}160{% endif %}"
                                    min="20" max="1500" step="10"
                                    onchange="recalcularCotizacionEnVivo()" oninput="recalcularCotizacionEnVivo()">
+                        </div>
+                    </div>
+
+                    <!-- Fraccionamiento rápido de sublotes en cotizador -->
+                    <div class="cotizador-sublotes-row">
+                        <span class="cotizador-sublote-title">Comprar Fracción / Sublote:</span>
+                        <div class="cotizador-sublote-pills" id="cotizador-pills-sublotes">
+                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(5)">5 tn</button>
+                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(10)">10 tn</button>
+                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(15)">15 tn</button>
+                            <button type="button" class="sublote-calc-pill active" id="btn-sublote-total" onclick="fijarToneladasCotizador('total')">Lote Completo</button>
                         </div>
                     </div>
 
@@ -849,6 +1024,42 @@
                             </div>
                         </div>
 
+                        <!-- Opciones de Marketplace: Tipo de Lote y Urgencia -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="pub-tipo-lote">Tipo de Publicación Marketplace</label>
+                                <select id="pub-tipo-lote" class="form-control" onchange="alternarCamposLoteFuturo(this.value)">
+                                    <option value="INMEDIATO" selected>Lote Físico Inmediato (Disponible en Acopio)</option>
+                                    <option value="FUTURO">Lote Futuro (Preventa de Zafra / Cosecha Programada)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pub-urgencia-toggle">Nivel de Urgencia de Evacuación</label>
+                                <select id="pub-urgencia-toggle" class="form-control" onchange="alCambiarUrgenciaVendedor(this.value)">
+                                    <option value="NORMAL" selected>Normal (Sin riesgo inminente de silo)</option>
+                                    <option value="URGENTE_48HS">🚨 Despacho Urgente 48 hs (Riesgo fermentación / saturación)</option>
+                                    <option value="URGENTE_24HS">⚡ Evacuación Crítica 24 hs (Flete 100% Vendedor)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campos condicionales para Lote Futuro y Sublotes -->
+                        <div id="pub-campos-lote-futuro" class="future-lot-config-box" style="display:none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pub-fecha-futura">Fecha Estimada de Disponibilidad / Zafra</label>
+                                    <input type="text" id="pub-fecha-futura" class="form-control" placeholder="Ej: Zafra Mayo 2026 / Quincena 1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pub-sublote-min">Fraccionar en Sublotes desde (tn mínimas)</label>
+                                    <input type="number" id="pub-sublote-min" class="form-control font-mono" value="5" min="1" max="30">
+                                </div>
+                            </div>
+                            <div class="future-lot-hint">
+                                💡 Los compradores podrán señar y reservar sublotes de tu producción futura antes de que salga del molino/campo.
+                            </div>
+                        </div>
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="pub-precio">Precio por Tonelada ($ ARS)</label>
@@ -884,11 +1095,14 @@
                                 <span class="cert-seal-badge">
                                     PAGO EN GARANTÍA (ESCROW ARS) · REMITO CIRCULAR AUDITABLE
                                 </span>
+                                <span class="cert-credit-seal-badge">
+                                    APTO CRÉDITOS NACIONALES DE ECONOMÍA CIRCULAR
+                                </span>
                                 <h3 style="font-size: 1.38rem; margin-top: 0.45rem; font-family: var(--fuente-display);">
                                     Certificado Oficial de Trazabilidad Ambiental y Disposición Final
                                 </h3>
                                 <p style="font-size: 0.88rem; color: var(--texto-secundario); margin-top: 0.25rem;">
-                                    Comprobante institucional emitido bajo estándares de economía circular del NEA. Acredita la reutilización productiva del residuo agroindustrial sin quema a cielo abierto.
+                                    Comprobante institucional emitido bajo estándares de economía circular del NEA. Acredita la reutilización productiva del residuo agroindustrial sin quema a cielo abierto. Este sello de valorización circular podrá ser presentado para la postulación a <strong>créditos verdes y beneficios fiscales nacionales/provinciales</strong> de transición ecológica.
                                 </p>
                             </div>
                             <div class="cert-number-box">
@@ -1346,6 +1560,9 @@
         </div>
     </div>
 
+    <script id="datos-mapa-nea" type="application/json">
+        {{ nodos_mapa_nea_json|safe }}
+    </script>
     <script src="{% static 'js/app.js' %}"></script>
 </body>
 </html>

@@ -140,9 +140,8 @@ function restaurarSesionGuardada() {
 }
 
 function aplicarDatosSesionEnUI() {
-    const label = document.getElementById("session-user-label");
-    const pill = document.getElementById("session-role-pill");
     const tabLabel = document.getElementById("nav-login-tab-label");
+    const sessionRolePill = document.getElementById("session-role-pill");
     const btnLogout = document.getElementById("btn-logout");
 
     // Contenedores privados y de acceso restringido para no logueados
@@ -158,9 +157,11 @@ function aplicarDatosSesionEnUI() {
     };
 
     if (!usuarioActivo) {
-        if (label) label.textContent = "Iniciar Sesión";
-        if (pill) pill.textContent = "Ingresar";
         if (tabLabel) tabLabel.textContent = "Iniciar Sesión";
+        if (sessionRolePill) {
+            sessionRolePill.style.display = "none";
+            sessionRolePill.textContent = "Ingresar";
+        }
         if (btnLogout) btnLogout.style.display = "none";
 
         // Gating para usuarios no identificados: mostrar tarjetas de bienvenida/bloqueo
@@ -171,15 +172,15 @@ function aplicarDatosSesionEnUI() {
         return;
     }
 
-    // Usuario con sesión iniciada
-    if (label) {
-        label.textContent = usuarioActivo.nombre || "Mi Cuenta";
-    }
-    if (pill) {
-        pill.textContent = rolMap[usuarioActivo.rol] || "Usuario";
-    }
+    // Usuario con sesión iniciada en la navbar unificada
+    const rolTexto = rolMap[usuarioActivo.rol] || "Usuario";
+    const nombreCorto = (usuarioActivo.nombre || "Mi Cuenta").split(" ")[0];
     if (tabLabel) {
-        tabLabel.textContent = `Mi Perfil (${rolMap[usuarioActivo.rol] || "Usuario"})`;
+        tabLabel.textContent = `${nombreCorto} (${rolTexto})`;
+    }
+    if (sessionRolePill) {
+        sessionRolePill.style.display = "inline-block";
+        sessionRolePill.textContent = rolTexto;
     }
     if (btnLogout) {
         btnLogout.style.display = "inline-flex";
@@ -498,29 +499,319 @@ async function recalcularCotizacionEnVivo() {
         };
 
         setTxt("res-lote-titulo", c.lote_titulo);
-        setTxt("res-origen", `${c.vendedor} (${c.localidad_origen})`);
+        setTxt("res-origen", `${c.empresa_vendedora || c.vendedor || "Agroindustria"} (${c.origen || c.localidad_origen || "NEA"})`);
         setTxt("res-volumen-m3", `${c.volumen_m3} m³`);
-        setTxt("res-limitante", c.factor_limitante.toUpperCase());
-        setTxt("pct-vol-label", `${c.porcentaje_volumen_camion}%`);
-        setTxt("pct-peso-label", `${c.porcentaje_peso_camion}%`);
+        setTxt("res-limitante", (c.factor_limitante || "VOLUMEN FÍSICO").toUpperCase());
+        
+        const pctVol = c.ocupacion_volumen_pct ?? c.porcentaje_volumen_camion ?? 0;
+        const pctPeso = c.ocupacion_peso_pct ?? c.porcentaje_peso_camion ?? 0;
+        setTxt("pct-vol-label", `${pctVol}%`);
+        setTxt("pct-peso-label", `${pctPeso}%`);
 
         const barVol = document.getElementById("bar-volumen");
         const barPeso = document.getElementById("bar-peso");
-        if (barVol) barVol.style.width = `${Math.min(100, c.porcentaje_volumen_camion)}%`;
-        if (barPeso) barPeso.style.width = `${Math.min(100, c.porcentaje_peso_camion)}%`;
+        if (barVol) barVol.style.width = `${Math.min(100, pctVol)}%`;
+        if (barPeso) barPeso.style.width = `${Math.min(100, pctPeso)}%`;
 
         setTxt("res-flete-tradicional", formatoARS(c.flete_tradicional_fadeeac_ars));
-        setTxt("res-incidencia-pct", `${c.incidencia_flete_tradicional_pct}% del total`);
+        setTxt("res-incidencia-pct", `${c.incidencia_flete_tradicional_pct || c.incidencia_flete_pct || 75}% del total`);
         setTxt("res-flete-calzado", formatoARS(c.flete_calzado_ars));
-        setTxt("res-descuento-pct", `-${c.descuento_aplicado_pct}% por Retorno`);
+        const descPct = c.descuento_retorno_pct ?? c.descuento_aplicado_pct ?? 45;
+        setTxt("res-descuento-pct", `-${descPct}% por Retorno`);
         setTxt("res-ahorro", `${formatoARS(c.ahorro_logistico_ars)} ARS`);
 
         setTxt("res-subtotal-prod", formatoARS(c.subtotal_subproducto_ars));
-        setTxt("res-modalidad", c.modalidad_flete);
+        setTxt("res-modalidad", c.modalidad_flete_texto || c.modalidad_flete || "100% Comprador");
         setTxt("res-comision", formatoARS(c.comision_total_plataforma_ars));
         setTxt("res-total-comprador", formatoARS(c.total_comprador_subruta_ars));
     } catch (err) {
         console.error("Error en cotización en vivo:", err);
+    }
+}
+
+/* =============================================================================
+   6.1. SUBLOTES, FRACCIONAMIENTO Y LOTES FUTUROS (MARKETPLACE AGRO 2026)
+   ============================================================================= */
+function comprarSubloteDirecto(loteId, toneladas, distanciaKm) {
+    seleccionarLote(loteId, toneladas, distanciaKm);
+    
+    // Marcar tag visual de sublote
+    const subloteTag = document.getElementById("calc-sublote-tag");
+    if (subloteTag) subloteTag.style.display = "inline-block";
+
+    // Actualizar botones de sublotes en cotizador
+    actualizarBotonesSubloteCotizador(toneladas);
+
+    const panel = document.getElementById("panel-cotizador-comprador");
+    if (panel) {
+        panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+function fijarToneladasCotizador(toneladas) {
+    const inputTn = document.getElementById("calc-toneladas");
+    const selectLote = document.getElementById("calc-lote-id");
+    if (!inputTn) return;
+
+    if (toneladas === "total") {
+        const opt = selectLote?.options[selectLote.selectedIndex];
+        const tnTotal = opt ? parseFloat(opt.getAttribute("data-toneladas") || "14") : 14;
+        inputTn.value = tnTotal;
+        const subloteTag = document.getElementById("calc-sublote-tag");
+        if (subloteTag) subloteTag.style.display = "none";
+    } else {
+        inputTn.value = toneladas;
+        const subloteTag = document.getElementById("calc-sublote-tag");
+        if (subloteTag) subloteTag.style.display = "inline-block";
+    }
+
+    actualizarBotonesSubloteCotizador(toneladas);
+    recalcularCotizacionEnVivo();
+}
+
+function actualizarBotonesSubloteCotizador(toneladasSeleccionadas) {
+    document.querySelectorAll(".sublote-calc-pill").forEach(btn => {
+        btn.classList.remove("active");
+    });
+    if (toneladasSeleccionadas === "total") {
+        const btnTotal = document.getElementById("btn-sublote-total");
+        if (btnTotal) btnTotal.classList.add("active");
+    }
+}
+
+/* =============================================================================
+   6.2. MAPA INTERACTIVO DE PRODUCTORES DEL NEA
+   ============================================================================= */
+let datosMapaNEA = null;
+let modoMercadoActual = "catalogo";
+
+function cargarDatosMapa() {
+    try {
+        const scriptEl = document.getElementById("datos-mapa-nea");
+        if (scriptEl && scriptEl.textContent) {
+            datosMapaNEA = JSON.parse(scriptEl.textContent.trim());
+        }
+    } catch (e) {
+        console.warn("No se pudieron parsear los datos del mapa NEA:", e);
+    }
+}
+
+function cambiarModoMercado(modo) {
+    modoMercadoActual = modo;
+    const btnCatalogo = document.getElementById("btn-vista-catalogo");
+    const btnMapa = document.getElementById("btn-vista-mapa");
+    const seccionCatalogo = document.getElementById("seccion-grilla-catalogo");
+    const seccionMapa = document.getElementById("seccion-mapa-productores");
+
+    if (modo === "mapa") {
+        if (btnCatalogo) btnCatalogo.classList.remove("active");
+        if (btnMapa) btnMapa.classList.add("active");
+        if (seccionMapa) seccionMapa.style.display = "block";
+        renderizarMapaProductores();
+    } else {
+        if (btnCatalogo) btnCatalogo.classList.add("active");
+        if (btnMapa) btnMapa.classList.remove("active");
+        if (seccionMapa) seccionMapa.style.display = "none";
+    }
+}
+
+function proyectarCoordASVG(lat, lng) {
+    // Delimitación geográfica aproximada del Corredor NEA:
+    // Latitud: de -26.0 (norte Sáenz Peña/Formosa) a -30.0 (sur Corrientes/Santa Fe)
+    // Longitud: de -61.0 (oeste Chaco) a -55.5 (este Virasoro/Río Uruguay)
+    const latMin = -30.0;
+    const latMax = -26.0;
+    const lngMin = -61.2;
+    const lngMax = -55.2;
+
+    const width = 880;
+    const height = 500;
+    const padding = 55;
+
+    const x = padding + ((lng - lngMin) / (lngMax - lngMin)) * (width - 2 * padding);
+    // En SVG el eje Y crece hacia abajo: latitud más negativa queda más abajo
+    const y = padding + ((latMax - lat) / (latMax - latMin)) * (height - 2 * padding);
+
+    return { x: Math.round(x), y: Math.round(y) };
+}
+
+function renderizarMapaProductores() {
+    if (!datosMapaNEA) cargarDatosMapa();
+    if (!datosMapaNEA) return;
+
+    const svg = document.getElementById("svg-mapa-nea");
+    const routesLayer = document.getElementById("map-routes-layer");
+    const flowLayer = document.getElementById("map-flow-layer");
+    const nodesLayer = document.getElementById("map-nodes-layer");
+
+    if (!svg || !routesLayer || !nodesLayer) return;
+
+    routesLayer.innerHTML = "";
+    flowLayer.innerHTML = "";
+    nodesLayer.innerHTML = "";
+
+    const comp = datosMapaNEA.comprador || { lat: -29.14, lng: -59.2626, nombre: "Goya, Corrientes" };
+    const pComp = proyectarCoordASVG(comp.lat, comp.lng);
+
+    // 1. Dibujar Corredores Viales del NEA (RN 12, RN 14, RN 118, RN 16)
+    const rutasTroncales = [
+        // RN 12: Corrientes -> Empedrado -> Saladas -> Bella Vista -> Goya
+        [
+            proyectarCoordASVG(-27.4692, -58.8306),
+            proyectarCoordASVG(-27.9542, -58.8042),
+            proyectarCoordASVG(-28.2539, -58.6258),
+            proyectarCoordASVG(-28.5089, -59.0453),
+            proyectarCoordASVG(-29.1400, -59.2626),
+        ],
+        // RN 118 / RN 123: Saladas -> San Miguel -> Virasoro / Mercedes
+        [
+            proyectarCoordASVG(-28.2539, -58.6258),
+            proyectarCoordASVG(-28.0500, -56.0167),
+        ],
+        // RN 119: Mercedes -> Curuzú -> enlace Goya
+        [
+            proyectarCoordASVG(-29.1842, -58.0753),
+            proyectarCoordASVG(-29.1400, -59.2626),
+        ],
+        // RN 16: Sáenz Peña -> Resistencia -> Corrientes
+        [
+            proyectarCoordASVG(-26.7852, -60.4388),
+            proyectarCoordASVG(-27.4514, -58.9867),
+            proyectarCoordASVG(-27.4692, -58.8306),
+        ],
+    ];
+
+    rutasTroncales.forEach(puntos => {
+        let d = `M ${puntos[0].x} ${puntos[0].y}`;
+        for (let i = 1; i < puntos.length; i++) {
+            d += ` L ${puntos[i].x} ${puntos[i].y}`;
+        }
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", d);
+        path.setAttribute("class", "map-trunk-road");
+        routesLayer.appendChild(path);
+    });
+
+    // 2. Líneas de Flujo desde cada Productor hacia el Comprador
+    (datosMapaNEA.productores || []).forEach(prod => {
+        const pProd = proyectarCoordASVG(prod.lat, prod.lng);
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const cx = (pProd.x + pComp.x) / 2;
+        const cy = Math.min(pProd.y, pComp.y) - 25;
+        path.setAttribute("d", `M ${pProd.x} ${pProd.y} Q ${cx} ${cy} ${pComp.x} ${pComp.y}`);
+        path.setAttribute("class", prod.es_urgente ? "map-flow-line map-flow-urgent" : "map-flow-line");
+        flowLayer.appendChild(path);
+    });
+
+    // 3. Nodo del Comprador (Establecimiento Activo)
+    const gComp = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    gComp.setAttribute("class", "map-node-buyer");
+    gComp.setAttribute("transform", `translate(${pComp.x}, ${pComp.y})`);
+    gComp.innerHTML = `
+        <circle r="18" class="buyer-pulse-halo" />
+        <circle r="9" class="buyer-center-dot" />
+        <text y="24" class="map-node-label">${comp.nombre || "Tu Campo"}</text>
+    `;
+    nodesLayer.appendChild(gComp);
+
+    // 4. Nodos de Productores con badges de urgencia / futuro
+    (datosMapaNEA.productores || []).forEach(prod => {
+        const pt = proyectarCoordASVG(prod.lat, prod.lng);
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        const nodeClass = prod.es_urgente ? "map-node-urgent" : (prod.es_lote_futuro ? "map-node-future" : "map-node-producer");
+        g.setAttribute("class", `map-producer-node ${nodeClass}`);
+        g.setAttribute("transform", `translate(${pt.x}, ${pt.y})`);
+        g.setAttribute("role", "button");
+        g.setAttribute("tabindex", "0");
+        g.setAttribute("aria-label", `${prod.titulo} en ${prod.localidad}`);
+
+        let badgeIcon = "🏭";
+        if (prod.es_urgente) badgeIcon = "⚡";
+        else if (prod.es_lote_futuro) badgeIcon = "🌱";
+
+        g.innerHTML = `
+            <circle r="14" class="node-outer-ring" />
+            <circle r="8" class="node-center-point" />
+            <text y="-18" class="node-title-tag">${prod.localidad} (${prod.toneladas} tn)</text>
+            <text y="4" class="node-icon-emoji">${badgeIcon}</text>
+        `;
+
+        g.addEventListener("click", () => mostrarCardEnMapa(prod, pt));
+        nodesLayer.appendChild(g);
+    });
+}
+
+function mostrarCardEnMapa(prod, pt) {
+    const card = document.getElementById("map-producer-card");
+    const content = document.getElementById("map-card-content");
+    if (!card || !content) return;
+
+    let etiquetaBadge = "";
+    if (prod.es_urgente) {
+        etiquetaBadge = `<span class="badge-urgente-pulse"><span class="pulse-dot"></span> ${prod.etiqueta_urgencia || "VENTA INMEDIATA 48 HS"}</span>`;
+    } else if (prod.es_lote_futuro) {
+        etiquetaBadge = `<span class="badge-lote-futuro">📅 Lote Futuro (${prod.fecha_entrega_futura || "Zafra"})</span>`;
+    }
+
+    content.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.4rem;">
+            <span class="badge-cat badge-cat-${(prod.categoria || "arroz").toLowerCase()}">${prod.categoria}</span>
+            ${etiquetaBadge}
+        </div>
+        <h4 style="font-size:1.05rem; font-family:var(--fuente-display); margin-bottom:0.25rem; color:var(--texto-principal);">${prod.titulo}</h4>
+        <div style="font-size:0.80rem; color:var(--texto-secundario); margin-bottom:0.6rem;">
+            📍 <strong>${prod.empresa}</strong> · ${prod.localidad}, ${prod.provincia} (${prod.ruta || "RN 12"})
+        </div>
+        <div class="map-card-metrics">
+            <div><span>Disponible:</span><strong>${prod.toneladas} tn (${prod.volumen_m3} m³)</strong></div>
+            <div><span>Distancia:</span><strong>${prod.distancia_km} km</strong></div>
+            <div><span>Precio:</span><strong>$${Number(prod.precio_tn).toLocaleString("es-AR")}/tn</strong></div>
+        </div>
+        <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+            <button type="button" class="btn-primary" style="padding:0.45rem 0.9rem; font-size:0.82rem; min-height:36px;"
+                    onclick="comprarSubloteDesdeMapa('${prod.id}', '${prod.sublote_min_tn || 5}', '${prod.distancia_km}')">
+                Cotizar Sublote (${prod.sublote_min_tn || 5} tn) →
+            </button>
+            <button type="button" class="chip-btn" style="padding:0.45rem 0.75rem; font-size:0.82rem;"
+                    onclick="seleccionarLote('${prod.id}', '${prod.toneladas}', '${prod.distancia_km}')">
+                Lote Entero
+            </button>
+        </div>
+    `;
+
+    card.style.display = "block";
+    // Posicionamiento adaptativo de la tarjeta flotante
+    const leftPos = Math.min(Math.max(20, pt.x - 140), 580);
+    const topPos = pt.y > 260 ? pt.y - 230 : pt.y + 25;
+    card.style.left = `${leftPos}px`;
+    card.style.top = `${topPos}px`;
+}
+
+function comprarSubloteDesdeMapa(loteId, toneladas, distanciaKm) {
+    cerrarCardMapa();
+    cambiarModoMercado("catalogo");
+    comprarSubloteDirecto(loteId, toneladas, distanciaKm);
+}
+
+function cerrarCardMapa() {
+    const card = document.getElementById("map-producer-card");
+    if (card) card.style.display = "none";
+}
+
+/* =============================================================================
+   6.3. CONTROL DE FORMULARIO DE PUBLICACIÓN DEL VENDEDOR (FUTURO & URGENCIA)
+   ============================================================================= */
+function alternarCamposLoteFuturo(tipo) {
+    const container = document.getElementById("pub-campos-lote-futuro");
+    if (container) {
+        container.style.display = tipo === "FUTURO" ? "block" : "none";
+    }
+}
+
+function alCambiarUrgenciaVendedor(urgencia) {
+    const selectModalidad = document.getElementById("pub-modalidad");
+    if (selectModalidad && urgencia.startsWith("URGENTE")) {
+        selectModalidad.value = "VENDEDOR";
     }
 }
 
@@ -696,6 +987,11 @@ function actualizarPreviewCubicajePublicacion() {
 
 async function enviarNuevoLote(event) {
     event.preventDefault();
+    const tipoLote = document.getElementById("pub-tipo-lote")?.value || "INMEDIATO";
+    const urgencia = document.getElementById("pub-urgencia-toggle")?.value || "NORMAL";
+    const fechaFutura = document.getElementById("pub-fecha-futura")?.value || "";
+    const subloteMin = document.getElementById("pub-sublote-min")?.value || "5";
+
     const payload = {
         titulo: document.getElementById("pub-titulo").value,
         categoria: document.getElementById("pub-categoria").value,
@@ -706,6 +1002,11 @@ async function enviarNuevoLote(event) {
         precio_tonelada_ars: document.getElementById("pub-precio").value,
         modalidad_flete: document.getElementById("pub-modalidad").value,
         usos_recomendados: document.getElementById("pub-usos").value,
+        tipo_publicacion: tipoLote,
+        es_urgente: urgencia.startsWith("URGENTE"),
+        permite_sublotes: true,
+        sublote_min_tn: subloteMin,
+        fecha_disponibilidad: fechaFutura,
     };
 
     try {
@@ -771,11 +1072,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calcular primer lote en cotizador
     recalcularCotizacionEnVivo();
 
+    // Cargar datos del mapa interactivo
+    cargarDatosMapa();
+
     // Escuchar atajo de teclado para cerrar modales con ESC
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             cerrarModalLogin();
             cerrarModalReserva();
+            cerrarCardMapa();
         }
     });
 });

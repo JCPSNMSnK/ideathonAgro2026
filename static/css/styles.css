@@ -176,23 +176,14 @@ h4 {
 
 .brand-title {
     font-family: var(--fuente-display);
-    font-size: 1.35rem;
+    font-size: 1.42rem;
     font-weight: 700;
     line-height: 1.05;
     color: var(--texto-principal);
     letter-spacing: -0.015em;
 }
 
-.brand-subtitle {
-    font-size: 0.76rem;
-    font-weight: 600;
-    color: var(--texto-secundario);
-    letter-spacing: 0.01em;
-    margin-top: 0.15rem;
-    white-space: nowrap;
-}
-
-/* Selector Central de Rol / Vista */
+/* Selector Central de Rol / Vista y Barra Unificada */
 .role-switcher {
     display: inline-flex;
     align-items: center;
@@ -200,7 +191,7 @@ h4 {
     border: 1px solid var(--borde-color);
     border-radius: 9999px;
     padding: 0.25rem;
-    gap: 0.2rem;
+    gap: 0.25rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
@@ -219,6 +210,7 @@ h4 {
     white-space: nowrap;
     transition: all 0.2s ease;
     border: 1px solid transparent;
+    cursor: pointer;
 }
 
 .role-tab-btn:hover {
@@ -236,100 +228,36 @@ h4 {
     stroke: var(--texto-sobre-primario);
 }
 
-/* Acciones de Navegación */
-.nav-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    flex-shrink: 0;
-}
-
-.user-session-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.38rem 0.75rem;
-    min-height: 38px;
-    border-radius: 9999px;
-    background: var(--bg-tarjeta);
-    border: 1px solid var(--borde-color);
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--texto-principal);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-    transition: all 0.2s ease;
-}
-
-.user-session-btn:hover {
-    border-color: var(--color-primario);
-    box-shadow: 0 2px 8px rgba(22, 66, 40, 0.15);
-}
-
-.session-badge-pill {
-    background: var(--color-primario-suave);
-    color: var(--color-primario);
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.15rem 0.45rem;
-    border-radius: 9999px;
+.nav-inline-divider {
+    display: inline-block;
+    width: 1px;
+    height: 22px;
+    background: var(--borde-color);
+    margin: 0 0.25rem;
+    align-self: center;
 }
 
 .btn-logout-navbar {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.38rem 0.75rem;
-    min-height: 38px;
-    border-radius: 9999px;
     background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-    font-size: 0.80rem;
-    font-weight: 600;
     color: var(--texto-secundario);
-    transition: all 0.2s ease;
+    border: 1px solid var(--borde-color);
 }
 
 .btn-logout-navbar:hover {
-    background: var(--color-peligro-bg);
-    color: var(--color-peligro);
-    border-color: var(--color-peligro-borde);
-}
-
-.db-pill {
-    display: none;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--texto-suave);
-    padding: 0.3rem 0.6rem;
-    border-radius: 9999px;
-    background: var(--bg-bloque-suave);
-    border: 1px solid var(--borde-color);
-}
-
-@media (min-width: 992px) {
-    .db-pill {
-        display: inline-block;
-    }
+    background: var(--color-peligro-bg) !important;
+    color: var(--color-peligro) !important;
+    border-color: var(--color-peligro-borde) !important;
 }
 
 .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.38rem 0.75rem;
-    min-height: 38px;
-    border-radius: 9999px;
-    background: var(--bg-tarjeta);
-    border: 1px solid var(--borde-color);
-    font-size: 0.80rem;
-    font-weight: 600;
+    background: transparent;
+    border: 1px solid transparent;
     color: var(--texto-secundario);
-    transition: all 0.2s ease;
 }
 
 .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.4);
     color: var(--texto-principal);
-    border-color: var(--borde-fuerte);
 }
 
 /* =============================================================================
@@ -1978,7 +1906,8 @@ h4 {
    8b. ESTILOS VISUALES GPS PARA PORTAL DE LOGÍSTICA / CAMIONES
    ============================================================================= */
 .truck-route-card {
-    border-left: 4px solid var(--color-primario);
+    border: 1.5px solid var(--borde-fuerte);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 .truck-gps-banner {
@@ -2380,4 +2309,596 @@ h4 {
     font-size: 0.82rem;
     color: var(--texto-secundario);
     margin-top: 0.2rem;
+}
+
+/* =============================================================================
+   12. IDENTIDAD VISUAL: SELLOS AMBIENTALES, LOTES FUTUROS, SUBLOTES Y MAPA NEA
+   ============================================================================= */
+
+/* Aviso Estratégico de Sellos Ambientales para Créditos Nacionales */
+.hero-stat-chip-green {
+    border-color: var(--color-exito-borde) !important;
+    background: var(--color-exito-bg) !important;
+}
+
+.circular-credit-notice-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--color-exito-borde);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0 1.5rem;
+    text-align: left;
+    box-shadow: var(--sombra-suave);
+}
+
+.credit-notice-icon {
+    font-size: 1.45rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.credit-notice-content strong {
+    display: block;
+    font-size: 0.92rem;
+    color: var(--color-primario);
+    margin-bottom: 0.25rem;
+}
+
+.credit-notice-content p {
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+    line-height: 1.48;
+    margin: 0;
+}
+
+.cert-credit-seal-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--color-exito);
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    margin-left: 0.4rem;
+}
+
+/* Badges y Alertas de Urgencia en Lotes */
+.lote-badges-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.badge-urgente-pulse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--color-peligro-bg);
+    color: var(--color-peligro);
+    border: 1.5px solid var(--color-peligro-borde);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    animation: alertBorderPulse 2s infinite ease-in-out;
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-peligro);
+    box-shadow: 0 0 6px var(--color-peligro);
+    animation: pulseBlink 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+@keyframes alertBorderPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2); }
+    50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15); }
+}
+
+.lote-card-urgent {
+    border-color: rgba(220, 38, 38, 0.45) !important;
+}
+
+.lote-card-urgent:hover {
+    border-color: var(--color-peligro) !important;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.15) !important;
+}
+
+.lote-urgente-alert-box {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--color-peligro-bg);
+    border: 1px solid var(--color-peligro-borde);
+    border-radius: var(--radio-sm);
+    padding: 0.55rem 0.85rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.80rem;
+    color: var(--color-peligro);
+    line-height: 1.35;
+}
+
+/* Badges y Alertas de Lote Futuro */
+.badge-lote-futuro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border: 1.5px solid var(--color-exito-borde);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.lote-card-future {
+    border-style: dashed;
+    border-color: var(--color-primario) !important;
+}
+
+.lote-futuro-alert-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    background: var(--color-primario-suave);
+    border: 1px dashed var(--color-exito-borde);
+    border-radius: var(--radio-sm);
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--texto-principal);
+    line-height: 1.4;
+}
+
+.future-lot-config-box {
+    background: var(--bg-bloque-suave);
+    border: 1.5px dashed var(--color-primario);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.future-lot-hint {
+    font-size: 0.80rem;
+    color: var(--texto-secundario);
+    margin-top: 0.4rem;
+}
+
+.lote-corredor-tag {
+    font-size: 0.74rem;
+    color: var(--texto-suave);
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radio-xs);
+}
+
+/* Selector Rápido de Sublotes en Tarjetas */
+.sublotes-quick-selector {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.sublotes-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--texto-secundario);
+    margin-bottom: 0.4rem;
+}
+
+.sublote-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.sublote-chip-btn {
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    color: var(--texto-principal);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.sublote-chip-btn:hover {
+    border-color: var(--color-primario);
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    transform: translateY(-1px);
+}
+
+/* Sublotes en el Panel Cotizador */
+.sublote-indicator-tag {
+    font-size: 0.70rem;
+    font-weight: 800;
+    color: var(--color-exito);
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.12rem 0.45rem;
+    border-radius: 9999px;
+    margin-left: 0.4rem;
+}
+
+.cotizador-sublotes-row {
+    margin: -0.25rem 0 0.85rem;
+}
+
+.cotizador-sublote-title {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.cotizador-sublote-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.sublote-calc-pill {
+    padding: 0.28rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.sublote-calc-pill:hover,
+.sublote-calc-pill.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+}
+
+/* Selector de Vistas: Catálogo vs Mapa de Productores */
+.market-view-toggle-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 0.4rem 0.5rem;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.market-view-toggle-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.market-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radio-sm);
+    background: transparent;
+    border: 1.5px solid transparent;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.market-view-btn:hover {
+    color: var(--texto-principal);
+    background: var(--bg-bloque-suave);
+}
+
+.market-view-btn.active {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border-color: var(--color-exito-borde);
+}
+
+.market-view-btn.active svg {
+    stroke: var(--color-primario);
+}
+
+.map-badge-live {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: var(--color-exito);
+    color: #FFFFFF;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+}
+
+.market-view-meta {
+    font-size: 0.80rem;
+    color: var(--texto-suave);
+    padding-right: 0.5rem;
+}
+
+/* =============================================================================
+   13. MAPA INTERACTIVO DE PRODUCTORES (CANVAS SVG VECTORIAL DEL NEA)
+   ============================================================================= */
+.producers-map-container {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.75rem;
+    box-shadow: var(--sombra-destacada);
+    animation: fadeInPanel 0.25s ease-out;
+}
+
+.map-container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-bottom: 1px solid var(--borde-color);
+    padding-bottom: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.map-header-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primario);
+}
+
+.map-header-title {
+    font-family: var(--fuente-display);
+    font-size: 1.28rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0.25rem 0 0.35rem;
+}
+
+.map-header-desc {
+    font-size: 0.86rem;
+    color: var(--texto-secundario);
+    line-height: 1.45;
+    max-width: 620px;
+    margin: 0;
+}
+
+.map-legend-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-self: center;
+}
+
+.legend-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    color: var(--texto-principal);
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot-buyer { background: #3B82F6; box-shadow: 0 0 4px #3B82F6; }
+.dot-urgent { background: #DC2626; box-shadow: 0 0 4px #DC2626; }
+.dot-future { background: #16A34A; box-shadow: 0 0 4px #16A34A; }
+.dot-producer { background: var(--color-primario); }
+
+.interactive-map-stage {
+    position: relative;
+    width: 100%;
+    min-height: 380px;
+    background: radial-gradient(circle at 50% 50%, var(--bg-bloque-suave) 0%, var(--bg-tarjeta) 100%);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    overflow: hidden;
+}
+
+.map-canvas-svg {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    display: block;
+}
+
+/* Rutas y Flujos en el Mapa */
+.map-trunk-road {
+    fill: none;
+    stroke: var(--borde-fuerte);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.45;
+}
+
+.map-flow-line {
+    fill: none;
+    stroke: var(--color-primario);
+    stroke-width: 2.2;
+    stroke-dasharray: 6 5;
+    animation: flowDashAnim 30s linear infinite;
+    opacity: 0.75;
+}
+
+.map-flow-urgent {
+    stroke: var(--color-peligro);
+    stroke-width: 2.6;
+    stroke-dasharray: 5 4;
+    animation: flowDashAnim 15s linear infinite;
+    opacity: 0.9;
+}
+
+@keyframes flowDashAnim {
+    from { stroke-dashoffset: 200; }
+    to { stroke-dashoffset: 0; }
+}
+
+/* Nodos SVG */
+.map-node-buyer .buyer-pulse-halo {
+    fill: rgba(59, 130, 246, 0.18);
+    stroke: #3B82F6;
+    stroke-width: 1.5;
+    animation: haloPulse 2s infinite ease-out;
+}
+
+.map-node-buyer .buyer-center-dot {
+    fill: #2563EB;
+    stroke: #FFFFFF;
+    stroke-width: 2.5;
+}
+
+@keyframes haloPulse {
+    0% { r: 10; opacity: 1; }
+    100% { r: 26; opacity: 0; }
+}
+
+.map-node-label {
+    font-size: 11px;
+    font-weight: 800;
+    fill: var(--texto-principal);
+    text-anchor: middle;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+.map-producer-node {
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-producer-node:hover {
+    transform: scale(1.18);
+}
+
+.node-outer-ring {
+    fill: var(--bg-tarjeta);
+    stroke: var(--color-primario);
+    stroke-width: 2.5;
+    transition: all 0.2s ease;
+}
+
+.map-node-urgent .node-outer-ring {
+    stroke: var(--color-peligro);
+    fill: #FEE2E2;
+}
+
+.map-node-future .node-outer-ring {
+    stroke: var(--color-exito);
+    stroke-dasharray: 4 2;
+}
+
+.node-center-point {
+    fill: var(--color-primario);
+}
+
+.map-node-urgent .node-center-point { fill: var(--color-peligro); }
+.map-node-future .node-center-point { fill: var(--color-exito); }
+
+.node-title-tag {
+    font-size: 10px;
+    font-weight: 800;
+    fill: var(--texto-principal);
+    text-anchor: middle;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+    pointer-events: none;
+}
+
+.node-icon-emoji {
+    font-size: 10px;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+/* Ficha Flotante de Productor sobre el Mapa */
+.map-floating-card {
+    position: absolute;
+    width: 290px;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.15rem;
+    box-shadow: var(--sombra-destacada);
+    z-index: 25;
+    animation: fadeInPanel 0.2s ease-out;
+}
+
+.map-card-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    color: var(--texto-suave);
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.map-card-close:hover {
+    color: var(--texto-principal);
+}
+
+.map-card-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.45rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-xs);
+    padding: 0.5rem;
+    font-size: 0.74rem;
+}
+
+.map-card-metrics span {
+    display: block;
+    color: var(--texto-suave);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+}
+
+.map-card-metrics strong {
+    color: var(--texto-principal);
 }

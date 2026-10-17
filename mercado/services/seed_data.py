@@ -9,8 +9,25 @@ def asegurar_datos_iniciales_nea():
     """
     Si no hay lotes cargados en la base de datos activa, inserta los casos
     reales del NEA y los camiones de retorno ('Flete Calzado').
+    Si ya existen los lotes iniciales sin metadatos de Lote Futuro, actualiza
+    suavemente los lotes de zafra para habilitar la preventa de sublotes en la demo.
     """
     if LoteSubproducto.objects.exists():
+        tiene_lote_futuro = (
+            LoteSubproducto.objects.filter(humedad_estado__icontains="futuro").exists()
+            or LoteSubproducto.objects.filter(humedad_estado__icontains="zafra").exists()
+        )
+        if not tiene_lote_futuro:
+            LoteSubproducto.objects.filter(categoria="ALGODON").update(
+                humedad_estado="Lote Futuro (Zafra Quincenal) · Fraccionable desde 5 tn",
+                toneladas_disponibles=30.0,
+            )
+            LoteSubproducto.objects.filter(
+                categoria="MADERA", localidad_origen__icontains="Virasoro"
+            ).update(
+                humedad_estado="Lote Futuro (Entrega 15 días) · Sublotes desde 5 tn",
+                toneladas_disponibles=30.0,
+            )
         return
 
     lotes_nea = [
@@ -23,7 +40,7 @@ def asegurar_datos_iniciales_nea():
             "toneladas_disponibles": 14.0,
             "densidad_kg_m3": 165,
             "precio_tonelada_ars": 22000.0,
-            "humedad_estado": "Seco (11% hum.) / A granel",
+            "humedad_estado": "Seco (11% hum.) / A granel · Sublotes desde 5 tn",
             "carroceria_requerida": "Batea o Semirremolque con lona",
             "usos_recomendados": "Cama para galpones avícolas (pollos/ponedoras), sustrato de vivero y biomasa térmica",
             "perfiles_comprador": "AVICOLA,VIVERO,BIOMASA",
@@ -38,7 +55,7 @@ def asegurar_datos_iniciales_nea():
             "toneladas_disponibles": 12.0,
             "densidad_kg_m3": 210,
             "precio_tonelada_ars": 18500.0,
-            "humedad_estado": "Seco / A granel o bolsones",
+            "humedad_estado": "Seco / A granel o bolsones · Sublotes desde 5 tn",
             "carroceria_requerida": "Semirremolque baranda volcable / Batea",
             "usos_recomendados": "Cama de pollo de alta absorción, compostaje y fabricación de pellets de energía",
             "perfiles_comprador": "AVICOLA,BIOMASA,GANADERO",
@@ -65,10 +82,10 @@ def asegurar_datos_iniciales_nea():
             "empresa_vendedora": "Desmotadora Chaco-Corrientes",
             "localidad_origen": "Presidencia Roque Sáenz Peña",
             "provincia": "Chaco",
-            "toneladas_disponibles": 26.0,
+            "toneladas_disponibles": 30.0,
             "densidad_kg_m3": 480,
             "precio_tonelada_ars": 95000.0,
-            "humedad_estado": "Seco / A granel",
+            "humedad_estado": "Lote Futuro (Zafra Quincenal) · Fraccionable desde 5 tn",
             "carroceria_requerida": "Batea o Tolva cerealera",
             "usos_recomendados": "Suplemento proteico-energético de alta fibra para rodeos de cría e invernada",
             "perfiles_comprador": "GANADERO",
@@ -80,10 +97,10 @@ def asegurar_datos_iniciales_nea():
             "empresa_vendedora": "Foresto Industrial Santo Tomé",
             "localidad_origen": "Gobernador Virasoro",
             "provincia": "Corrientes",
-            "toneladas_disponibles": 22.0,
+            "toneladas_disponibles": 30.0,
             "densidad_kg_m3": 320,
             "precio_tonelada_ars": 26000.0,
-            "humedad_estado": "Semi-seco / A granel",
+            "humedad_estado": "Lote Futuro (Entrega 15 días) · Sublotes desde 5 tn",
             "carroceria_requerida": "Batea de gran volumen (90 m3)",
             "usos_recomendados": "Generación de vapor industrial, secaderos de yerba/madera y producción de biochar",
             "perfiles_comprador": "BIOMASA",
