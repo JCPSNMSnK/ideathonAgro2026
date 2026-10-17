@@ -1,0 +1,16 @@
+<!-- Datalist oficial alimentado en vivo por API Georef Datos Argentina (apis.datos.gob.ar) -->
+<datalist id="datalist-localidades-argentina">
+    {% for loc in localidades_comprador %}
+    <option value="{{ loc.nombre }}"></option>
+    {% endfor %}
+</datalist>
+
+<script id="datos-mapa-nea" type="application/json">
+    {{ nodos_mapa_nea_json|safe }}
+</script>
+<script id="datos-casos-demo-landing" type="application/json">
+    {{ casos_demo_landing_json|safe }}
+</script>
+<script id="datos-certificados-iniciales" type="application/json">
+    {{ certificados_json|safe }}
+</script>

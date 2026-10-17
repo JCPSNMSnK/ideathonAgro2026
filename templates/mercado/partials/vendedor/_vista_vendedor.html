@@ -1,0 +1,20 @@
+<!-- =================================================================== -->
+<!-- VISTA 3: PORTAL DEL VENDEDOR (AGROINDUSTRIA + CERTIFICADO HEDERA)   -->
+<!-- =================================================================== -->
+<section id="vista-vendedor" class="user-view-panel app-tab-panel" role="tabpanel" aria-labelledby="nav-btn-vendedor">
+
+    {% include "mercado/partials/vendedor/_acceso_restringido.html" %}
+
+    <!-- CONTENIDO PRIVADO (VISIBLE CUANDO HAY SESIÓN INICIADA) -->
+    <div id="vendedor-private-view" class="auth-private-view">
+
+        {% include "mercado/partials/vendedor/_encabezado.html" %}
+
+        {% include "mercado/partials/vendedor/_mis_lotes.html" %}
+
+        {% include "mercado/partials/vendedor/_publicar_lote.html" %}
+
+        {% include "mercado/partials/vendedor/_certificados.html" %}
+
+    </div>
+</section>

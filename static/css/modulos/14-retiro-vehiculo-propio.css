@@ -1,0 +1,96 @@
+/* =============================================================================
+   14. RETIRO CON VEHÍCULO PROPIO / PARTICULAR (PYMES Y PEQUEÑOS PRODUCTORES)
+   ============================================================================= */
+.vehiculo-propio-box {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(22, 163, 74, 0.08) 100%);
+    border: 1.5px solid rgba(37, 99, 235, 0.35);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem;
+    margin-bottom: 0.95rem;
+    animation: fadeInPanel 0.2s ease-out;
+}
+
+.vehiculo-propio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.70rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #2563EB;
+    background: rgba(37, 99, 235, 0.12);
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    margin-bottom: 0.4rem;
+}
+
+.vehiculo-propio-notice {
+    font-size: 0.79rem;
+    color: var(--texto-secundario);
+    line-height: 1.4;
+    margin-top: 0.5rem;
+    padding-top: 0.45rem;
+    border-top: 1px dashed rgba(37, 99, 235, 0.25);
+}
+
+.vehiculo-propio-notice strong {
+    color: var(--color-exito);
+}
+
+/* Filtros Regionales del Mapa Federal de Argentina */
+.map-region-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--borde-color);
+}
+
+.map-region-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--texto-secundario);
+    margin-right: 0.2rem;
+}
+
+.map-region-pill {
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.map-region-pill:hover {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border-color: var(--color-exito-borde);
+}
+
+.map-region-pill.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+}
+
+.badge-retiro-propio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: rgba(37, 99, 235, 0.12);
+    color: #2563EB;
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+}

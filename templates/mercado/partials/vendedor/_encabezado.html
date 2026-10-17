@@ -1,0 +1,46 @@
+<!-- NIVEL 1 DE JERARQUÍA: Encabezado Ejecutivo + Selector de Planta Vendedora + KPIs -->
+<div class="role-workspace-header role-hierarchy-header">
+    <div class="role-header-main">
+        <span class="role-badge-pill">PORTAL AGROINDUSTRIA VENDEDORA · GESTIÓN DE PLANTA</span>
+        <h2 class="workspace-title">Control de Stock de Subproductos y Certificados Ambientales</h2>
+        <p class="workspace-subtitle">
+            Gestioná los lotes publicados por <strong>tu planta</strong>, publicá nuevos excedentes (spot, urgentes 48 hs o lotes futuros) y auditá tus <strong>Certificados de Disposición Sustentable</strong> a medida que los compradores firman la recepción en tranquera.
+        </p>
+    </div>
+
+</div>
+
+<!-- NIVEL 2 DE JERARQUÍA: Barra de Sub-Pestañas del Vendedor -->
+<div class="role-subtabs-nav" role="tablist" aria-label="Secciones del Portal Vendedor">
+    <button type="button"
+            id="btn-subtab-vend-lotes"
+            class="role-subtab-btn active"
+            role="tab"
+            aria-selected="true"
+            onclick="cambiarSubTabVendedor('lotes')">
+        <span class="subtab-step-circle">1</span>
+        <strong>Mis Lotes</strong>
+        <span class="subtab-counter-pill font-mono" id="badge-vend-lotes-count">{{ todos_los_lotes|length }}</span>
+    </button>
+
+    <button type="button"
+            id="btn-subtab-vend-publicar"
+            class="role-subtab-btn"
+            role="tab"
+            aria-selected="false"
+            onclick="cambiarSubTabVendedor('publicar')">
+        <span class="subtab-step-circle">2</span>
+        <strong id="subtab-vend-form-label">Publicar Lote</strong>
+    </button>
+
+    <button type="button"
+            id="btn-subtab-vend-certificados"
+            class="role-subtab-btn"
+            role="tab"
+            aria-selected="false"
+            onclick="cambiarSubTabVendedor('certificados')">
+        <span class="subtab-step-circle">3</span>
+        <strong>Mis Certificados</strong>
+        <span class="subtab-counter-pill font-mono" id="badge-vend-certs-count">HCS</span>
+    </button>
+</div>

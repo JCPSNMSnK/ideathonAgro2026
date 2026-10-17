@@ -1,0 +1,46 @@
+<!-- NIVEL 1 DE JERARQUÍA: Encabezado Ejecutivo + Selector de Transportista + KPIs -->
+<div class="role-workspace-header role-hierarchy-header">
+    <div class="role-header-main">
+        <span class="role-badge-pill">PORTAL TRANSPORTE Y FLOTAS REGIONALES · FLETE CALZADO</span>
+        <h2 class="workspace-title">Gestión de Mi Flota en Retorno y Liquidaciones de Viaje</h2>
+        <p class="workspace-subtitle">
+            Monetizá tus kilómetros de regreso vacío con cargas compatibles en ruta. Por regla de seguridad, <strong>cada empresa de logística solo puede editar o dar de baja sus propios camiones</strong>.
+        </p>
+    </div>
+
+</div>
+
+<!-- NIVEL 2 DE JERARQUÍA: Barra de Sub-Pestañas de Logística -->
+<div class="role-subtabs-nav" role="tablist" aria-label="Secciones del Portal Logística">
+    <button type="button"
+            id="btn-subtab-log-flota"
+            class="role-subtab-btn active"
+            role="tab"
+            aria-selected="true"
+            onclick="cambiarSubTabLogistica('flota')">
+        <span class="subtab-step-circle">1</span>
+        <strong>Flota en Ruta</strong>
+        <span class="subtab-counter-pill font-mono" id="badge-log-flota-count">{{ camiones|length }}</span>
+    </button>
+
+    <button type="button"
+            id="btn-subtab-log-publicar"
+            class="role-subtab-btn"
+            role="tab"
+            aria-selected="false"
+            onclick="cambiarSubTabLogistica('publicar')">
+        <span class="subtab-step-circle">2</span>
+        <strong id="subtab-log-form-label">Publicar Unidad</strong>
+    </button>
+
+    <button type="button"
+            id="btn-subtab-log-viajes"
+            class="role-subtab-btn"
+            role="tab"
+            aria-selected="false"
+            onclick="cambiarSubTabLogistica('viajes')">
+        <span class="subtab-step-circle">3</span>
+        <strong>Viajes y Cobros</strong>
+        <span class="subtab-counter-pill font-mono" id="badge-log-viajes-count">Escrow</span>
+    </button>
+</div>

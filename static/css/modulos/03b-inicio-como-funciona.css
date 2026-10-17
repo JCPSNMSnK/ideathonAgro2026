@@ -1,0 +1,94 @@
+/* =============================================================================
+   3b. GUÍA SIMPLE: CÓMO FUNCIONA MOÑÁI EN 3 PASOS
+   ============================================================================= */
+.how-it-works-section {
+    padding: 3rem 0 3.5rem;
+    border-top: 1px dashed var(--borde-color);
+    margin-top: 1.5rem;
+}
+
+.section-tag-center {
+    display: block;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-primario);
+    margin-bottom: 0.45rem;
+}
+
+.section-headline-center {
+    font-family: var(--fuente-display);
+    font-size: clamp(1.65rem, 3.2vw, 2.25rem);
+    font-weight: 700;
+    text-align: center;
+    color: var(--texto-principal);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.section-subheadline-center {
+    font-size: 0.95rem;
+    color: var(--texto-secundario);
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 2.25rem;
+    line-height: 1.55;
+}
+
+.how-it-works-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .how-it-works-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+.step-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.75rem 1.5rem;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.step-card-num {
+    font-family: var(--fuente-mono);
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--color-primario);
+    opacity: 0.85;
+    margin-bottom: 0.85rem;
+    line-height: 1;
+}
+
+.step-card-title {
+    font-family: var(--fuente-display);
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.5rem;
+    line-height: 1.25;
+}
+
+.step-card-desc {
+    font-size: 0.86rem;
+    color: var(--texto-secundario);
+    line-height: 1.6;
+}

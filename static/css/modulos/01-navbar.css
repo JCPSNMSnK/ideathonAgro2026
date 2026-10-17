@@ -1,0 +1,159 @@
+/* =============================================================================
+   1. BARRA DE NAVEGACIÓN SUPERIOR (.navbar)
+   ============================================================================= */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: var(--bg-header);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--borde-color);
+    box-shadow: var(--sombra-suave);
+    padding: 0.65rem 1rem;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.navbar-inner {
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+/* Marca e Isotipo Oficial Moñái */
+.brand-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    min-width: 0;
+    text-decoration: none;
+    user-select: none;
+}
+
+.brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--color-primario) 0%, #1D5434 100%);
+    border: 1.5px solid var(--color-crema-dorado);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px -2px rgba(22, 66, 40, 0.35);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.brand-box:hover .brand-mark {
+    transform: scale(1.04);
+    box-shadow: 0 6px 18px -2px rgba(22, 66, 40, 0.45);
+}
+
+.brand-text-wrap {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.brand-title {
+    font-family: var(--fuente-display);
+    font-size: 1.42rem;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--texto-principal);
+    letter-spacing: -0.015em;
+}
+
+/* Selector Central de Rol / Vista y Barra Unificada */
+.role-switcher {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: 9999px;
+    padding: 0.25rem;
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+}
+
+.role-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    min-height: 40px;
+    border-radius: 9999px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--texto-secundario);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.role-tab-btn:hover {
+    color: var(--texto-principal);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.role-tab-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    box-shadow: 0 2px 8px -1px rgba(22, 66, 40, 0.35);
+}
+
+.role-tab-btn.active svg {
+    stroke: var(--texto-sobre-primario);
+}
+
+.role-tab-btn.nav-role-locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.role-tab-btn.nav-role-locked:hover {
+    background: transparent;
+    color: var(--texto-secundario);
+}
+
+.nav-inline-divider {
+    display: inline-block;
+    width: 1px;
+    height: 22px;
+    background: var(--borde-color);
+    margin: 0 0.25rem;
+    align-self: center;
+}
+
+.btn-logout-navbar {
+    background: var(--bg-bloque-suave);
+    color: var(--texto-secundario);
+    border: 1px solid var(--borde-color);
+}
+
+.btn-logout-navbar:hover {
+    background: var(--color-peligro-bg) !important;
+    color: var(--color-peligro) !important;
+    border-color: var(--color-peligro-borde) !important;
+}
+
+.theme-toggle {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--texto-secundario);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.4);
+    color: var(--texto-principal);
+}

@@ -1,0 +1,320 @@
+/* =============================================================================
+   4. CONSOLA DE SIMULACIÓN INTERACTIVA EN VIVO (LIVE SANDBOX)
+   ============================================================================= */
+.live-demo-stage {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: var(--radio-lg);
+    padding: 1.5rem;
+    box-shadow: var(--sombra-destacada);
+    position: relative;
+}
+
+.live-demo-stage.live-demo-stage-full {
+    max-width: 980px;
+    margin: 2rem auto 3.5rem;
+    border: 2px solid var(--color-primario);
+    border-radius: var(--radio-xl);
+    padding: 2rem;
+}
+
+.demo-stage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.demo-live-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--color-exito);
+    background: var(--color-exito-bg);
+    border: 1.5px solid var(--color-exito-borde);
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.04em;
+}
+
+.demo-stage-title {
+    font-family: var(--fuente-display);
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.22;
+    color: var(--texto-principal);
+}
+
+.demo-stage-meta {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    background: var(--color-primario-suave);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    white-space: nowrap;
+}
+
+/* Selector de Casos Demo */
+.demo-preset-tabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .demo-preset-tabs {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.demo-preset-btn {
+    padding: 0.75rem 0.95rem;
+    min-height: 48px;
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.demo-preset-btn:hover {
+    color: var(--texto-principal);
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
+}
+
+.demo-preset-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.25);
+}
+
+/* Ficha del Escenario Activo */
+.demo-scenario-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    background: var(--bg-bloque-suave);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--borde-color);
+}
+
+.demo-scenario-route {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--texto-principal);
+}
+
+.demo-scenario-sub {
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+    margin-top: 0.25rem;
+}
+
+/* Visualizador de Batea del Camión */
+.truck-visualizer {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.truck-vis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.85rem;
+}
+
+.truck-bars-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.truck-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+    margin-bottom: 0.25rem;
+}
+
+.text-alert-vol {
+    color: var(--color-peligro);
+    font-weight: 800;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 14px;
+    background: var(--bg-elevado);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--color-primario);
+    border-radius: 9999px;
+    transition: width 0.35s ease;
+}
+
+.progress-bar-fill.volume-alert {
+    background: linear-gradient(90deg, #D97706 0%, var(--color-peligro) 100%);
+}
+
+.truck-vis-note {
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+    margin-top: 0.85rem;
+    line-height: 1.5;
+    border-top: 1px dashed var(--borde-color);
+    padding-top: 0.65rem;
+}
+
+/* Comparador Visual Lado a Lado (Tarjeta Clave #2) */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 600px) {
+    .comparison-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+}
+
+.comp-box {
+    padding: 1.15rem;
+    border-radius: var(--radio-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+}
+
+.comp-bad {
+    background: var(--color-peligro-bg);
+    border: 1.5px solid var(--color-peligro-borde);
+}
+
+.comp-good {
+    background: var(--color-exito-bg);
+    border: 1.5px solid var(--color-exito-borde);
+}
+
+.comp-badge-header {
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.45rem;
+}
+
+.comp-bad .comp-badge-header {
+    color: var(--color-peligro);
+}
+
+.comp-good .comp-badge-header {
+    color: var(--color-exito);
+}
+
+.comp-price {
+    font-family: var(--fuente-mono);
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 0.45rem;
+}
+
+.comp-bad .comp-price {
+    color: var(--color-peligro);
+    text-decoration: line-through;
+    opacity: 0.9;
+}
+
+.comp-good .comp-price {
+    color: var(--color-exito);
+}
+
+.comp-desc {
+    font-size: 0.80rem;
+    line-height: 1.42;
+    color: var(--texto-secundario);
+}
+
+.demo-box-rojo {
+    background: var(--color-peligro-bg);
+    border: 1.5px solid var(--color-peligro-borde);
+}
+
+.demo-box-verde {
+    background: var(--color-exito-bg);
+    border: 1.5px solid var(--color-exito-borde);
+}
+
+.demo-vs-grid {
+    margin: 1.25rem 0;
+}
+
+.truck-bar-row {
+    margin-bottom: 0.65rem;
+}
+
+.demo-stage-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-top: 1px solid var(--borde-color);
+    padding-top: 1.15rem;
+}
+
+.demo-saving-highlight {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+}
+
+.demo-saving-highlight strong {
+    font-family: var(--fuente-mono);
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--color-exito);
+}
+
+.demo-cta-btn {
+    width: auto !important;
+    padding: 0.8rem 1.6rem !important;
+    min-height: 48px !important;
+    font-size: 0.94rem !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.3) !important;
+}

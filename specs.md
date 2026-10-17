@@ -161,6 +161,6 @@ La plataforma aplica **aislamiento estricto de roles** para proteger la privacid
 ## 7. Criterios de Calidad, Diseño y UI/UX
 
 1. **Sin Emojis:** La identidad visual de Moñai es profesional, técnica y corporativa agroindustrial. No se permiten emojis en botones, títulos ni badges; se utilizan iconos SVG limpios, badges de estado tipográficos y chips monocromáticos.
-2. **Tokens de Diseño y Modo Oscuro:** Centralizados en `static/css/variables.css` y `static/css/styles.css` con variables CSS (`--color-primario`, `--fondo-base`, `--borde-color`, etc.) y soporte para View Transitions API.
+2. **Tokens de Diseño y Modo Oscuro:** Centralizados en `static/css/variables.css` y los módulos de `static/css/modulos/` con variables CSS (`--color-primario`, `--fondo-base`, `--borde-color`, etc.) y soporte para View Transitions API.
 3. **Paginación en Cliente y Rendimiento:** Tablas y grids paginados dinámicamente mediante `renderizarControlesPaginacion` para soportar gran volumen de transacciones sin ralentizar la interfaz.
-4. **Integridad del Marcado HTML:** Todas las etiquetas `<div` y `</div` deben mantenerse estrictamente balanceadas (verificar con script de conteo antes de cada commit).
+4. **Integridad del Marcado HTML:** Todas las etiquetas `<div` y `</div` deben mantenerse estrictamente balanceadas (verificar con script de conteo antes de cada commit, archivo por archivo en `templates/mercado/partials/`).

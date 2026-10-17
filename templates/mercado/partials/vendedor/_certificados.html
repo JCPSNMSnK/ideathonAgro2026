@@ -1,0 +1,165 @@
+<!-- =============================================================== -->
+<!-- SUB-PESTAÑA 3 DEL VENDEDOR: MIS CERTIFICADOS AMBIENTALES        -->
+<!-- =============================================================== -->
+<div id="subtab-vendedor-certificados" class="role-subtab-panel">
+    <div class="vendedor-certificados-layout">
+
+        <!-- Columna Izquierda: Historial Paginado de Certificados de la Planta Vendedora -->
+        <div class="calculator-panel" style="position:static;">
+            <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
+                <div>
+                    <span class="step-num">REGISTRO DE TRAZABILIDAD AMBIENTAL DE PLANTA</span>
+                    <h3 style="font-size: 1.22rem; margin-top: 0.2rem; font-family: var(--fuente-display);">
+                        Certificados Emitidos por Ventas
+                    </h3>
+                    <p style="font-size: 0.84rem; color: var(--texto-secundario);">
+                        Hacé clic en cualquier operación para inspeccionar o imprimir su Certificado Oficial A4. <strong>Nota de seguridad:</strong> el pago en garantía se libera únicamente cuando el comprador firma la recepción en su campo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Paginador de Certificados del Vendedor -->
+            <div id="paginador-vendedor-cert-top" class="subruta-pagination-bar"></div>
+
+            <!-- Lista de Certificados del Vendedor -->
+            <div id="lista-certificados-vendedor" class="certificados-operations-list"></div>
+
+            <div id="paginador-vendedor-cert-bottom" class="subruta-pagination-bar" style="margin-top:0.85rem;"></div>
+        </div>
+
+        <!-- Columna Derecha: Visor Oficial A4 del Certificado Seleccionado (Sin botón de auto-liberar Escrow) -->
+        <div>
+            <div class="certificado-oficial-card" id="tarjeta-certificado-activo">
+                <div class="cert-watermark" aria-hidden="true">MOÑÁI</div>
+                <div class="cert-seal-header">
+                    <div>
+                        <span class="cert-seal-badge" id="cert-estado-badge">
+                            PAGO EN GARANTÍA (ESCROW ARS) · REMITO CIRCULAR AUDITABLE
+                        </span>
+                        <span class="cert-credit-seal-badge">
+                            APTO CRÉDITOS NACIONALES DE ECONOMÍA CIRCULAR
+                        </span>
+                        <h3 style="font-size: 1.32rem; margin-top: 0.45rem; font-family: var(--fuente-display);">
+                            Certificado Oficial de Trazabilidad Ambiental y Disposición Final
+                        </h3>
+                        <p style="font-size: 0.85rem; color: var(--texto-secundario); margin-top: 0.25rem;">
+                            Comprobante institucional bajo Ley Nac. 25.916. Acredita la reutilización productiva del subproducto sin quema ni vuelco. Elegible como respaldo para <strong>créditos verdes y beneficios fiscales nacionales</strong>.
+                        </p>
+                    </div>
+                    <div class="cert-number-box">
+                        <span>Certificado N.°</span>
+                        <strong id="cert-id" class="font-mono">
+                            {% if certificados_recientes %}
+                                #MN-2026-{{ certificados_recientes.0.id|stringformat:"04d" }}
+                            {% else %}
+                                #MN-2026-0001
+                            {% endif %}
+                        </strong>
+                    </div>
+                </div>
+
+                <!-- Estado de Auditoría de Firma del Comprador (Solo Lectura para Vendedor) -->
+                <div id="cert-vendedor-audit-banner" class="cert-audit-readonly-banner">
+                    <span id="cert-vendedor-audit-icon" class="font-mono">●</span>
+                    <div>
+                        <strong id="cert-vendedor-audit-title">Estado de Cierre y Firma de Conformidad:</strong>
+                        <span id="cert-vendedor-audit-desc">Verificando estado de firma del comprador en tranquera...</span>
+                    </div>
+                </div>
+
+                <div class="cert-grid">
+                    <div class="cert-field">
+                        <span>Industria Generadora (Vendedor)</span>
+                        <strong id="cert-vendedor">
+                            {% if certificados_recientes %}
+                                {{ certificados_recientes.0.lote.empresa_vendedora }} ({{ certificados_recientes.0.lote.localidad_origen }}, {{ certificados_recientes.0.lote.provincia }})
+                            {% elif lotes %}
+                                {{ lotes.0.empresa_vendedora }} ({{ lotes.0.localidad_origen }}, {{ lotes.0.provincia }})
+                            {% else %}
+                                Molino Arrocero San Lorenzo SRL (Saladas, Corrientes)
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="cert-field">
+                        <span>Establecimiento Receptor (Comprador que firma)</span>
+                        <strong id="cert-comprador">
+                            {% if certificados_recientes %}
+                                {{ certificados_recientes.0.comprador_nombre }} ({{ certificados_recientes.0.localidad_destino }})
+                            {% else %}
+                                Granja Avícola San Isidro SRL (Goya, Corrientes)
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="cert-field">
+                        <span>Biomasa Recuperada</span>
+                        <strong id="cert-subproducto">
+                            {% if certificados_recientes %}
+                                {{ certificados_recientes.0.lote.titulo }} — {{ certificados_recientes.0.volumen_m3_calculado }} m³
+                            {% elif lotes %}
+                                {{ lotes.0.titulo }} — {{ lotes.0.toneladas_disponibles|floatformat:0 }} tn ({{ lotes.0.volumen_total_m3 }} m³)
+                            {% else %}
+                                Cascarilla de Arroz Seca — 15 tn (90.9 m³)
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="cert-field">
+                        <span>Camión de Retorno (Flete Calzado)</span>
+                        <strong id="cert-transportista">
+                            {% if certificados_recientes and certificados_recientes.0.camion %}
+                                {{ certificados_recientes.0.camion.transportista }}
+                            {% elif camiones %}
+                                {{ camiones.0.transportista }}
+                            {% else %}
+                                Transporte Litoral Express (Batea 90 m³)
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="cert-field">
+                        <span>Ahorro Logístico Generado</span>
+                        <strong id="cert-ahorro" class="font-mono" style="color: var(--color-exito);">
+                            {% if certificados_recientes %}
+                                ${{ certificados_recientes.0.ahorro_logistico_ars|floatformat:0 }} ARS
+                            {% else %}
+                                $630.000 ARS (-45%)
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="cert-field">
+                        <span>Estado de Garantía Escrow</span>
+                        <strong id="cert-total" class="font-mono">
+                            {% if certificados_recientes %}
+                                ${{ certificados_recientes.0.flete_calzado_ars|floatformat:0 }} ARS ({{ certificados_recientes.0.estado_garantia }})
+                            {% else %}
+                                $770.000 ARS (Custodia activa)
+                            {% endif %}
+                        </strong>
+                    </div>
+                </div>
+
+                <div class="cert-hash-section">
+                    <div style="font-size: 0.80rem; font-weight: 700; color: var(--color-blockchain); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                        <span>Sello de Auditoría Inmutable (<span id="cert-red">{% if certificados_recientes %}{{ certificados_recientes.0.red_blockchain }}{% else %}Hedera Testnet · Topic HCS 0.0.4829104{% endif %}</span>):</span>
+                        <span class="font-mono" style="font-size:0.75rem; color:var(--texto-suave);">$0,0001 USD / tx</span>
+                    </div>
+                    <div id="cert-hash" class="hash-box font-mono">{% if certificados_recientes %}{{ certificados_recientes.0.hash_certificado }}{% else %}0x8afb5ee71262172013ebea4918f0c3a8e91f42a1760628000419283710{% endif %}</div>
+                </div>
+
+                <!-- Botones Auditados: Vendedor imprime o verifica en HashScan, NUNCA auto-libera su propio Escrow -->
+                <div class="cert-actions-row">
+                    <button type="button" class="btn-primary" style="width:auto;" onclick="imprimirCertificadoOficial()">
+                        Imprimir / Descargar Certificado A4
+                    </button>
+                    <a id="cert-hashscan-link" href="https://hashscan.io/testnet/mainnet" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration:none;">
+                        Verificar Bloque en Hedera HashScan (Testnet) ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

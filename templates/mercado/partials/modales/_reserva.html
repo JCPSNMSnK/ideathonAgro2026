@@ -1,0 +1,77 @@
+<!-- =================================================================== -->
+<!-- MODAL 2: CONFIRMACIÓN DE RESERVA DEL COMPRADOR (ESCROW VOUCHER)     -->
+<!-- =================================================================== -->
+<div id="modal-reserva-exito" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="voucher-title">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <div>
+                <span id="voucher-estado-badge" class="cert-seal-badge" style="background:var(--color-exito-bg); color:var(--color-exito);">
+                    OPERACIÓN EN CUSTODIA (ESCROW ARS) · CONFIRMADA
+                </span>
+                <h3 id="voucher-title" style="font-size: 1.35rem; font-family: var(--fuente-display); margin-top: 0.35rem;">
+                    Comprobante de Reserva con Pago en Garantía
+                </h3>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalReserva()" aria-label="Cerrar ventana">✕</button>
+        </div>
+
+        <div class="modal-body" id="voucher-body">
+            <div class="voucher-success-box">
+                <div class="voucher-success-icon">✓</div>
+                <div>
+                    <strong id="voucher-banner-title" style="display:block; font-size:1.05rem;">¡Flete Calzado y Lote Reservados Exitosamente!</strong>
+                    <span id="voucher-banner-desc" style="font-size:0.86rem; color:var(--texto-secundario);">
+                        Tus fondos en pesos quedaron retenidos en garantía. Podés hacer el seguimiento y firmar la recepción cuando llegue el camión en la pestaña "3. Mis Compras y Certificados".
+                    </span>
+                </div>
+            </div>
+
+            <div class="cert-grid" style="margin-top:1rem;">
+                <div class="cert-field">
+                    <span>Código de Reserva / Escrow</span>
+                    <strong id="voucher-id" class="font-mono">#MN-RES-0001</strong>
+                </div>
+                <div class="cert-field">
+                    <span>Subproducto y Cantidad</span>
+                    <strong id="voucher-subproducto">Cascarilla de Arroz — 15 tn</strong>
+                </div>
+                <div class="cert-field">
+                    <span>Industria Vendedora</span>
+                    <strong id="voucher-vendedor">Molino San Lorenzo (Saladas)</strong>
+                </div>
+                <div class="cert-field">
+                    <span>Camión de Retorno Calzado</span>
+                    <strong id="voucher-camion">Transporte Litoral Express</strong>
+                </div>
+                <div class="cert-field">
+                    <span>Ahorro Logístico Directo</span>
+                    <strong id="voucher-ahorro" class="font-mono" style="color:var(--color-exito);">$630.000 ARS</strong>
+                </div>
+                <div class="cert-field">
+                    <span>Total Puesto en Destino</span>
+                    <strong id="voucher-total" class="font-mono">$770.000 ARS</strong>
+                </div>
+            </div>
+
+            <div style="margin-top:1rem; font-size:0.80rem; color:var(--texto-suave);">
+                <div>Red de Consenso: <strong id="voucher-red" style="color:var(--texto-principal);">Hedera Testnet (HCS)</strong></div>
+                <div style="margin-top:0.25rem;">Sello Criptográfico: <span id="voucher-hash" class="font-mono" style="word-break:break-all;">0x8afb5ee7...</span></div>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; justify-content:flex-end; gap:0.65rem; margin-top:1.25rem;">
+                <a id="voucher-hashscan-link" href="https://hashscan.io/testnet/mainnet" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration:none;">
+                    Verificar en Hedera HashScan ↗
+                </a>
+                <button type="button" class="chip-btn" onclick="imprimirVoucherReserva()">
+                    Imprimir Recibo
+                </button>
+                <button type="button" id="btn-voucher-liberar" class="btn-secondary" onclick="confirmarDescargaYLiberarEscrow()">
+                    Firmar Recepción Ahora
+                </button>
+                <button type="button" class="btn-primary" style="width:auto; padding:0.6rem 1.2rem;" onclick="irAMisComprasComprador()">
+                    Ir a Mis Compras y Certificados →
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

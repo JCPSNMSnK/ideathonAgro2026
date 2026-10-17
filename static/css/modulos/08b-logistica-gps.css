@@ -1,0 +1,39 @@
+/* =============================================================================
+   8b. ESTILOS VISUALES GPS PARA PORTAL DE LOGÍSTICA / CAMIONES
+   ============================================================================= */
+.truck-route-card {
+    border: 1.5px solid var(--borde-fuerte);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.truck-gps-banner {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem 1rem;
+    margin: 0.65rem 0;
+}
+
+.gps-route-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--fuente-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    line-height: 1.2;
+}
+
+.gps-arrow {
+    color: var(--color-primario);
+    font-weight: 800;
+}
+
+.gps-corredor-pill {
+    display: inline-block;
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+    margin-top: 0.35rem;
+}

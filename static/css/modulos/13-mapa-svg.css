@@ -1,0 +1,253 @@
+/* =============================================================================
+   13. MAPA INTERACTIVO DE PRODUCTORES (CANVAS SVG VECTORIAL DEL NEA)
+   ============================================================================= */
+.producers-map-container {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.75rem;
+    box-shadow: var(--sombra-destacada);
+    animation: fadeInPanel 0.25s ease-out;
+}
+
+.map-container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-bottom: 1px solid var(--borde-color);
+    padding-bottom: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.map-header-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-primario);
+}
+
+.map-header-title {
+    font-family: var(--fuente-display);
+    font-size: 1.28rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0.25rem 0 0.35rem;
+}
+
+.map-header-desc {
+    font-size: 0.86rem;
+    color: var(--texto-secundario);
+    line-height: 1.45;
+    max-width: 620px;
+    margin: 0;
+}
+
+.map-legend-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-self: center;
+}
+
+.legend-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    color: var(--texto-principal);
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot-buyer { background: #3B82F6; box-shadow: 0 0 4px #3B82F6; }
+.dot-urgent { background: #DC2626; box-shadow: 0 0 4px #DC2626; }
+.dot-future { background: #16A34A; box-shadow: 0 0 4px #16A34A; }
+.dot-producer { background: var(--color-primario); }
+
+.interactive-map-stage {
+    position: relative;
+    width: 100%;
+    min-height: 380px;
+    background: radial-gradient(circle at 50% 50%, var(--bg-bloque-suave) 0%, var(--bg-tarjeta) 100%);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    overflow: hidden;
+}
+
+.map-canvas-svg {
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    display: block;
+}
+
+/* Rutas y Flujos en el Mapa */
+.map-trunk-road {
+    fill: none;
+    stroke: var(--borde-fuerte);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.45;
+}
+
+.map-flow-line {
+    fill: none;
+    stroke: var(--color-primario);
+    stroke-width: 2.2;
+    stroke-dasharray: 6 5;
+    animation: flowDashAnim 30s linear infinite;
+    opacity: 0.75;
+}
+
+.map-flow-urgent {
+    stroke: var(--color-peligro);
+    stroke-width: 2.6;
+    stroke-dasharray: 5 4;
+    animation: flowDashAnim 15s linear infinite;
+    opacity: 0.9;
+}
+
+@keyframes flowDashAnim {
+    from { stroke-dashoffset: 200; }
+    to { stroke-dashoffset: 0; }
+}
+
+/* Nodos SVG */
+.map-node-buyer .buyer-pulse-halo {
+    fill: rgba(59, 130, 246, 0.18);
+    stroke: #3B82F6;
+    stroke-width: 1.5;
+    animation: haloPulse 2s infinite ease-out;
+}
+
+.map-node-buyer .buyer-center-dot {
+    fill: #2563EB;
+    stroke: #FFFFFF;
+    stroke-width: 2.5;
+}
+
+@keyframes haloPulse {
+    0% { r: 10; opacity: 1; }
+    100% { r: 26; opacity: 0; }
+}
+
+.map-node-label {
+    font-size: 11px;
+    font-weight: 800;
+    fill: var(--texto-principal);
+    text-anchor: middle;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+.map-producer-node {
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.map-producer-node:hover {
+    transform: scale(1.18);
+}
+
+.node-outer-ring {
+    fill: var(--bg-tarjeta);
+    stroke: var(--color-primario);
+    stroke-width: 2.5;
+    transition: all 0.2s ease;
+}
+
+.map-node-urgent .node-outer-ring {
+    stroke: var(--color-peligro);
+    fill: #FEE2E2;
+}
+
+.map-node-future .node-outer-ring {
+    stroke: var(--color-exito);
+    stroke-dasharray: 4 2;
+}
+
+.node-center-point {
+    fill: var(--color-primario);
+}
+
+.map-node-urgent .node-center-point { fill: var(--color-peligro); }
+.map-node-future .node-center-point { fill: var(--color-exito); }
+
+.node-title-tag {
+    font-size: 10px;
+    font-weight: 800;
+    fill: var(--texto-principal);
+    text-anchor: middle;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+    pointer-events: none;
+}
+
+.node-icon-emoji {
+    font-size: 10px;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+/* Ficha Flotante de Productor sobre el Mapa */
+.map-floating-card {
+    position: absolute;
+    width: 290px;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.15rem;
+    box-shadow: var(--sombra-destacada);
+    z-index: 25;
+    animation: fadeInPanel 0.2s ease-out;
+}
+
+.map-card-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    color: var(--texto-suave);
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.map-card-close:hover {
+    color: var(--texto-principal);
+}
+
+.map-card-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.45rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-xs);
+    padding: 0.5rem;
+    font-size: 0.74rem;
+}
+
+.map-card-metrics span {
+    display: block;
+    color: var(--texto-suave);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+}
+
+.map-card-metrics strong {
+    color: var(--texto-principal);
+}

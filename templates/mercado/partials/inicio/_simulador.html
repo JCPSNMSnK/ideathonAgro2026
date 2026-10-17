@@ -1,0 +1,99 @@
+<!-- 3. CONSOLA DE SIMULACIÓN INTERACTIVA EN VIVO -->
+<div class="live-demo-stage live-demo-stage-full" id="simulador-en-vivo-seccion" aria-label="Demostración interactiva en vivo de Moñái">
+    <div class="demo-stage-header">
+        <div>
+            <span class="demo-live-badge">SIMULADOR EN VIVO · CASOS PRODUCTIVOS REALES</span>
+            <h2 class="demo-stage-title">Mirá en vivo cómo el Flete Calzado vuelve rentable un lote</h2>
+            <p style="font-size: 0.88rem; color: var(--texto-secundario); margin-top: 0.25rem;">
+                Elegí un escenario productivo para comprobar cómo se resuelve la trampa del volumen físico.
+            </p>
+        </div>
+        <span class="demo-stage-meta font-mono">Tarifa FADEEAC 2026</span>
+    </div>
+
+    <!-- Selector de Escenarios Reales sin Emojis -->
+    <div class="demo-preset-tabs" role="group" aria-label="Casos productivos reales">
+        <button type="button" class="demo-preset-btn active" id="demo-btn-0" onclick="seleccionarCasoDemoLanding(0)">
+            1. Cascarilla de Arroz (15 tn)
+        </button>
+        <button type="button" class="demo-preset-btn" id="demo-btn-1" onclick="seleccionarCasoDemoLanding(1)">
+            2. Aserrín de Pino (14 tn)
+        </button>
+        <button type="button" class="demo-preset-btn" id="demo-btn-2" onclick="seleccionarCasoDemoLanding(2)">
+            3. Citrus Húmedo (24 tn)
+        </button>
+    </div>
+
+    <!-- Ficha del Escenario Activo -->
+    <div class="demo-scenario-summary">
+        <div>
+            <div class="demo-scenario-route font-mono" id="demo-ruta-texto">Saladas, Corrientes → Goya, Corrientes (250 km)</div>
+            <div class="demo-scenario-sub" id="demo-actor-texto">Molino Arrocero San Lorenzo · Destino: Cama Avícola de Galpón</div>
+        </div>
+        <span class="badge-flete" id="demo-modalidad-pill">Flete: 100% Comprador</span>
+    </div>
+
+    <!-- Gráfico de Cubicaje en Batea (La Trampa del Volumen) -->
+    <div class="truck-visualizer">
+        <div class="truck-vis-header">
+            <span>Cubicaje en Batea Típica de Ruta (90 m³ / 30 tn máx)</span>
+            <strong id="demo-densidad-badge" class="font-mono">Densidad: 165 kg/m³</strong>
+        </div>
+
+        <div class="truck-bars-stack">
+            <div class="truck-bar-row">
+                <div class="truck-bar-label">
+                    <span>Ocupación Física por Volumen (<strong id="demo-vol-m3" class="font-mono">90.9 m³</strong>)</span>
+                    <strong id="demo-vol-pct" class="text-alert-vol font-mono">100% Batea llena</strong>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="demo-bar-vol" class="progress-bar-fill volume-alert" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="truck-bar-row">
+                <div class="truck-bar-label">
+                    <span>Ocupación por Peso en Balanza (<strong id="demo-peso-tn" class="font-mono">15 tn</strong> de 30 tn)</span>
+                    <strong id="demo-peso-pct" class="font-mono">50% Capacidad</strong>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="demo-bar-peso" class="progress-bar-fill" style="width: 50%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="truck-vis-note" id="demo-trampa-explicacion">
+            La carga llena el 100% del volumen del acoplado con solo 15 tn. Un flete tradicional cobra el camión entero de 30 tn.
+        </p>
+    </div>
+
+    <!-- Comparador Lado a Lado: Rojo FADEEAC vs Verde Flete Calzado -->
+    <div class="comparison-grid demo-vs-grid">
+        <div class="comp-box comp-bad demo-box-rojo">
+            <div class="comp-badge-header">Flete Tradicional (Tarifa Plena)</div>
+            <div class="comp-price font-mono" id="demo-precio-rojo">$1.400.000</div>
+            <div class="comp-desc" id="demo-desc-rojo">
+                Representa el <strong>73,7% del costo total</strong>. El negocio no cierra y el residuo se quema.
+            </div>
+        </div>
+
+        <div class="comp-box comp-good demo-box-verde">
+            <div class="comp-badge-header">Con Flete Calzado Moñái (<span id="demo-desc-pct">-45%</span>)</div>
+            <div class="comp-price font-mono" id="demo-precio-verde">$770.000</div>
+            <div class="comp-desc" id="demo-desc-verde">
+                Camión que regresa vacío por RN 12. <strong>Operación rentable e inmediata.</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultado y Botón de Acción Directa -->
+    <div class="demo-stage-footer">
+        <div class="demo-saving-highlight">
+            <span>Ahorro neto directo en este viaje:</span>
+            <strong id="demo-ahorro-valor" class="font-mono">$630.000 ARS</strong>
+        </div>
+        <button type="button" class="btn-primary demo-cta-btn" onclick="abrirCasoDemoEnCotizador()">
+            Cotizar este Lote para tu Campo
+        </button>
+    </div>
+</div>

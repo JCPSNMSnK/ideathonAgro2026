@@ -1,0 +1,9 @@
+/* =============================================================================
+   19. AJUSTES TIPOGRÁFICOS FINALES (antes en un <style> inline del <head>)
+   Se carga último para conservar la misma prioridad en la cascada.
+   ============================================================================= */
+
+body { font-size: 16px; line-height: 1.5; }
+h1, .hero-headline { font-size: clamp(2.15rem, 3.6vw, 3.1rem); letter-spacing: -0.025em; line-height: 1.08; }
+h2, .workspace-title { font-size: clamp(1.55rem, 2.3vw, 2.05rem); letter-spacing: -0.02em; line-height: 1.18; }
+h3 { font-size: 1.25rem; letter-spacing: -0.012em; line-height: 1.26; }

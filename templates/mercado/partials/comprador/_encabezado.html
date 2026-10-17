@@ -1,0 +1,65 @@
+<!-- NIVEL 1 DE JERARQUÍA: Encabezado Ejecutivo + Identidad Activa + KPIs del Rol -->
+<div class="role-workspace-header role-hierarchy-header">
+    <div class="role-header-main">
+        <span class="role-badge-pill">PORTAL COMPRADOR AGROPECUARIO · ECONOMÍA CIRCULAR</span>
+        <h2 class="workspace-title">Abastecimiento Rural con Flete Calzado y Custodia Escrow</h2>
+        <p class="workspace-subtitle">
+            Recorrido en 3 etapas: <strong>1) Explorá lotes o sublotes</strong> en el catálogo o mapa federal, <strong>2) Cotizá puesto en tu tranquera</strong> (con camión de retorno o vehículo propio) y <strong>3) Firmá la recepción</strong> al descargar para cerrar el certificado ambiental.
+        </p>
+    </div>
+
+</div>
+
+<!-- NIVEL 1B: Selector de Ventana Principal del Comprador (Nueva Compra vs Mis Compras y Certificados) -->
+<div class="comprador-main-windows-bar" role="tablist" aria-label="Ventanas del Portal Comprador">
+    <button type="button"
+            id="btn-ventana-comp-nueva"
+            class="comprador-window-btn active"
+            role="tab"
+            aria-selected="true"
+            onclick="cambiarVentanaPrincipalComprador('nueva')">
+        <div class="window-btn-text">
+            <strong class="window-btn-title">Nueva Compra</strong>
+            <span class="window-btn-desc">Catálogo, mapa interactivo y cotizador</span>
+        </div>
+        <span class="subtab-counter-pill font-mono" id="kpi-comp-lotes-count">{{ lotes|length }} lotes</span>
+    </button>
+
+    <button type="button"
+            id="btn-ventana-comp-compras"
+            class="comprador-window-btn"
+            role="tab"
+            aria-selected="false"
+            onclick="cambiarVentanaPrincipalComprador('compras')">
+        <div class="window-btn-text">
+            <strong class="window-btn-title">Mis Compras y Certificados</strong>
+            <span class="window-btn-desc">Firmar recepción en tranquera y certificados</span>
+        </div>
+        <span class="subtab-counter-pill subtab-pill-warning font-mono" id="badge-compras-pendientes">Mis compras</span>
+    </button>
+</div>
+
+<!-- NIVEL 2: Barra Concisa de Pasos de Nueva Compra (Solo visible en la ventana "Nueva Compra") -->
+<div id="barra-pasos-nueva-compra" class="role-subtabs-nav comprador-two-steps-nav" role="tablist" aria-label="Pasos de Nueva Compra">
+    <button type="button"
+            id="btn-subtab-comp-paso1"
+            class="role-subtab-btn active"
+            role="tab"
+            aria-selected="true"
+            onclick="cambiarSubTabComprador('paso1')">
+        <span class="subtab-step-circle">1</span>
+        <strong>Catálogo y Mapa</strong>
+        <span class="subtab-counter-pill font-mono" id="badge-count-paso1">{{ lotes|length }}</span>
+    </button>
+
+    <button type="button"
+            id="btn-subtab-comp-paso2"
+            class="role-subtab-btn"
+            role="tab"
+            aria-selected="false"
+            onclick="cambiarSubTabComprador('paso2')">
+        <span class="subtab-step-circle">2</span>
+        <strong>Cotizar y Reservar</strong>
+        <span class="subtab-counter-pill subtab-pill-accent" id="badge-lote-activo-paso2">Cotizar</span>
+    </button>
+</div>

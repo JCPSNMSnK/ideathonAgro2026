@@ -1,0 +1,178 @@
+/* =============================================================================
+   16. JERARQUÍA VISUAL 3 NIVELES, SUB-PESTAÑAS, PAGINACIÓN Y PROPIEDAD (CONT.)
+   ============================================================================= */
+
+/* Nivel 3: Motor de Paginación Reutilizable */
+.subruta-pagination-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    margin: 0.85rem 0;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    box-shadow: var(--sombra-suave);
+}
+
+.pagination-summary {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+}
+
+.pagination-summary strong {
+    color: var(--texto-principal);
+    font-weight: 700;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.pagination-pages-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pagination-nav-btn,
+.pagination-page-btn {
+    padding: 0.36rem 0.72rem;
+    border-radius: var(--radio-sm);
+    border: 1px solid var(--borde-color);
+    background: var(--bg-bloque-suave);
+    color: var(--texto-principal);
+    font-family: var(--fuente-sans);
+    font-size: 0.80rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.pagination-page-btn {
+    min-width: 34px;
+    text-align: center;
+}
+
+.pagination-nav-btn:hover:not(:disabled),
+.pagination-page-btn:hover:not(.active) {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border-color: var(--color-exito-borde);
+}
+
+.pagination-page-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+}
+
+.pagination-nav-btn:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+/* Grilla de Catálogo Comprador (Paso 1) y Grilla Cotizador (Paso 2) */
+.lotes-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+    gap: 1.15rem;
+}
+
+.active-lot-context-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1.15rem;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--color-exito-borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.paso2-cotizador-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.paso2-col-config,
+.paso2-col-results {
+    min-width: 0;
+}
+
+/* Reglas de Propiedad: Badges de Titularidad, Toggle Míos/Todos y Candados Read-Only */
+.ownership-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.2rem;
+    gap: 0.2rem;
+}
+
+.ownership-filter-btn {
+    padding: 0.38rem 0.78rem;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--texto-secundario);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ownership-filter-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.badge-own-resource {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.16rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.badge-thirdparty-resource {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.16rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    color: var(--texto-secundario);
+    border: 1px solid var(--borde-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.readonly-lock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.38rem 0.75rem;
+    border-radius: var(--radio-sm);
+    background: var(--bg-bloque-suave);
+    border: 1px dashed var(--borde-fuerte);
+    color: var(--texto-secundario);
+    font-size: 0.76rem;
+    font-weight: 600;
+}

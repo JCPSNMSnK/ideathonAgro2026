@@ -1,0 +1,79 @@
+<!-- =============================================================== -->
+<!-- SUB-PESTAÑA 2 DE LOGÍSTICA: PUBLICAR / EDITAR UNIDAD VACÍA      -->
+<!-- =============================================================== -->
+<div id="subtab-logistica-publicar" class="role-subtab-panel">
+    <div class="calculator-panel" style="position:static; max-width: 820px; margin: 0 auto;" id="panel-form-camion">
+        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
+            <div>
+                <span class="step-num" id="cam-form-badge">ALTA Y MODIFICACIÓN DE FLOTA PROPIA</span>
+                <h3 id="cam-form-title" style="font-size: 1.35rem; margin-top: 0.25rem; font-family: var(--fuente-display);">Publicar Viaje de Regreso Vacío</h3>
+                <p style="font-size: 0.88rem; color: var(--texto-secundario);">
+                    La unidad quedará registrada bajo tu empresa transportista activa. Solo vos podrás editar su ruta o darla de baja.
+                </p>
+            </div>
+            <button type="button" class="chip-btn" onclick="cambiarSubTabLogistica('flota')">
+                ← Volver a la Bolsa de Flota
+            </button>
+        </div>
+
+        <form onsubmit="enviarNuevoCamion(event)">
+            <input type="hidden" id="cam-edit-id" value="">
+            <div class="form-group">
+                <label for="cam-transportista">Empresa Transportista o Chofer Titular</label>
+                <input type="text" id="cam-transportista" class="form-control" value="Transportes Don Horacio" placeholder="Ej: Transportes Don Horacio (Batea #02)" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cam-origen">Origen de Regreso</label>
+                    <input type="text" id="cam-origen" class="form-control" value="Corrientes Capital" required>
+                </div>
+                <div class="form-group">
+                    <label for="cam-destino">Destino Final</label>
+                    <input type="text" id="cam-destino" class="form-control" value="Goya / Reconquista" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cam-pasa-por">Localidades de paso en el corredor vial</label>
+                <input type="text" id="cam-pasa-por" class="form-control" value="Empedrado, Saladas, San Roque, Bella Vista" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cam-carroceria">Carrocería de la Unidad</label>
+                    <select id="cam-carroceria" class="form-control">
+                        <option value="Batea Cerealera con Lona (85 m3)">Batea Cerealera con Lona (85 m³)</option>
+                        <option value="Semirremolque Baranda Volcable (90 m3)">Semirremolque Baranda Volcable (90 m³)</option>
+                        <option value="Batea Forestal Alto Volumen (95 m3)">Batea Forestal Alto Volumen (95 m³)</option>
+                        <option value="Batea Estanca para Húmedos (75 m3)">Batea Estanca para Húmedos (75 m³)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cam-fecha">Fecha y Horario de Salida</label>
+                    <input type="text" id="cam-fecha" class="form-control" value="Hoy — 18:00 hs" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cam-cap-m3">Capacidad de Caja / Batea (m³)</label>
+                    <input type="number" id="cam-cap-m3" class="form-control font-mono" value="85" min="30" max="120" required>
+                </div>
+                <div class="form-group">
+                    <label for="cam-descuento">Descuento de Retorno Ofrecido (%)</label>
+                    <input type="number" id="cam-descuento" class="form-control font-mono" value="45" min="20" max="60" required>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:0.65rem; flex-wrap:wrap; margin-top:0.85rem;">
+                <button type="submit" id="cam-btn-submit" class="btn-primary" style="flex:1;">
+                    Publicar Retorno y Activar Match en Corredor →
+                </button>
+                <button type="button" id="cam-btn-cancel-edit" class="chip-btn" style="display:none;" onclick="cancelarEdicionCamion()">
+                    Cancelar Edición
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

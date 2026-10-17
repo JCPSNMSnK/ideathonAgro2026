@@ -1,0 +1,95 @@
+<!-- Paso 1 de Selección: Filtros Claros y Accesibles para Productores -->
+<div class="buyer-filter-card">
+    <div class="filter-step-label">
+        <span class="step-badge">1</span>
+        <strong>Filtrá por actividad productiva y ubicación de tu establecimiento</strong>
+    </div>
+
+    <!-- Selector de Actividad Táctil -->
+    <div class="activity-selector-grid">
+        {% for p in perfiles %}
+        <a href="?rol=comprador&perfil={{ p.codigo }}{% if localidad_actual %}&localidad={{ localidad_actual }}{% endif %}"
+           class="activity-choice-btn {% if perfil_actual == p.codigo %}active{% endif %}">
+            <span class="activity-choice-title">{{ p.nombre }}</span>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Fila de Ubicación y Búsqueda Rápida -->
+    <form method="get" action="/" class="buyer-location-bar" id="form-filtros-carril2">
+        <input type="hidden" name="rol" value="comprador">
+        <input type="hidden" name="perfil" id="filtro-perfil-hidden" value="{{ perfil_actual }}">
+
+        <select id="filtro-perfil-select" name="perfil_sync" style="display:none;">
+            {% for p in perfiles %}
+            <option value="{{ p.codigo }}" {% if perfil_actual == p.codigo %}selected{% endif %}>{{ p.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="location-input-group">
+            <label for="filtro-localidad-select">
+                <span class="step-badge">2</span>
+                <strong>¿Dónde está tu campo o establecimiento?</strong>
+            </label>
+            <select id="filtro-localidad-select" name="localidad" class="form-control" onchange="actualizarLocalidadComprador(this)">
+                {% if localidades_comprador %}
+                    {% for loc in localidades_comprador %}
+                    <option value="{{ loc.codigo }}"
+                            data-nombre="{{ loc.nombre }}"
+                            {% if localidad_actual == loc.codigo %}selected{% endif %}>
+                        {{ loc.nombre }}
+                    </option>
+                    {% endfor %}
+                {% else %}
+                    <option value="GOYA" data-nombre="Goya, Corrientes" selected>Goya, Corrientes</option>
+                    <option value="SALADAS" data-nombre="Saladas, Corrientes">Saladas, Corrientes</option>
+                    <option value="BELLA_VISTA" data-nombre="Bella Vista, Corrientes">Bella Vista, Corrientes</option>
+                    <option value="MERCEDES" data-nombre="Mercedes, Corrientes">Mercedes, Corrientes</option>
+                    <option value="CORRIENTES" data-nombre="Corrientes Capital">Corrientes Capital</option>
+                    <option value="RECONQUISTA" data-nombre="Reconquista, Santa Fe">Reconquista, Santa Fe</option>
+                {% endif %}
+            </select>
+        </div>
+
+        <div class="search-input-group">
+            <label for="filtro-busqueda-input">
+                <strong>Buscar residuo, empresa o ciudad:</strong>
+            </label>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text"
+                       id="filtro-busqueda-input"
+                       name="q"
+                       value="{{ busqueda_q|default:'' }}"
+                       class="form-control"
+                       placeholder="Ej: cascarilla, aserrín, urgente, futuro, Saladas..."
+                       oninput="filtrarTarjetasEnCliente(this.value)">
+                {% if busqueda_q or perfil_actual != 'TODOS' %}
+                <a href="/?rol=comprador" class="chip-btn" style="white-space:nowrap;">Limpiar</a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    <!-- Filtros rápidos de modalidad comercial (Todos / Urgencia 48hs / Lotes Futuros) -->
+    <div class="quick-type-filters-bar">
+        <span class="quick-filter-label">Filtro rápido:</span>
+        <button type="button" class="quick-type-pill chip-btn active" onclick="filtrarPorCondicionLote('TODOS', this)">
+            Todos los Lotes ({{ lotes|length }})
+        </button>
+        <button type="button" class="quick-type-pill chip-btn" onclick="filtrarPorCondicionLote('URGENTE', this)">
+            Evacuación Urgente 48 hs
+        </button>
+        <button type="button" class="quick-type-pill chip-btn" onclick="filtrarPorCondicionLote('FUTURO', this)">
+            Lotes Futuros (Preventa Sublotes)
+        </button>
+    </div>
+
+    {% if perfil_actual_obj %}
+    <div class="recommender-active-banner" style="margin-top: 0.75rem;">
+        <div>
+            <strong>Criterio técnico para {{ perfil_actual_obj.nombre }}:</strong>
+            <span>{{ perfil_actual_obj.descripcion }}</span>
+        </div>
+    </div>
+    {% endif %}
+</div>

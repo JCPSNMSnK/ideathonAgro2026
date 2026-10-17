@@ -1,0 +1,26 @@
+<!-- PANTALLA DE ACCESO RESTRINGIDO (CUANDO NO HAY SESIÓN INICIADA) -->
+<div id="logistica-gated-view" class="auth-gated-view" style="display:none;">
+    <div class="auth-gated-card">
+        <div class="auth-gated-icon-box">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+        </div>
+        <span class="role-badge-pill">BOLSA DE RETORNOS REGIONAL</span>
+        <h2 class="auth-gated-title">Acceso Exclusivo para Transportistas y Fleteros</h2>
+        <p class="auth-gated-desc">
+            Para administrar las unidades de tu empresa, publicar retornos vacíos en los corredores nacionales y auditar tus liquidaciones protegidas por Escrow, identificá tu transportista.
+        </p>
+        <div class="auth-gated-actions">
+            <button type="button" class="btn-primary" onclick="identificarseComoRol('logistica', 'Horacio Giménez', 'Transportes Don Horacio', 'Corrientes Capital')">
+                Ingresar como Transportes Don Horacio →
+            </button>
+            <button type="button" class="btn-secondary" onclick="abrirModalLogin()">
+                Identificarme con otra flota
+            </button>
+        </div>
+    </div>
+</div>

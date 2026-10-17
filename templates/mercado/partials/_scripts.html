@@ -1,0 +1,22 @@
+{% load static %}
+{# Scripts de Moñái (JS clásico, sin bundler). Comparten el ámbito global, así que el ORDEN importa: #}
+{# 00-utilidades va primero y 18-inicializacion último (registra DOMContentLoaded). #}
+<script src="{% static 'js/modulos/00-utilidades.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/01-sesion-usuario.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/02-casos-demo-landing.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/03-tema.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/04-navegacion-roles.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/05-lotes-filtros.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/06-cotizador.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/07-sublotes.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/08-mapa-leaflet.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/09-georef-autocompletado.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/10-formulario-vendedor.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/11-subpestanas.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/12-propiedad-paginacion.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/13-lotes-vendedor-flota.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/14-compras-comprador.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/15-certificados-viajes.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/16-reserva-escrow.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/17-abm-lotes-camiones.js' %}?v={% now 'U' %}"></script>
+<script src="{% static 'js/modulos/18-inicializacion.js' %}?v={% now 'U' %}"></script>
