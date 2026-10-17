@@ -1,0 +1,20 @@
+<!-- =================================================================== -->
+<!-- VISTA 4: PORTAL DE LOGÍSTICA / CAMIÓN (BOLSA DE FLETE CALZADO)      -->
+<!-- =================================================================== -->
+<section id="vista-logistica" class="user-view-panel app-tab-panel" role="tabpanel" aria-labelledby="nav-btn-logistica">
+
+    {% include "mercado/partials/logistica/_acceso_restringido.html" %}
+
+    <!-- CONTENIDO PRIVADO (VISIBLE CUANDO HAY SESIÓN INICIADA) -->
+    <div id="logistica-private-view" class="auth-private-view">
+
+        {% include "mercado/partials/logistica/_encabezado.html" %}
+
+        {% include "mercado/partials/logistica/_flota.html" %}
+
+        {% include "mercado/partials/logistica/_publicar_camion.html" %}
+
+        {% include "mercado/partials/logistica/_viajes.html" %}
+
+    </div>
+</section>

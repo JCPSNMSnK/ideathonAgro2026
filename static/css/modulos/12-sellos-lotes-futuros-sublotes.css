@@ -1,0 +1,337 @@
+/* =============================================================================
+   12. IDENTIDAD VISUAL: SELLOS AMBIENTALES, LOTES FUTUROS, SUBLOTES Y MAPA NEA
+   ============================================================================= */
+
+/* Aviso Estratégico de Sellos Ambientales para Créditos Nacionales */
+.hero-stat-chip-green {
+    border-color: var(--color-exito-borde) !important;
+    background: var(--color-exito-bg) !important;
+}
+
+.circular-credit-notice-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--color-exito-borde);
+    border-radius: var(--radio-md);
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0 1.5rem;
+    text-align: left;
+    box-shadow: var(--sombra-suave);
+}
+
+.credit-notice-icon {
+    font-size: 1.45rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.credit-notice-content strong {
+    display: block;
+    font-size: 0.92rem;
+    color: var(--color-primario);
+    margin-bottom: 0.25rem;
+}
+
+.credit-notice-content p {
+    font-size: 0.84rem;
+    color: var(--texto-secundario);
+    line-height: 1.48;
+    margin: 0;
+}
+
+.cert-credit-seal-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--color-exito);
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    margin-left: 0.4rem;
+}
+
+/* Badges y Alertas de Urgencia en Lotes */
+.lote-badges-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.badge-urgente-pulse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--color-peligro-bg);
+    color: var(--color-peligro);
+    border: 1.5px solid var(--color-peligro-borde);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    animation: alertBorderPulse 2s infinite ease-in-out;
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-peligro);
+    box-shadow: 0 0 6px var(--color-peligro);
+    animation: pulseBlink 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+@keyframes alertBorderPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2); }
+    50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15); }
+}
+
+.lote-card-urgent {
+    border-color: rgba(220, 38, 38, 0.45) !important;
+}
+
+.lote-card-urgent:hover {
+    border-color: var(--color-peligro) !important;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.15) !important;
+}
+
+.lote-urgente-alert-box {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--color-peligro-bg);
+    border: 1px solid var(--color-peligro-borde);
+    border-radius: var(--radio-sm);
+    padding: 0.55rem 0.85rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.80rem;
+    color: var(--color-peligro);
+    line-height: 1.35;
+}
+
+/* Badges y Alertas de Lote Futuro */
+.badge-lote-futuro {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.22rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border: 1.5px solid var(--color-exito-borde);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.lote-card-future {
+    border-style: dashed;
+    border-color: var(--color-primario) !important;
+}
+
+.lote-futuro-alert-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    background: var(--color-primario-suave);
+    border: 1px dashed var(--color-exito-borde);
+    border-radius: var(--radio-sm);
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--texto-principal);
+    line-height: 1.4;
+}
+
+.future-lot-config-box {
+    background: var(--bg-bloque-suave);
+    border: 1.5px dashed var(--color-primario);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.future-lot-hint {
+    font-size: 0.80rem;
+    color: var(--texto-secundario);
+    margin-top: 0.4rem;
+}
+
+.lote-corredor-tag {
+    font-size: 0.74rem;
+    color: var(--texto-suave);
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radio-xs);
+}
+
+/* Selector Rápido de Sublotes en Tarjetas */
+.sublotes-quick-selector {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.sublotes-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--texto-secundario);
+    margin-bottom: 0.4rem;
+}
+
+.sublote-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.sublote-chip-btn {
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    color: var(--texto-principal);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.sublote-chip-btn:hover {
+    border-color: var(--color-primario);
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    transform: translateY(-1px);
+}
+
+/* Sublotes en el Panel Cotizador */
+.sublote-indicator-tag {
+    font-size: 0.70rem;
+    font-weight: 800;
+    color: var(--color-exito);
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.12rem 0.45rem;
+    border-radius: 9999px;
+    margin-left: 0.4rem;
+}
+
+.cotizador-sublotes-row {
+    margin: -0.25rem 0 0.85rem;
+}
+
+.cotizador-sublote-title {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.cotizador-sublote-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.sublote-calc-pill {
+    padding: 0.28rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    cursor: pointer;
+    transition: all 0.16s ease;
+}
+
+.sublote-calc-pill:hover,
+.sublote-calc-pill.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+}
+
+/* Selector de Vistas: Catálogo vs Mapa de Productores */
+.market-view-toggle-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding: 0.4rem 0.5rem;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.market-view-toggle-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.market-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radio-sm);
+    background: transparent;
+    border: 1.5px solid transparent;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--texto-secundario);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.market-view-btn:hover {
+    color: var(--texto-principal);
+    background: var(--bg-bloque-suave);
+}
+
+.market-view-btn.active {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border-color: var(--color-exito-borde);
+}
+
+.market-view-btn.active svg {
+    stroke: var(--color-primario);
+}
+
+.map-badge-live {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: var(--color-exito);
+    color: #FFFFFF;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+}
+
+.market-view-meta {
+    font-size: 0.80rem;
+    color: var(--texto-suave);
+    padding-right: 0.5rem;
+}

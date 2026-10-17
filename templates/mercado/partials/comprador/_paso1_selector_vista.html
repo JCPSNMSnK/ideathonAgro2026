@@ -1,0 +1,32 @@
+<!-- Selector de Vista: Catálogo Paginado de Lotes vs Mapa Interactivo de Productores -->
+<div class="market-view-toggle-bar">
+    <div class="market-view-toggle-group" role="group" aria-label="Cambiar modo de visualización">
+        <button type="button"
+                class="market-view-btn active"
+                id="btn-vista-catalogo"
+                onclick="cambiarModoMercado('catalogo')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Catálogo Paginado ({{ lotes|length }})</span>
+        </button>
+        <button type="button"
+                class="market-view-btn"
+                id="btn-vista-mapa"
+                onclick="cambiarModoMercado('mapa')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+            <span>Mapa Federal de Productores (Argentina)</span>
+            <span class="map-badge-live">IGN + OSRM</span>
+        </button>
+    </div>
+    <div class="market-view-meta font-mono" id="market-quick-filter-stats">
+        Seleccioná un lote o sublote para pasar automáticamente al Paso 2 (Cotizador)
+    </div>
+</div>

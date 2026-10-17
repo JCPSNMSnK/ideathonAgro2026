@@ -1,0 +1,82 @@
+/* =============================================================================
+   10. ESTILOS DE IMPRESIÓN OFICIAL (@media print)
+   ============================================================================= */
+@media print {
+    body {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+    }
+
+    .navbar,
+    .role-switcher,
+    .nav-actions,
+    .filter-bar,
+    .calculator-panel,
+    .btn-primary,
+    .chip-btn,
+    .kpi-strip,
+    .value-pillars-grid,
+    .hero-landing,
+    .modal-close-btn,
+    .cert-actions-row,
+    #vista-inicio,
+    #vista-comprador,
+    #vista-logistica {
+        display: none !important;
+    }
+
+    .container {
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .user-view-panel {
+        display: none !important;
+    }
+
+    #vista-vendedor {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    .role-workspace-header {
+        display: none !important;
+    }
+
+    .main-grid {
+        display: block !important;
+    }
+
+    .main-grid > div:first-child {
+        display: none !important;
+    }
+
+    .certificado-oficial-card {
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        margin: 0 auto !important;
+        padding: 2cm !important;
+        width: 100% !important;
+        max-width: 210mm !important;
+    }
+
+    .cert-watermark {
+        color: rgba(0, 0, 0, 0.05) !important;
+    }
+
+    /* Si se imprime el voucher */
+    .modal-backdrop {
+        position: static !important;
+        background: #fff !important;
+        padding: 0 !important;
+    }
+
+    .modal-dialog {
+        border: 2px solid #000 !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        padding: 1.5cm !important;
+    }
+}

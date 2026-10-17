@@ -1,0 +1,66 @@
+<!-- CONTENEDOR DEL MAPA INTERACTIVO REAL DE PRODUCTORES DE ARGENTINA (LEAFLET + GEOREF IGN + OSRM) -->
+<div id="seccion-mapa-productores" class="producers-map-container" style="display: none;">
+    <div class="map-container-header">
+        <div>
+            <div class="map-header-tag">CARTOGRAFÍA OFICIAL · API GEOREF DATOS ARGENTINA (IGN) + RUTEO VIAL OSRM</div>
+            <h3 class="map-header-title">Mapa Federal Interactivo de Agroindustrias y Corredores Reales</h3>
+            <p class="map-header-desc">
+                Navegá por toda la República Argentina con coordenadas oficiales del <strong>IGN (Instituto Geográfico Nacional)</strong>. Hacé clic en cualquier productor para trazar la <strong>ruta vial real por carreteras nacionales (OSRM)</strong> y cotizar en el Paso 2.
+            </p>
+        </div>
+        <div class="map-legend-pills">
+            <span class="legend-pill"><span class="legend-dot dot-buyer"></span> Tu Establecimiento</span>
+            <span class="legend-pill"><span class="legend-dot dot-urgent"></span> Venta Urgente (48h)</span>
+            <span class="legend-pill"><span class="legend-dot dot-future"></span> Lote Futuro (Zafra)</span>
+            <span class="legend-pill"><span class="legend-dot dot-producer"></span> Disponible en Planta</span>
+        </div>
+    </div>
+
+    <div class="map-region-filter-bar" style="justify-content: space-between; gap: 0.75rem;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
+            <span class="map-region-label">Región:</span>
+            <button type="button" class="map-region-pill active" onclick="filtrarMapaPorRegion('TODAS', this)">Toda Argentina</button>
+            <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NEA', this)">Litoral / NEA</button>
+            <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PAMPEANA', this)">Pampeana / Centro</button>
+            <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('CUYO', this)">Cuyo</button>
+            <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NOA', this)">NOA</button>
+            <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PATAGONIA', this)">Patagonia / Alto Valle</button>
+        </div>
+
+        <div class="map-georef-search-wrap" style="display: flex; align-items: center; gap: 0.45rem; flex: 1; max-width: 370px;">
+            <input type="text"
+                   id="mapa-georef-input"
+                   list="datalist-localidades-argentina"
+                   class="form-control"
+                   style="padding: 0.42rem 0.75rem; font-size: 0.82rem;"
+                   placeholder="Tu localidad (API Georef: ej. Rafaela, Junín, Oberá)..."
+                   oninput="autocompletarLocalidadGeoref(this.value)">
+            <button type="button"
+                    class="chip-btn"
+                    style="white-space: nowrap; padding: 0.42rem 0.75rem; font-size: 0.80rem;"
+                    onclick="fijarDestinoCompradorDesdeMapa()">
+                Ubicar mi Campo
+            </button>
+        </div>
+    </div>
+
+    <div id="map-osrm-telemetry" class="map-telemetry-bar font-mono">
+        <span><strong>Fuente Oficial:</strong> API Georef Datos Argentina (IGN) + OSRM Road Router</span>
+        <span id="map-osrm-route-summary">Seleccioná un lote en el mapa para trazar la ruta vial real por carreteras nacionales</span>
+    </div>
+
+    <div class="interactive-map-stage" id="mapa-stage-wrapper">
+        <div id="leaflet-mapa-argentina" class="leaflet-map-canvas" role="region" aria-label="Mapa interactivo oficial de productores y rutas de Argentina"></div>
+
+        <svg id="svg-mapa-nea" viewBox="0 0 880 500" class="map-canvas-svg" style="display:none;" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g id="map-routes-layer" class="map-routes-layer"></g>
+            <g id="map-flow-layer" class="map-flow-layer"></g>
+            <g id="map-nodes-layer" class="map-nodes-layer"></g>
+        </svg>
+
+        <div id="map-producer-card" class="map-floating-card" style="display:none;">
+            <button type="button" class="map-card-close" onclick="cerrarCardMapa()" aria-label="Cerrar ficha">✕</button>
+            <div id="map-card-content"></div>
+        </div>
+    </div>
+</div>

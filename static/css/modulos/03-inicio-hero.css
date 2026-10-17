@@ -1,0 +1,160 @@
+/* =============================================================================
+   3. LANDING PAGE Y PSEUDO-DEMOSTRACIÓN INTERACTIVA (VISTA INICIO)
+   ============================================================================= */
+/* =============================================================================
+   3. LANDING PAGE Y HERO SHOWCASE DE ALTO IMPACTO (VISTA INICIO)
+   ============================================================================= */
+.hero-showcase {
+    text-align: center;
+    padding: 2.5rem 1rem 3.5rem;
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(21, 128, 61, 0);
+    }
+}
+
+.hero-eyebrow-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primario);
+    background: var(--color-primario-suave);
+    border: 1px solid var(--color-exito-borde);
+    padding: 0.45rem 1.1rem;
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(22, 66, 40, 0.06);
+}
+
+.eyebrow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-exito);
+    box-shadow: 0 0 8px var(--color-exito);
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.hero-main-title {
+    font-family: var(--fuente-display);
+    font-size: clamp(2.1rem, 5vw, 3.25rem);
+    font-weight: 700;
+    line-height: 1.14;
+    color: var(--texto-principal);
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
+.hero-main-title em {
+    font-style: italic;
+    color: var(--color-primario);
+    text-decoration: underline;
+    text-decoration-color: var(--color-crema-dorado);
+    text-underline-offset: 4px;
+}
+
+.hero-main-subtitle {
+    font-size: clamp(0.98rem, 1.8vw, 1.12rem);
+    line-height: 1.68;
+    color: var(--texto-secundario);
+    max-width: 840px;
+    margin: 0 auto 2.25rem;
+    text-wrap: pretty;
+}
+
+/* 3 Píldoras de Valor Cuantitativas */
+.hero-value-pills-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    max-width: 840px;
+    margin: 0 auto 2.25rem;
+}
+
+@media (min-width: 640px) {
+    .hero-value-pills-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.15rem;
+    }
+}
+
+.hero-stat-chip {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    padding: 1.15rem 1rem;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.hero-stat-chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.stat-highlight {
+    display: block;
+    font-family: var(--fuente-mono);
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--color-exito);
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+}
+
+.stat-caption {
+    font-size: 0.80rem;
+    font-weight: 600;
+    color: var(--texto-secundario);
+    line-height: 1.35;
+}
+
+/* Botones de Acción Hero */
+.hero-actions-row.hero-actions-centered {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-cta-main {
+    width: auto !important;
+    padding: 0.85rem 2rem !important;
+    font-size: 1rem !important;
+    border-radius: 9999px !important;
+    min-height: 52px !important;
+    box-shadow: 0 4px 16px rgba(22, 66, 40, 0.35) !important;
+}
+
+.btn-cta-secondary {
+    width: auto !important;
+    padding: 0.85rem 1.8rem !important;
+    font-size: 0.94rem !important;
+    border-radius: 9999px !important;
+    min-height: 52px !important;
+    background: var(--bg-tarjeta) !important;
+    border: 1.5px solid var(--borde-color) !important;
+    box-shadow: var(--sombra-suave) !important;
+}
+
+.btn-cta-secondary:hover {
+    background: var(--bg-tarjeta-hover) !important;
+    border-color: var(--color-primario) !important;
+    transform: translateY(-1px) !important;
+}

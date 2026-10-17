@@ -1,0 +1,147 @@
+<!-- CATÁLOGO DE LOTES CON PAGINACIÓN -->
+<div id="seccion-grilla-catalogo">
+    <!-- Barra de Paginación Superior -->
+    <div id="paginador-comprador-top" class="subruta-pagination-bar"></div>
+
+    <!-- Grilla de Tarjetas de Lotes (2 columnas amplias al estar separada del Paso 2) -->
+    <div class="lotes-catalog-grid" id="contenedor-tarjetas-lotes">
+        {% for lote in lotes %}
+        <article class="lote-card {% if forloop.first %}selected{% endif %} {% if lote.es_urgente %}lote-card-urgent{% endif %} {% if lote.es_lote_futuro %}lote-card-future{% endif %}"
+                 data-lote-id="{{ lote.id }}"
+                 data-lote-titulo="{{ lote.titulo }}"
+                 data-lote-empresa="{{ lote.empresa_vendedora }}"
+                 data-lote-origen="{{ lote.localidad_origen }}, {{ lote.provincia }}"
+                 data-es-urgente="{% if lote.es_urgente %}1{% else %}0{% endif %}"
+                 data-es-futuro="{% if lote.es_lote_futuro %}1{% else %}0{% endif %}"
+                 data-busqueda="{{ lote.titulo|lower }} {{ lote.localidad_origen|lower }} {{ lote.empresa_vendedora|lower }} {{ lote.usos_recomendados|lower }} {% if lote.es_urgente %}urgente{% endif %} {% if lote.es_lote_futuro %}futuro zafra{% endif %}"
+                 data-distancia-km="{{ lote.distancia_sugerida_km|default:160 }}"
+                 data-sublote-min="{{ lote.sublote_min_tn|default:5 }}"
+                 onclick="seleccionarLoteYEnfocarCotizador('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
+
+            <div class="lote-header">
+                <div class="lote-badges-group">
+                    <span class="badge-cat badge-cat-{{ lote.categoria|lower }}">{{ lote.get_categoria_display }}</span>
+                    {% if lote.es_urgente %}
+                    <span class="badge-urgente-pulse">
+                        <span class="pulse-dot"></span>
+                        <span>{{ lote.etiqueta_urgencia|default:"VENTA INMEDIATA · URGENTE 48 HS" }}</span>
+                    </span>
+                    {% endif %}
+                    {% if lote.es_lote_futuro %}
+                    <span class="badge-lote-futuro">
+                        Lote Futuro ({{ lote.fecha_entrega_futura|default:"Zafra Próxima" }})
+                    </span>
+                    {% endif %}
+                    <span class="badge-retiro-propio" title="Apto para retiro directo en planta con camioneta o acoplado particular">
+                        Apto Retiro Particular
+                    </span>
+                </div>
+
+                <span class="badge-flete-savings font-mono">
+                    Retorno: -45% Flete Calzado
+                </span>
+            </div>
+
+            {% if lote.es_urgente %}
+            <div class="lote-urgente-alert-box">
+                <div>
+                    <strong>{{ lote.etiqueta_urgencia|default:"Despacho Inmediato" }}</strong>: {{ lote.motivo_urgencia|default:"Liberación urgente de acopio. Máxima prioridad logística." }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if lote.es_lote_futuro %}
+            <div class="lote-futuro-alert-box">
+                <div style="flex:1;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>Preventa de Cosecha / Zafra Programada:</strong>
+                        <span class="font-mono" style="font-size:0.78rem; font-weight:700;">{{ lote.toneladas_disponibles|floatformat:0 }} tn disponibles</span>
+                    </div>
+                    <div style="font-size:0.80rem; margin-top:0.2rem;">
+                        Reservá tu sublote desde solo <strong>{{ lote.sublote_min_tn }} tn</strong> con precio congelado antes del despacho.
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <h3 class="lote-title">{{ lote.titulo }}</h3>
+
+            <div class="lote-origin-row">
+                <span><strong>{{ lote.empresa_vendedora }}</strong> · {{ lote.localidad_origen }}, {{ lote.provincia }}</span>
+                <span class="lote-dist-pill font-mono">a {{ lote.distancia_sugerida_km|default:160 }} km</span>
+                <span class="lote-corredor-tag font-mono">{{ lote.ruta_corredor|default:"RN 12" }}</span>
+            </div>
+
+            <div class="lote-metrics">
+                <div class="metric-item">
+                    <span>Volumen Disponible</span>
+                    <strong class="font-mono">{{ lote.toneladas_disponibles|floatformat:0 }} tn ({{ lote.volumen_total_m3 }} m³)</strong>
+                </div>
+                <div class="metric-item">
+                    <span>Densidad Real</span>
+                    <strong class="font-mono">{{ lote.densidad_kg_m3 }} kg/m³</strong>
+                </div>
+                <div class="metric-item highlight-metric">
+                    <span>Precio en Planta</span>
+                    <strong class="font-mono">${{ lote.precio_tonelada_ars|floatformat:0 }} / tn</strong>
+                </div>
+            </div>
+
+            <!-- Fraccionamiento rápido de sublotes auditado y limpio -->
+            <div class="sublotes-quick-selector">
+                <span class="sublotes-label">Cotizar Sublote Rápido:</span>
+                <div class="sublote-chips-row">
+                    {% if lote.opciones_sublote_tn %}
+                        {% for opc in lote.opciones_sublote_tn %}
+                        <button type="button"
+                                class="sublote-chip-btn"
+                                onclick="event.stopPropagation(); comprarSubloteDirecto('{{ lote.id }}', '{{ opc }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                            {{ opc }} tn {% if opc < lote.toneladas_disponibles %}(Sublote){% else %}(Total){% endif %}
+                        </button>
+                        {% endfor %}
+                    {% else %}
+                        <button type="button"
+                                class="sublote-chip-btn"
+                                onclick="event.stopPropagation(); comprarSubloteDirecto('{{ lote.id }}', '5', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                            5 tn (Sublote)
+                        </button>
+                        <button type="button"
+                                class="sublote-chip-btn"
+                                onclick="event.stopPropagation(); comprarSubloteDirecto('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                            {{ lote.toneladas_disponibles|floatformat:0 }} tn (Total)
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="lote-uso">
+                <strong>Aplicación recomendada:</strong> {{ lote.usos_recomendados }}
+                {% if lote.explicacion_para_comprador %}
+                <div class="lote-uso-extra">{{ lote.explicacion_para_comprador }}</div>
+                {% endif %}
+            </div>
+
+            <div class="lote-card-footer">
+                <span class="lote-route-hint">
+                    Carrocería: <strong>{{ lote.carroceria_requerida }}</strong>
+                </span>
+                <button type="button"
+                        class="btn-cotizar-lote"
+                        onclick="event.stopPropagation(); seleccionarLoteYEnfocarCotizador('{{ lote.id }}', '{{ lote.toneladas_disponibles|floatformat:0 }}', '{{ lote.distancia_sugerida_km|default:160 }}')">
+                    {% if lote.es_lote_futuro %}Pasar al Paso 2: Cotizar Sublote{% else %}Pasar al Paso 2: Cotizar en Tranquera{% endif %}
+                </button>
+            </div>
+        </article>
+        {% empty %}
+        <div class="calculator-panel" style="text-align:center; padding:2rem 1.5rem; grid-column: 1 / -1;">
+            <p style="font-size:1.05rem; color:var(--texto-secundario);">No se encontraron lotes para ese filtro o búsqueda.</p>
+            <a href="/?rol=comprador" class="btn-secondary" style="display:inline-block; margin-top:0.75rem; text-decoration:none;">
+                Ver todos los lotes disponibles
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Barra de Paginación Inferior -->
+    <div id="paginador-comprador-bottom" class="subruta-pagination-bar" style="margin-top: 1.25rem;"></div>
+</div>

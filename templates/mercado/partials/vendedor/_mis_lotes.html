@@ -1,0 +1,91 @@
+<!-- =============================================================== -->
+<!-- SUB-PESTAÑA 1 DEL VENDEDOR: MIS LOTES EN PLANTA (PAGINADO)      -->
+<!-- =============================================================== -->
+<div id="subtab-vendedor-lotes" class="role-subtab-panel active">
+    <div class="calculator-panel" style="position:static;">
+        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <span class="step-num">GESTIÓN DE STOCK PROPIO Y REFERENCIA DE MERCADO</span>
+                <h3 style="font-size: 1.3rem; margin-top: 0.2rem; font-family: var(--fuente-display);">
+                    Lotes Publicados — Regla de Propiedad por Agroindustria
+                </h3>
+                <p style="font-size: 0.86rem; color: var(--texto-secundario);">
+                    Solo podés <strong>editar o dar de baja</strong> los lotes que pertenecen a tu planta vendedora (<strong id="label-planta-activa-vendedor">Molino Arrocero San Lorenzo SRL</strong>). Las publicaciones de otras empresas se muestran únicamente en modo lectura como referencia de precios.
+                </p>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+                <div class="ownership-filter-toggle" role="group" aria-label="Filtrar lotes de vendedor">
+                    <button type="button"
+                            id="btn-filtro-vend-mios"
+                            class="ownership-toggle-btn"
+                            onclick="cambiarFiltroLotesVendedor('MIOS')">
+                        Solo Mis Lotes
+                    </button>
+                    <button type="button"
+                            id="btn-filtro-vend-todos"
+                            class="ownership-toggle-btn active"
+                            onclick="cambiarFiltroLotesVendedor('TODOS')">
+                        Todos (Propios + Referencia)
+                    </button>
+                </div>
+                <button type="button" class="btn-primary" style="width:auto; padding:0.55rem 1.1rem; font-size:0.84rem;" onclick="irANuevoLoteVendedor()">
+                    + Publicar Nuevo Lote
+                </button>
+            </div>
+        </div>
+
+        <!-- Paginador Superior de Lotes Vendedor -->
+        <div id="paginador-vendedor-lotes-top" class="subruta-pagination-bar"></div>
+
+        <!-- Lista Paginada de Lotes con Control de Ownership -->
+        <div id="lista-lotes-vendedor-abm" style="display:grid; gap:0.75rem;">
+            {% for item in todos_los_lotes %}
+            <article class="vendedor-lote-row-card"
+                     data-lote-id="{{ item.id }}"
+                     data-empresa-vendedora="{{ item.empresa_vendedora }}">
+                <div class="vendedor-lote-row-main">
+                    <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.25rem;">
+                        <span class="badge-cat badge-cat-{{ item.categoria|lower }}">{{ item.get_categoria_display }}</span>
+                        <strong style="font-size:1.02rem; color:var(--texto-principal);">{{ item.titulo }}</strong>
+                        <span class="ownership-badge-slot"></span>
+                    </div>
+                    <div style="font-size:0.84rem; color:var(--texto-secundario); display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center;">
+                        <span>Planta: <strong>{{ item.empresa_vendedora }}</strong> ({{ item.localidad_origen }}, {{ item.provincia }})</span>
+                        <span>·</span>
+                        <span class="font-mono"><strong>{{ item.toneladas_disponibles|floatformat:1 }} tn</strong> disponibles</span>
+                        <span>·</span>
+                        <span class="font-mono">{{ item.densidad_kg_m3 }} kg/m³</span>
+                        <span>·</span>
+                        <span class="font-mono" style="color:var(--color-primario); font-weight:700;">${{ item.precio_tonelada_ars|floatformat:0 }} / tn</span>
+                        <span>·</span>
+                        <span>Flete: <strong>{{ item.get_modalidad_flete_display }}{% if item.modalidad_flete == 'MUTUO_ACUERDO' %} ({{ item.porcentaje_flete_vendedor|floatformat:0 }}% Vendedor){% endif %}</strong></span>
+                    </div>
+                </div>
+
+                <!-- Acciones protegidas por regla de negocio (Solo visibles si empresa_vendedora pertenece al actor) -->
+                <div class="vendedor-lote-row-actions">
+                    <div class="owner-actions-group" style="display:flex; gap:0.5rem;">
+                        <button type="button" class="chip-btn"
+                                onclick="cargarLoteEnFormularioEdicion('{{ item.id }}', '{{ item.titulo|escapejs }}', '{{ item.categoria }}', '{{ item.empresa_vendedora|escapejs }}', '{{ item.localidad_origen|escapejs }}', '{{ item.toneladas_disponibles }}', '{{ item.densidad_kg_m3 }}', '{{ item.precio_tonelada_ars }}', '{{ item.modalidad_flete }}', '{{ item.usos_recomendados|escapejs }}', '{{ item.porcentaje_flete_vendedor|default:50 }}')">
+                            Editar Mi Lote
+                        </button>
+                        <button type="button" class="chip-btn" style="color:var(--color-peligro); border-color:var(--color-peligro);"
+                                onclick="eliminarLoteABM('{{ item.id }}', '{{ item.titulo|escapejs }}')">
+                            Dar de Baja
+                        </button>
+                    </div>
+                    <div class="readonly-notice-slot" style="display:none;">
+                        <span class="readonly-lock-pill" title="Regla de negocio: No podés modificar ni eliminar lotes de otra empresa vendedora">
+                            Solo lectura (Otra empresa)
+                        </span>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <!-- Paginador Inferior de Lotes Vendedor -->
+        <div id="paginador-vendedor-lotes-bottom" class="subruta-pagination-bar" style="margin-top:1rem;"></div>
+    </div>
+</div>

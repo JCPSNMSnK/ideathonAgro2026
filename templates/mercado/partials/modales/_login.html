@@ -1,0 +1,95 @@
+<!-- =================================================================== -->
+<!-- MODAL 1: INICIO DE SESIÓN Y ABM DE PERFILES DE USUARIO              -->
+<!-- =================================================================== -->
+<div id="modal-login" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <div>
+                <span class="role-badge-pill">GESTIÓN DE PERFILES Y ROLES (ABM USUARIOS)</span>
+                <h3 id="login-modal-title" style="font-size: 1.35rem; font-family: var(--fuente-display); margin-top: 0.35rem;">
+                    ¿Cómo vas a operar en Moñái?
+                </h3>
+                <p style="font-size: 0.88rem; color: var(--texto-secundario); margin-top: 0.2rem;">
+                    Elegí un perfil precargado o creá, editá y eliminá tus propios usuarios de prueba.
+                </p>
+            </div>
+            <button type="button" class="modal-close-btn" onclick="cerrarModalLogin()" aria-label="Cerrar ventana">✕</button>
+        </div>
+
+        <div class="modal-body">
+            <div id="login-modal-notice" style="display:none;"></div>
+
+            <!-- Selector Rápido de Rol en 1 Clic -->
+            <div class="login-roles-grid">
+                <button type="button" class="login-role-option" onclick="identificarseComoRol('comprador', 'Don Aníbal Gómez', 'Granja Avícola San Isidro SRL', 'Goya, Corrientes')">
+                    <div class="login-role-badge">01 · COMPRADOR</div>
+                    <div class="login-role-name">Productor Agropecuario</div>
+                    <p class="login-role-hint">Compra subproductos, recibe en tranquera y firma el cierre del Certificado.</p>
+                    <span class="login-role-sample">Ejemplo: Granja Avícola San Isidro SRL (Goya)</span>
+                </button>
+
+                <button type="button" class="login-role-option" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo', 'Saladas, Corrientes')">
+                    <div class="login-role-badge">02 · VENDEDOR</div>
+                    <div class="login-role-name">Agroindustria Generadora</div>
+                    <p class="login-role-hint">Gestiona sus propios lotes en planta y audita sus Certificados Ambientales.</p>
+                    <span class="login-role-sample">Ejemplo: Molino Arrocero San Lorenzo (Saladas)</span>
+                </button>
+
+                <button type="button" class="login-role-option" onclick="identificarseComoRol('logistica', 'Horacio Giménez', 'Transportes Don Horacio', 'Corrientes Capital')">
+                    <div class="login-role-badge">03 · LOGÍSTICA</div>
+                    <div class="login-role-name">Transporte / Chofer</div>
+                    <p class="login-role-hint">Gestiona su propia flota de retorno vacío y cobra al confirmarse la descarga.</p>
+                    <span class="login-role-sample">Ejemplo: Transportes Don Horacio (RN 12)</span>
+                </button>
+            </div>
+
+            <!-- Lista ABM de Usuarios Personalizados Guardados -->
+            <div id="custom-users-abm-container" style="margin-top:0.85rem; display:none;">
+                <div style="font-size:0.8rem; font-weight:700; color:var(--texto-secundario); margin-bottom:0.4rem;">
+                    Tus Perfiles Guardados (Seleccionar / Editar / Eliminar):
+                </div>
+                <div id="custom-users-abm-list" style="display:grid; gap:0.45rem;"></div>
+            </div>
+
+            <div class="login-divider">
+                <span id="login-form-mode-label">o creá / editá un perfil de usuario</span>
+            </div>
+
+            <!-- Formulario Simple ABM de Usuario -->
+            <form onsubmit="guardarIdentificacionManual(event)" class="login-manual-form">
+                <input type="hidden" id="login-edit-index" value="">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="login-nombre">Nombre o Razón Social</label>
+                        <input type="text" id="login-nombre" class="form-control" placeholder="Ej: Establecimiento La Tranquera" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-rol-select">Rol en la Plataforma</label>
+                        <select id="login-rol-select" class="form-control">
+                            <option value="comprador">Comprador (Productor Rural)</option>
+                            <option value="vendedor">Vendedor (Industria Generadora)</option>
+                            <option value="logistica">Logística (Fletero / Camionero)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="login-localidad">Localidad de Argentina (API Georef Datos Argentina)</label>
+                    <input type="text"
+                           id="login-localidad"
+                           list="datalist-localidades-argentina"
+                           class="form-control"
+                           placeholder="Ej: Goya, Rafaela, Río Cuarto, San Martín..."
+                           oninput="autocompletarLocalidadGeoref(this.value)"
+                           required>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.75rem;">
+                    <button type="button" class="chip-btn" onclick="cerrarModalLogin()">Cancelar</button>
+                    <button type="submit" id="login-btn-submit" class="btn-primary" style="width:auto; padding:0.6rem 1.4rem;">
+                        Guardar Perfil y Entrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

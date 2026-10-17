@@ -1,0 +1,358 @@
+/* =============================================================================
+   6. PORTAL DEL COMPRADOR (TARJETA CLAVE #1 Y COTIZADOR ACCESIBLE)
+   ============================================================================= */
+.buyer-filter-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.35rem;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.filter-step-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--texto-principal);
+}
+
+.step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    font-size: 0.80rem;
+    font-weight: 800;
+}
+
+/* Selector de Actividad Táctil y Accesible (4 Botones Grandes) */
+.activity-selector-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+}
+
+@media (min-width: 600px) {
+    .activity-selector-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .activity-selector-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.activity-choice-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.85rem 1rem;
+    min-height: 52px;
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    color: var(--texto-principal);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.3;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.activity-choice-btn:hover {
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-suave);
+}
+
+.activity-choice-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.25);
+}
+
+/* Fila de Ubicación y Búsqueda */
+.buyer-location-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    border-top: 1px dashed var(--borde-color);
+    padding-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .buyer-location-bar {
+        grid-template-columns: 1.3fr 1fr;
+        align-items: end;
+    }
+}
+
+.location-input-group label,
+.search-input-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.4rem;
+}
+
+.recommender-active-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    border-radius: var(--radio-md);
+    font-size: 0.88rem;
+    color: var(--texto-principal);
+    line-height: 1.45;
+}
+
+.recommender-bulb {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.recommender-active-banner strong {
+    display: block;
+    color: var(--color-primario);
+    margin-bottom: 0.15rem;
+}
+
+/* Grilla de Catálogo + Cotizador */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+}
+
+@media (min-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 1.6rem;
+        align-items: start;
+    }
+}
+
+/* Tarjeta Clave #1: Lote de Subproducto */
+.lotes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.lote-card {
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.35rem;
+    box-shadow: var(--sombra-suave);
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.lote-card:hover {
+    border-color: var(--color-primario);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-destacada);
+}
+
+.lote-card.selected {
+    border-color: var(--color-primario);
+    background: var(--bg-tarjeta-hover);
+    box-shadow: 0 0 0 2px var(--color-primario), var(--sombra-destacada);
+}
+
+.lote-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge-cat {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    color: var(--texto-principal);
+    border: 1px solid var(--borde-color);
+}
+
+.badge-cat-arroz {
+    background: var(--badge-arroz-bg);
+    color: var(--badge-arroz-text);
+    border-color: var(--badge-arroz-borde);
+}
+
+.badge-cat-madera {
+    background: var(--badge-madera-bg);
+    color: var(--badge-madera-text);
+    border-color: var(--badge-madera-borde);
+}
+
+.badge-cat-citrus {
+    background: var(--badge-citrus-bg);
+    color: var(--badge-citrus-text);
+    border-color: var(--badge-citrus-borde);
+}
+
+.badge-flete-savings {
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1.5px solid var(--color-exito-borde);
+    letter-spacing: 0.02em;
+}
+
+.lote-title {
+    font-family: var(--fuente-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.45rem;
+    line-height: 1.25;
+}
+
+.lote-origin-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-size: 0.86rem;
+    color: var(--texto-secundario);
+    margin-bottom: 0.95rem;
+}
+
+.origin-dot {
+    font-size: 0.95rem;
+}
+
+.lote-dist-pill {
+    display: inline-block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    background: var(--color-primario-suave);
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-exito-borde);
+}
+
+.lote-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.85rem;
+    margin-bottom: 0.95rem;
+}
+
+.metric-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-item span {
+    font-size: 0.72rem;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.metric-item strong {
+    font-size: 0.96rem;
+    color: var(--texto-principal);
+    margin-top: 0.2rem;
+}
+
+.metric-item.highlight-metric {
+    border-left: 2px solid var(--color-primario);
+    padding-left: 0.55rem;
+}
+
+.metric-item.highlight-metric strong {
+    color: var(--color-primario);
+}
+
+.lote-uso {
+    font-size: 0.88rem;
+    color: var(--texto-secundario);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.lote-uso-extra {
+    margin-top: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--color-primario-suave);
+    border: 1px solid var(--color-exito-borde);
+    border-radius: var(--radio-xs);
+    font-size: 0.84rem;
+    color: var(--color-primario);
+    font-weight: 600;
+}
+
+.lote-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    border-top: 1px solid var(--borde-color);
+    padding-top: 0.95rem;
+}
+
+.lote-route-hint {
+    font-size: 0.82rem;
+    color: var(--texto-suave);
+}
+
+.btn-cotizar-lote {
+    padding: 0.6rem 1.2rem;
+    min-height: 42px;
+    border-radius: 9999px;
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border: 1.5px solid var(--color-primario);
+    font-size: 0.86rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(22, 66, 40, 0.2);
+}
+
+.btn-cotizar-lote:hover {
+    background: var(--color-primario-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(22, 66, 40, 0.3);
+}

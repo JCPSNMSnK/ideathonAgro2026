@@ -1,0 +1,167 @@
+<!-- =============================================================== -->
+<!-- SUB-PESTAÑA 2 DEL VENDEDOR: PUBLICAR / EDITAR EXCEDENTE         -->
+<!-- =============================================================== -->
+<div id="subtab-vendedor-publicar" class="role-subtab-panel">
+    <div class="calculator-panel" style="position:static; max-width: 880px; margin: 0 auto;">
+        <div class="panel-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
+            <div>
+                <span class="step-num" id="pub-form-badge">ALTA Y MODIFICACIÓN DE SUBPRODUCTOS EN PLANTA</span>
+                <h3 id="pub-form-title" style="font-size: 1.35rem; margin-top: 0.25rem; font-family: var(--fuente-display);">Publicar Nuevo Excedente</h3>
+                <p style="font-size: 0.88rem; color: var(--texto-secundario);">
+                    El lote quedará vinculado a tu razón social activa para garantizar la trazabilidad del Remito Circular.
+                </p>
+            </div>
+            <button type="button" class="chip-btn" onclick="cambiarSubTabVendedor('lotes')">
+                ← Volver a Mis Lotes
+            </button>
+        </div>
+
+        <form onsubmit="enviarNuevoLote(event)">
+            <input type="hidden" id="pub-lote-edit-id" value="">
+
+            <div class="cotizador-section-label" style="margin-top:0;">1. Identificación del Subproducto y Ubicación de Planta</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pub-categoria">Sector Agroindustrial</label>
+                    <select id="pub-categoria" class="form-control" onchange="sugerirValoresPorSector(this.value)">
+                        <option value="ARROZ">Sector Arrocero (Cascarilla / Afrechillo)</option>
+                        <option value="MADERA">Foresto-Industria (Aserrín / Viruta / Chips)</option>
+                        <option value="CITRUS">Sector Citrícola (Bagazo / Cáscara húmeda)</option>
+                        <option value="ALGODON">Sector Algodonero / Oleaginoso (Semilla / Expeller)</option>
+                        <option value="OTRO">Otro Subproducto Regional (Orujo / Bagazo / Pomaza)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pub-titulo">Denominación del Lote</label>
+                    <input type="text" id="pub-titulo" class="form-control" placeholder="Ej: Cascarilla de Arroz Seca (Silo Norte)" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pub-empresa">Razón Social o Planta Vendedora (Titular)</label>
+                    <input type="text" id="pub-empresa" class="form-control" value="Molino Arrocero San Lorenzo" required>
+                </div>
+                <div class="form-group">
+                    <label for="pub-provincia">Provincia (Padrón Oficial IGN)</label>
+                    <select id="pub-provincia" class="form-control" onchange="autocompletarLocalidadGeoref(document.getElementById('pub-localidad').value, this.value)">
+                        {% for prov in provincias_oficiales %}
+                        <option value="{{ prov.nombre }}" {% if prov.nombre == "Corrientes" %}selected{% endif %}>{{ prov.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pub-localidad">Localidad de Planta (API Georef Datos Argentina)</label>
+                <input type="text"
+                       id="pub-localidad"
+                       list="datalist-localidades-argentina"
+                       class="form-control"
+                       value="Saladas"
+                       placeholder="Escribí la localidad de tu planta..."
+                       oninput="autocompletarLocalidadGeoref(this.value, document.getElementById('pub-provincia').value)"
+                       required>
+            </div>
+
+            <div class="cotizador-section-label">2. Volumen Físico, Densidad y Condición de Venta</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pub-toneladas">Toneladas Disponibles (tn)</label>
+                    <input type="number" id="pub-toneladas" class="form-control font-mono" value="15" min="1" max="120" step="0.5" oninput="actualizarPreviewCubicajePublicacion()" required>
+                </div>
+                <div class="form-group">
+                    <label for="pub-densidad">Densidad Aparente (kg/m³)</label>
+                    <input type="number" id="pub-densidad" class="form-control font-mono" value="165" min="80" max="900" step="5" oninput="actualizarPreviewCubicajePublicacion()" required>
+                </div>
+            </div>
+
+            <div class="cubicaje-box">
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.86rem;">
+                    <span>Volumen físico total a evacuar en bateas:</span>
+                    <strong id="pub-volumen-preview" class="font-mono" style="color:var(--color-primario);">90.9 m³ (1 equipo Batea de 90 m³)</strong>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pub-tipo-lote">Tipo de Publicación Marketplace</label>
+                    <select id="pub-tipo-lote" class="form-control" onchange="alternarCamposLoteFuturo(this.value)">
+                        <option value="INMEDIATO" selected>Lote Físico Inmediato (Disponible en Acopio)</option>
+                        <option value="FUTURO">Lote Futuro (Preventa de Zafra / Cosecha Programada)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pub-urgencia-toggle">Nivel de Urgencia de Evacuación</label>
+                    <select id="pub-urgencia-toggle" class="form-control" onchange="alCambiarUrgenciaVendedor(this.value)">
+                        <option value="NORMAL" selected>Normal (Sin riesgo inminente de silo)</option>
+                        <option value="URGENTE_48HS">Prioridad Alta · Despacho Urgente 48 hs (Riesgo fermentación / saturación)</option>
+                        <option value="URGENTE_24HS">Prioridad Crítica · Evacuación 24 hs (Flete 100% Vendedor)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="pub-campos-lote-futuro" class="future-lot-config-box" style="display:none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pub-fecha-futura">Fecha Estimada de Disponibilidad / Zafra</label>
+                        <input type="text" id="pub-fecha-futura" class="form-control" placeholder="Ej: Zafra Mayo 2026 / Quincena 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="pub-sublote-min">Fraccionar en Sublotes desde (tn mínimas)</label>
+                        <input type="number" id="pub-sublote-min" class="form-control font-mono" value="5" min="1" max="30">
+                    </div>
+                </div>
+                <div class="future-lot-hint">
+                    Los compradores podrán reservar sublotes de tu producción futura antes de que salga de planta.
+                </div>
+            </div>
+
+            <div class="cotizador-section-label">3. Precio en Planta y Estrategia de Absorción de Flete</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pub-precio">Precio por Tonelada ($ ARS)</label>
+                    <input type="number" id="pub-precio" class="form-control font-mono" value="22000" min="0" step="500" required>
+                </div>
+                <div class="form-group">
+                    <label for="pub-modalidad">Modalidad de Pago del Flete</label>
+                    <select id="pub-modalidad" class="form-control" onchange="alternarCampoMutuoAcuerdo(this.value)">
+                        <option value="COMPRADOR">100% a cargo del Comprador</option>
+                        <option value="COMPARTIDO_50_50">50% Vendedor / 50% Comprador (Flete Compartido)</option>
+                        <option value="MUTUO_ACUERDO">Mutuo Acuerdo (% personalizado bonificado por Vendedor)</option>
+                        <option value="VENDEDOR">100% absorbido por Vendedor (Urgencia Ambiental 48hs)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Campo condicional para MUTUO_ACUERDO (integrado con calculadora_flete.py) -->
+            <div id="pub-porcentaje-vendedor-group" class="future-lot-config-box" style="display:none; margin-bottom:0.85rem;">
+                <div class="form-group" style="margin-bottom:0.3rem;">
+                    <label for="pub-porcentaje-vendedor">
+                        <span>Porcentaje del flete bonificado por tu planta vendedora:</span>
+                        <strong id="pub-porcentaje-vendedor-label" class="font-mono" style="color:var(--color-primario);">35% Vendedor / 65% Comprador</strong>
+                    </label>
+                    <input type="range" id="pub-porcentaje-vendedor" class="form-control" min="5" max="95" step="5" value="35"
+                           oninput="actualizarLabelMutuoAcuerdo(this.value)">
+                </div>
+                <div class="future-lot-hint">
+                    El motor de cotización descontará exactamente este porcentaje del flete al comprador en tranquera.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pub-usos">Aplicaciones Recomendadas</label>
+                <input type="text" id="pub-usos" class="form-control" value="Cama para galpones avícolas, sustrato de vivero y biomasa térmica" required>
+            </div>
+
+            <div style="display:flex; gap:0.65rem; flex-wrap:wrap; margin-top:1rem;">
+                <button type="submit" id="pub-btn-submit" class="btn-primary" style="flex:1;">
+                    Publicar Lote y Activar Match con Camiones de Retorno →
+                </button>
+                <button type="button" id="pub-btn-cancel-edit" class="chip-btn" style="display:none;" onclick="cancelarEdicionLote()">
+                    Cancelar Edición
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

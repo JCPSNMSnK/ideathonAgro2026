@@ -1,0 +1,26 @@
+<!-- PANTALLA DE ACCESO RESTRINGIDO (CUANDO NO HAY SESIÓN INICIADA) -->
+<div id="vendedor-gated-view" class="auth-gated-view" style="display:none;">
+    <div class="auth-gated-card">
+        <div class="auth-gated-icon-box">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 21h18"></path>
+                <path d="M19 21v-4"></path>
+                <path d="M19 13V7l-6 4-6-4v14"></path>
+                <path d="M9 21v-8"></path>
+            </svg>
+        </div>
+        <span class="role-badge-pill">ESPACIO AGROINDUSTRIAL EXCLUSIVO</span>
+        <h2 class="auth-gated-title">Portal de Gestión para Agroindustrias de Argentina</h2>
+        <p class="auth-gated-desc">
+            Para administrar tus propios lotes de cascarilla, aserrín, orujo o citrus, definir quién absorbe el flete para evacuación urgente en 48 hs y auditar tus Certificados Ambientales con trazabilidad Hedera HCS, identificá tu planta.
+        </p>
+        <div class="auth-gated-actions">
+            <button type="button" class="btn-primary" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo', 'Saladas, Corrientes')">
+                Ingresar como Molino San Lorenzo (Saladas) →
+            </button>
+            <button type="button" class="btn-secondary" onclick="abrirModalLogin()">
+                Identificarme con otra agroindustria
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,264 @@
+/* =============================================================================
+   16. JERARQUÍA VISUAL 3 NIVELES, SUB-PESTAÑAS, PAGINACIÓN Y PROPIEDAD (CONT.)
+   ============================================================================= */
+
+/* Tarjetas de Lotes del Vendedor */
+.vendedor-lotes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.vendedor-lote-row-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.vendedor-lote-row-card.is-own-resource {
+    border: 1px solid var(--color-primario);
+    background: var(--bg-tarjeta);
+    box-shadow: var(--sombra-suave);
+}
+
+.vendedor-lote-row-card.is-readonly-resource {
+    opacity: 0.88;
+}
+
+/* Tarjetas de Operaciones, Compras y Certificados con Stepper */
+.vendedor-certificados-layout {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.certificados-operations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.cert-op-card {
+    padding: 1.1rem 1.25rem;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+    transition: all 0.16s ease;
+}
+
+.cert-op-card.selected {
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.cert-op-card.cert-op-active {
+    border-color: rgba(180, 83, 9, 0.42);
+}
+
+.cert-op-card.cert-op-closed {
+    border-color: var(--color-exito-borde);
+}
+
+.cert-op-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--borde-color);
+}
+
+.cert-op-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+}
+
+.cert-op-main-info {
+    flex: 1 1 360px;
+}
+
+.cert-op-main-info h4 {
+    font-size: 1rem;
+    color: var(--texto-principal);
+}
+
+.cert-op-financials {
+    display: flex;
+    gap: 1rem;
+    background: var(--bg-bloque-suave);
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radio-sm);
+    border: 1px solid var(--borde-color);
+}
+
+.cert-fin-item {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.76rem;
+    color: var(--texto-secundario);
+}
+
+.cert-fin-item strong {
+    font-size: 0.90rem;
+    color: var(--texto-principal);
+}
+
+.badge-cert-closed {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.16rem 0.58rem;
+    border-radius: 9999px;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    font-size: 0.70rem;
+    font-weight: 800;
+}
+
+.badge-cert-custody {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.16rem 0.58rem;
+    border-radius: 9999px;
+    background: var(--ambar-trigo-fondo);
+    color: var(--ambar-trigo);
+    border: 1px solid rgba(180, 83, 9, 0.35);
+    font-size: 0.70rem;
+    font-weight: 800;
+}
+
+/* Stepper de 3 Pasos de Custodia y Firma */
+.cert-stepper-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 0.55rem 0 0.75rem;
+    padding: 0.6rem;
+    background: var(--bg-bloque-suave);
+    border-radius: var(--radio-sm);
+    font-size: 0.76rem;
+}
+
+.cert-step {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--texto-secundario);
+    font-weight: 600;
+}
+
+.cert-step.done {
+    color: var(--color-exito);
+    font-weight: 700;
+}
+
+.cert-step.pending {
+    color: var(--ambar-trigo);
+    font-weight: 700;
+}
+
+.step-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid currentColor;
+    flex-shrink: 0;
+}
+
+.cert-pending-sign-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: var(--ambar-trigo-fondo);
+    border: 1px solid rgba(180, 83, 9, 0.4);
+    border-radius: var(--radio-sm);
+    font-size: 0.82rem;
+}
+
+.cert-pending-sign-banner p {
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+    margin-top: 0.18rem;
+}
+
+.cert-signed-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.95rem;
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    border-radius: var(--radio-sm);
+    font-size: 0.80rem;
+    color: var(--color-exito);
+}
+
+.cert-audit-readonly-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.95rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-fuerte);
+    border-radius: var(--radio-sm);
+    flex: 1 1 320px;
+}
+
+.cert-audit-icon {
+    font-size: 1.15rem;
+    line-height: 1.2;
+}
+
+.empty-state-card {
+    padding: 1.75rem;
+    text-align: center;
+    background: var(--bg-bloque-suave);
+    border: 1px dashed var(--borde-fuerte);
+    border-radius: var(--radio-md);
+    color: var(--texto-secundario);
+}
+
+.empty-state-card h4 {
+    color: var(--texto-principal);
+    margin-bottom: 0.35rem;
+}
+
+@media (max-width: 980px) {
+    .paso2-cotizador-grid,
+    .vendedor-certificados-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .lotes-catalog-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cert-stepper-row {
+        grid-template-columns: 1fr;
+    }
+}

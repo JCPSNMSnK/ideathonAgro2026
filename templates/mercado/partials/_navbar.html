@@ -1,0 +1,146 @@
+<!-- =================================================================== -->
+<!-- BARRA SUPERIOR: MARCA MOÑÁI, SELECTOR DE ROL, USUARIO Y TEMA        -->
+<!-- =================================================================== -->
+<header class="navbar">
+    <div class="navbar-inner">
+        <!-- Marca e Isotipo Oficial Moñái (Protector Guaraní de los Caminos) -->
+        <div class="brand-box" onclick="cambiarVistaRol('vista-inicio')" role="button" tabindex="0" aria-label="Ir al inicio de Moñái">
+            <div class="brand-mark" aria-hidden="true">
+                <!-- Isotipo SVG: Serpiente Protectora Guaraní + Curva de Ruta + Espiga de Campo -->
+                <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor">
+                    <!-- Senda curva de ruta / cuerpo sinuoso de Moñái -->
+                    <path d="M6 24C6 17 12 15 16 12C20 9 22 5 26 6C27.5 6.5 28 8.5 27 10C25 13 20 15 16 18C12 21 10 24 6 24Z" 
+                          stroke="var(--color-crema-dorado)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <!-- Espiga / Hoja de Bioeconomía integrada -->
+                    <path d="M16 12C14 9 15 6 18 5C20 7 19 10 16 12Z" fill="var(--color-exito)" stroke="var(--color-crema-dorado)" stroke-width="1.2"/>
+                    <circle cx="25.5" cy="7.5" r="1.5" fill="var(--color-acento)"/>
+                    <path d="M12 21L14 18" stroke="var(--color-crema-dorado)" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="brand-text-wrap">
+                <div class="brand-title">Moñái</div>
+            </div>
+        </div>
+
+        <!-- Navegación Central por Tipo de Usuario / Rol + Sesión + Tema -->
+        <nav class="role-switcher" role="tablist" aria-label="Navegación y perfil de usuario">
+            <button type="button"
+                    class="role-tab-btn active"
+                    id="nav-btn-inicio"
+                    data-role-target="vista-inicio"
+                    role="tab"
+                    aria-selected="true"
+                    onclick="cambiarVistaRol('vista-inicio')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Inicio y Demo</span>
+            </button>
+
+            <button type="button"
+                    class="role-tab-btn"
+                    id="nav-btn-comprador"
+                    data-role-target="vista-comprador"
+                    role="tab"
+                    aria-selected="false"
+                    onclick="cambiarVistaRol('vista-comprador')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M12 8v4"></path>
+                    <path d="M12 16h.01"></path>
+                </svg>
+                <span>Comprador</span>
+            </button>
+
+            <button type="button"
+                    class="role-tab-btn"
+                    id="nav-btn-vendedor"
+                    data-role-target="vista-vendedor"
+                    role="tab"
+                    aria-selected="false"
+                    onclick="cambiarVistaRol('vista-vendedor')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 21h18"></path>
+                    <path d="M19 21v-4"></path>
+                    <path d="M19 13V7l-6 4-6-4v14"></path>
+                    <path d="M9 21v-8"></path>
+                </svg>
+                <span>Vendedor</span>
+            </button>
+
+            <button type="button"
+                    class="role-tab-btn"
+                    id="nav-btn-logistica"
+                    data-role-target="vista-logistica"
+                    role="tab"
+                    aria-selected="false"
+                    onclick="cambiarVistaRol('vista-logistica')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="1" y="3" width="15" height="13"></rect>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 8"></polygon>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                </svg>
+                <span>Logística / Camión</span>
+            </button>
+
+            <!-- Separador sutil dentro de la navbar unificada -->
+            <span class="nav-inline-divider" aria-hidden="true"></span>
+
+            <!-- Único botón accesible de Inicio de Sesión / Perfil Activo -->
+            <button type="button"
+                    class="role-tab-btn role-tab-login"
+                    id="nav-btn-login"
+                    onclick="abrirModalLogin()"
+                    aria-label="Iniciar Sesión o ver perfil">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span id="nav-login-tab-label">Iniciar Sesión</span>
+                <span class="session-badge-pill" id="session-role-pill" style="display:none;">Ingresar</span>
+            </button>
+
+            <!-- Botón de Cerrar Sesión (Visible solo con sesión activa) -->
+            <button type="button"
+                    id="btn-logout"
+                    class="role-tab-btn btn-logout-navbar"
+                    onclick="cerrarSesion()"
+                    style="display:none;"
+                    aria-label="Cerrar Sesión Activa"
+                    title="Cerrar sesión">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Salir</span>
+            </button>
+
+            <!-- Alternador de Tema Claro / Oscuro integrado en la barra -->
+            <button type="button"
+                    id="theme-toggle"
+                    class="role-tab-btn theme-toggle"
+                    onclick="alternarTema()"
+                    aria-label="Cambiar entre modo claro y oscuro"
+                    title="Cambiar tema">
+                <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span id="theme-toggle-text">Modo Oscuro</span>
+            </button>
+        </nav>
+    </div>
+</header>

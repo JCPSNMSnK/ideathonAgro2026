@@ -1,0 +1,128 @@
+/* =============================================================================
+   8. TARJETA CLAVE #3: CERTIFICADO OFICIAL DE TRAZABILIDAD AMBIENTAL
+   ============================================================================= */
+.certificado-oficial-card {
+    background: var(--bg-tarjeta);
+    border: 3px double var(--borde-fuerte);
+    border-radius: var(--radio-md);
+    padding: 1.5rem;
+    box-shadow: var(--sombra-destacada);
+    position: relative;
+    overflow: hidden;
+}
+
+.cert-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-25deg);
+    font-family: var(--fuente-display);
+    font-size: 7rem;
+    font-weight: 900;
+    color: rgba(22, 66, 40, 0.04);
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: 0.1em;
+}
+
+.cert-seal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--color-primario);
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+}
+
+.cert-seal-badge {
+    display: inline-block;
+    font-size: 0.70rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--color-primario);
+    background: var(--color-primario-suave);
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+}
+
+.cert-number-box {
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--borde-fuerte);
+    border-radius: var(--radio-xs);
+    padding: 0.5rem 0.75rem;
+    text-align: right;
+    min-width: 140px;
+}
+
+.cert-number-box span {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--texto-suave);
+}
+
+.cert-number-box strong {
+    font-size: 1rem;
+    color: var(--color-primario);
+}
+
+.cert-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .cert-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.cert-field {
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-xs);
+    padding: 0.7rem 0.85rem;
+}
+
+.cert-field span {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--texto-suave);
+    margin-bottom: 0.2rem;
+}
+
+.cert-field strong {
+    font-size: 0.90rem;
+    color: var(--texto-principal);
+}
+
+.cert-hash-section {
+    background: var(--bg-pagina);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-xs);
+    padding: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.hash-box {
+    background: var(--bg-bloque-suave);
+    padding: 0.55rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    color: var(--texto-principal);
+    word-break: break-all;
+    border: 1px solid var(--borde-color);
+    margin-top: 0.35rem;
+}
+
+.cert-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}

@@ -1,0 +1,248 @@
+<!-- =================================================================== -->
+<!-- SUB-PESTAÑA 2 DEL COMPRADOR: PASO 2 (COTIZADOR EN TRANQUERA)        -->
+<!-- =================================================================== -->
+<div id="subtab-comprador-paso2" class="role-subtab-panel">
+
+    <!-- Barra Contextual del Lote Seleccionado en el Paso 1 -->
+    <div class="active-lot-context-bar" id="panel-cotizador-comprador">
+        <div class="active-lot-context-info">
+            <span class="step-num">PASO 2 · COTIZADOR AUTOMÁTICO EN TRANQUERA</span>
+            <h3 id="res-lote-titulo" class="active-lot-context-title">
+                {% if lotes %}{{ lotes.0.titulo }}{% else %}Seleccioná un lote{% endif %}
+            </h3>
+            <p id="res-origen" class="active-lot-context-origin">
+                {% if lotes %}Planta: {{ lotes.0.empresa_vendedora }} ({{ lotes.0.localidad_origen }}, {{ lotes.0.provincia }}){% endif %}
+            </p>
+        </div>
+        <div class="active-lot-context-actions">
+            <button type="button" class="chip-btn" onclick="cambiarSubTabComprador('paso1')">
+                Volver al Paso 1 (Cambiar Lote en Catálogo)
+            </button>
+        </div>
+    </div>
+
+    <!-- Grilla de 2 Columnas Dedicadas para el Cotizador en Tranquera -->
+    <div class="paso2-cotizador-grid">
+
+        <!-- Columna Izquierda del Paso 2: Configuración de Carga, Sublote, Modo de Transporte y Cubicaje -->
+        <div class="calculator-panel" style="position:static;">
+            <div class="cotizador-section-label" style="margin-top:0;">1. Configurar Carga, Fracción y Modo de Retiro</div>
+
+            <div class="form-group">
+                <label for="calc-lote-id">Subproducto seleccionado</label>
+                <select id="calc-lote-id" class="form-control" onchange="alCambiarSelectorLote(this)">
+                    {% for lote in lotes %}
+                    <option value="{{ lote.id }}"
+                            data-toneladas="{{ lote.toneladas_disponibles|floatformat:0 }}"
+                            data-distancia="{{ lote.distancia_sugerida_km|default:160 }}">
+                        {{ lote.titulo }} ({{ lote.localidad_origen }} · {{ lote.densidad_kg_m3 }} kg/m³)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="calc-toneladas">
+                        <span>Toneladas a cargar (tn)</span>
+                        <span id="calc-sublote-tag" class="sublote-indicator-tag" style="display:none;">Sublote Fraccionado</span>
+                    </label>
+                    <input type="number" id="calc-toneladas" class="form-control font-mono"
+                           value="{% if lotes %}{{ lotes.0.toneladas_disponibles|floatformat:0 }}{% else %}14{% endif %}"
+                           min="1" max="60" step="0.5" onchange="recalcularCotizacionEnVivo()" oninput="recalcularCotizacionEnVivo()">
+                </div>
+                <div class="form-group">
+                    <label for="calc-distancia-km">Distancia a tu campo (km)</label>
+                    <input type="number" id="calc-distancia-km" class="form-control font-mono"
+                           value="{% if lotes %}{{ lotes.0.distancia_sugerida_km|default:160 }}{% else %}160{% endif %}"
+                           min="20" max="1500" step="10"
+                           onchange="recalcularCotizacionEnVivo()" oninput="recalcularCotizacionEnVivo()">
+                </div>
+            </div>
+
+            <!-- Fraccionamiento rápido de sublotes en cotizador -->
+            <div class="cotizador-sublotes-row">
+                <span class="cotizador-sublote-title">Elegir Fracción / Sublote:</span>
+                <div class="cotizador-sublote-pills" id="cotizador-pills-sublotes">
+                    <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(1)">1 tn (Pick-up)</button>
+                    <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(2.5)">2.5 tn (Acoplado)</button>
+                    <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(5)">5 tn (Chasis)</button>
+                    <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(10)">10 tn</button>
+                    <button type="button" class="sublote-calc-pill active" id="btn-sublote-total" onclick="fijarToneladasCotizador('total')">Lote Completo</button>
+                </div>
+            </div>
+
+            <!-- Modo de Transporte: Flete Calzado vs Retiro con Vehículo Propio -->
+            <div class="form-group">
+                <label for="calc-modo-transporte">
+                    <strong>Modo de Transporte y Retiro:</strong>
+                </label>
+                <select id="calc-modo-transporte" class="form-control" onchange="alCambiarModoTransporte(this.value)">
+                    <option value="VUELTA" selected>Flete Calzado en Retorno (-45% tarifa FADEEAC)</option>
+                    <option value="VEHICULO_PROPIO">Retiro con Vehículo Propio / Particular ($0 flete tercerizado)</option>
+                    <option value="IDA">Flete Contratado Tradicional (Tarifa Plena)</option>
+                    <option value="IDA_Y_VUELTA">Ida y Vuelta Combinado (Viaje Compartido)</option>
+                </select>
+            </div>
+
+            <!-- Selector de Vehículo Propio -->
+            <div id="contenedor-vehiculo-propio" class="vehiculo-propio-box" style="display: none;">
+                <div class="vehiculo-propio-badge">
+                    <span>RETIRO EN PLANTA · PRODUCTORES Y PYMES</span>
+                </div>
+                <div class="form-group" style="margin-top:0.4rem; margin-bottom:0.4rem;">
+                    <label for="calc-tipo-vehiculo-propio">Tipo de Vehículo Propio / Particular:</label>
+                    <select id="calc-tipo-vehiculo-propio" class="form-control" onchange="recalcularCotizacionEnVivo()">
+                        <option value="CAMIONETA">Camioneta Pick-up (hasta 1.0 tn · 3.5 m³ · Huerta / Granja)</option>
+                        <option value="CAMIONETA_CON_ACOPLADO">Camioneta + Acoplado Rural (hasta 2.5 tn · 9.0 m³)</option>
+                        <option value="FURGON">Furgón Utilitario (hasta 3.5 tn · 15.0 m³)</option>
+                        <option value="CAMION_CHASIS" selected>Camión Chasis / Balancín (hasta 8.0 tn · 30.0 m³)</option>
+                        <option value="CAMION_CON_ACOPLADO">Camión con Acoplado Propio (hasta 25.0 tn · 70.0 m³)</option>
+                        <option value="SEMIRREMOLQUE">Semirremolque Propio (hasta 30.0 tn · 85.0 m³)</option>
+                    </select>
+                </div>
+                <div class="vehiculo-propio-notice">
+                    <span><strong>Flete tercerizado: $0 ARS</strong>. Retirás directamente con tu vehículo en planta en el turno acordado. Solo abonás el valor del subproducto y la custodia oficial del remito.</span>
+                </div>
+            </div>
+
+            <div class="form-group" id="contenedor-camion-retorno">
+                <label for="calc-camion-id">Camión con retorno vacío calzado</label>
+                <select id="calc-camion-id" class="form-control" onchange="recalcularCotizacionEnVivo()">
+                    {% for cam in camiones %}
+                    <option value="{{ cam.id }}">
+                        {{ cam.transportista }} | {{ cam.origen_viaje }} → {{ cam.destino_viaje }} (-{{ cam.descuento_retorno_pct|floatformat:0 }}% retorno)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Visualizador de Cubicaje (Peso vs Volumen) -->
+            <div class="cubicaje-box" style="margin-bottom:0;">
+                <div style="font-size: 0.86rem; font-weight: 700; display: flex; justify-content: space-between;">
+                    <span>Cubicaje en Unidad (Peso vs. Volumen):</span>
+                    <span id="res-volumen-m3" class="font-mono" style="color: var(--color-primario);">84.8 m³</span>
+                </div>
+                <div style="font-size: 0.80rem; color: var(--texto-secundario); margin-top: 0.25rem;">
+                    Factor limitante de carga: <strong id="res-limitante" style="color:var(--color-primario);">VOLUMEN FÍSICO</strong>
+                </div>
+
+                <div class="progress-row">
+                    <div class="progress-label">
+                        <span>Volumen ocupado en caja/batea</span>
+                        <span id="pct-vol-label" class="font-mono">99%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="bar-volumen" class="progress-bar-fill volume-alert" style="width: 95%;"></div>
+                    </div>
+                </div>
+
+                <div class="progress-row">
+                    <div class="progress-label">
+                        <span>Peso en balanza</span>
+                        <span id="pct-peso-label" class="font-mono">46%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="bar-peso" class="progress-bar-fill" style="width: 46%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Derecha del Paso 2: Comparativa de Ahorro, Desglose en Tranquera y Reserva Escrow -->
+        <div class="calculator-panel" style="position:static;">
+            <div class="cotizador-section-label" style="margin-top:0;">2. Comparativa de Flete y Total Puesto en Tranquera</div>
+
+            <div class="comparison-grid">
+                <div class="comp-box comp-bad">
+                    <div class="comp-badge-header">Flete Tradicional (Tarifa Plena)</div>
+                    <div id="res-flete-tradicional" class="comp-price font-mono">$1.111.000</div>
+                    <div class="comp-desc">
+                        Tarifa FADEEAC (<span id="res-incidencia-pct">78% del total</span>) · <strong>Inviable para el productor</strong>
+                    </div>
+                </div>
+                <div class="comp-box comp-good">
+                    <div class="comp-badge-header">Con Flete Calzado Moñái</div>
+                    <div id="res-flete-calzado" class="comp-price font-mono">$519.000</div>
+                    <div class="comp-desc">
+                        <strong id="res-descuento-pct">-45% por retorno</strong> · <strong>Insumo rentable en tu campo</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="savings-banner">
+                Ahorro directo en este viaje: <strong id="res-ahorro" class="font-mono">$592.000 ARS</strong>
+            </div>
+
+            <div class="cost-breakdown-box">
+                <div class="breakdown-row">
+                    <span>Subproducto en planta:</span>
+                    <strong id="res-subtotal-prod" class="font-mono">$308.000</strong>
+                </div>
+                <div class="breakdown-row">
+                    <span>Modalidad de flete del lote:</span>
+                    <strong id="res-modalidad">100% Comprador</strong>
+                </div>
+                <div class="breakdown-row">
+                    <span>Comisión Moñái (2,5% + 2,5%):</span>
+                    <strong id="res-comision" class="font-mono">$20.675</strong>
+                </div>
+                <hr class="breakdown-divider">
+                <div class="breakdown-row breakdown-total">
+                    <span>Total puesto en tu campo:</span>
+                    <strong id="res-total-comprador" class="font-mono">$840.000</strong>
+                </div>
+            </div>
+
+            <div class="cotizador-section-label">3. Datos del Establecimiento Receptor y Turno de Carga</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="calc-preset-comprador">Autocompletar Establecimiento</label>
+                    <select id="calc-preset-comprador" class="form-control" onchange="aplicarPresetComprador(this.value)">
+                        <option value="Granja Avícola San Isidro SRL|Goya, Corrientes|155|VUELTA">Granja Avícola San Isidro (Goya · 155 km · Flete Calzado)</option>
+                        <option value="Don Roberto (Huerta & Granja Familiar)|Bella Vista, Corrientes|25|VEHICULO_PROPIO|CAMIONETA">Don Roberto · Huerta Familiar (Pick-up Particular · 25 km)</option>
+                        <option value="Establecimiento Ganadero El Ceibo|San Roque, Corrientes|95|VUELTA">Ganadera El Ceibo (San Roque · 95 km)</option>
+                        <option value="Tambo Pyme Los Robles|Rafaela, Santa Fe|110|VEHICULO_PROPIO|CAMION_CHASIS">Tambo Pyme Los Robles (Rafaela, Sta Fe · Chasis Propio · 110 km)</option>
+                        <option value="Feedlot Las Tres Marías SA|Curuzú Cuatiá, Corrientes|140|VUELTA">Feedlot Las Tres Marías (Curuzú Cuatiá · 140 km)</option>
+                        <option value="Secadero Yerbales del Sur SRL|Santo Tomé, Corrientes|75|VUELTA">Secadero Yerbales del Sur (Santo Tomé · 75 km)</option>
+                        <option value="CUSTOM">Escribir otro establecimiento...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="calc-ventana-carga">Turno de Carga (Sin Estadía)</label>
+                    <select id="calc-ventana-carga" class="form-control">
+                        <option value="Mañana 08:00 a 10:00 hs (Sin demora)">Mañana 08:00–10:00 hs (Confirmado)</option>
+                        <option value="Tarde 14:00 a 16:00 hs (Sin demora)">Tarde 14:00–16:00 hs (Confirmado)</option>
+                        <option value="Prioridad Evacuación 48 hs">Urgencia 48 hs (Carga inmediata)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="calc-comprador">Establecimiento Comprador Titular</label>
+                    <input type="text" id="calc-comprador" class="form-control" value="" placeholder="Nombre o Razón Social del Comprador">
+                </div>
+                <div class="form-group">
+                    <label for="calc-destino">Localidad de Descarga (API Georef Argentina)</label>
+                    <input type="text"
+                           id="calc-destino"
+                           list="datalist-localidades-argentina"
+                           class="form-control"
+                           value="Goya, Corrientes"
+                           placeholder="Escribí cualquier localidad de Argentina..."
+                           oninput="autocompletarLocalidadGeoref(this.value)"
+                           onchange="actualizarRutaRealDesdeDestino(this.value)">
+                </div>
+            </div>
+
+            <div class="escrow-trust-pill">
+                <span><strong>Pago en Garantía (Escrow en Pesos):</strong> Tus fondos quedan en custodia. <strong>Solo vos (como Comprador)</strong> podrás firmar la recepción en la Pestaña 3 cuando llegue el camión para cerrar el certificado y liberar el pago.</span>
+            </div>
+
+            <button id="btn-confirmar-reserva" class="btn-primary" onclick="confirmarReservaConGarantia()">
+                Reservar Lote con Pago en Garantía (Escrow)
+            </button>
+        </div>
+    </div>
+</div>

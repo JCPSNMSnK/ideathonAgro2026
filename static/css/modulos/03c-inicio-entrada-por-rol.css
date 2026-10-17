@@ -1,0 +1,92 @@
+/* =============================================================================
+   3c. ENTRADA SEGMENTADA POR ROL EN LA CADENA
+   ============================================================================= */
+.role-entry-section {
+    padding: 3rem 0 3.5rem;
+    border-top: 1px dashed var(--borde-color);
+}
+
+.role-entry-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+}
+
+@media (min-width: 768px) {
+    .role-entry-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.role-card {
+    text-align: left;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--borde-color);
+    border-radius: var(--radio-lg);
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 175px;
+    cursor: pointer;
+}
+
+.role-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.role-card:hover .role-arrow {
+    transform: translateX(4px);
+}
+
+.role-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.65rem;
+}
+
+.role-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--color-primario);
+}
+
+.role-arrow {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    transition: transform 0.2s ease;
+}
+
+.role-card-title {
+    font-family: var(--fuente-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 0.45rem;
+}
+
+.role-card-desc {
+    font-size: 0.85rem;
+    color: var(--texto-secundario);
+    line-height: 1.55;
+}
+
+/* Modificadores sutiles para cada rol */
+.role-card.role-buyer {
+    border-top: 3px solid var(--color-primario);
+}
+
+.role-card.role-seller {
+    border-top: 3px solid var(--color-acento);
+}
+
+.role-card.role-carrier {
+    border-top: 3px solid var(--color-crema-dorado);
+}

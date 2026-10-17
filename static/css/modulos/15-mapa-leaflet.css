@@ -1,0 +1,109 @@
+/* =============================================================================
+   15. MAPA INTERACTIVO REAL LEAFLET + CAPAS IGN + TELEMETRÍA VIAL OSRM
+   ============================================================================= */
+.leaflet-map-canvas {
+    width: 100%;
+    height: 520px;
+    border-radius: var(--radio-md);
+    border: 1px solid var(--borde-color);
+    z-index: 1;
+    overflow: hidden;
+    background: var(--bg-bloque-suave);
+}
+
+.map-telemetry-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.9rem;
+    margin: 0.65rem 0;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+}
+
+.map-telemetry-bar strong {
+    color: var(--texto-principal);
+}
+
+.map-floating-card {
+    z-index: 999 !important;
+}
+
+.leaflet-custom-div-icon {
+    background: transparent !important;
+    border: none !important;
+}
+
+.l-marker-pin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.6rem;
+    border-radius: 9999px;
+    background: var(--bg-tarjeta);
+    color: var(--texto-principal);
+    border: 2px solid var(--color-primario);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    font-family: var(--fuente-sans);
+    font-size: 0.74rem;
+    font-weight: 800;
+    white-space: nowrap;
+    position: relative;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.l-marker-pin:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32);
+}
+
+.l-marker-buyer {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: #93c5fd;
+}
+
+.l-marker-urgent {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #dc2626;
+}
+
+.l-marker-future {
+    background: #f5f3ff;
+    color: #5b21b6;
+    border-color: #7c3aed;
+}
+
+.l-marker-producer {
+    background: #f0fdf4;
+    color: #166534;
+    border-color: #15803d;
+}
+
+.l-marker-core {
+    font-size: 0.92rem;
+    line-height: 1;
+}
+
+.l-marker-pulse,
+.l-marker-pulse-red {
+    position: absolute;
+    inset: -4px;
+    border-radius: 9999px;
+    pointer-events: none;
+    animation: alertBorderPulse 1.8s infinite ease-in-out;
+}
+
+.l-marker-pulse {
+    border: 2px solid rgba(59, 130, 246, 0.55);
+}
+
+.l-marker-pulse-red {
+    border: 2px solid rgba(220, 38, 38, 0.65);
+}

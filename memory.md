@@ -18,9 +18,10 @@
 | [`mercado/services/trazabilidad_blockchain.py`](file:///c:/Users/joelm/Mio/Ideathon/mercado/services/trazabilidad_blockchain.py) | **Carril 4:** Registro y cierre de garantías Escrow con hash Hedera Testnet (HCS Topic). |
 | [`mercado/services/seed_data.py`](file:///c:/Users/joelm/Mio/Ideathon/mercado/services/seed_data.py) | Precarga de 15 lotes reales, 8 camiones de retorno y 5 operaciones históricas cerradas. |
 | [`mercado/services/georef_service.py`](file:///c:/Users/joelm/Mio/Ideathon/mercado/services/georef_service.py) | Integración con la API Oficial Georef de Datos Argentina (IGN) y ruteo vial OSRM. |
-| [`templates/mercado/index.html`](file:///c:/Users/joelm/Mio/Ideathon/templates/mercado/index.html) | Plantilla principal HTML5. Contiene las 4 vistas (Inicio, Comprador, Vendedor, Logística) y modales. |
-| [`static/js/app.js`](file:///c:/Users/joelm/Mio/Ideathon/static/js/app.js) | Lógica interactiva cliente: cotizador, paginadores, mapa Leaflet, RBAC y sesión en `localStorage`. |
-| [`static/css/styles.css`](file:///c:/Users/joelm/Mio/Ideathon/static/css/styles.css) | Estilos generales, componentes, modales, grids y diseño responsivo. |
+| [`templates/mercado/index.html`](file:///c:/Users/joelm/Mio/Ideathon/templates/mercado/index.html) | Esqueleto HTML5 (head, navbar, `<main>` y modales). Solo arma la página con `{% include %}`; el marcado real vive en `templates/mercado/partials/`. |
+| [`templates/mercado/partials/`](file:///c:/Users/joelm/Mio/Ideathon/templates/mercado/partials/) | Parciales por vista: `inicio/`, `comprador/`, `vendedor/`, `logistica/`, `modales/`, más `_navbar.html`, `_estilos.html` (lista ordenada de CSS), `_scripts.html` (lista ordenada de JS) y `_datos_servidor.html` (datalist + JSON inyectado por Django). |
+| [`static/js/modulos/`](file:///c:/Users/joelm/Mio/Ideathon/static/js/modulos/) | Lógica cliente dividida por tema (`00-utilidades.js` … `18-inicializacion.js`): sesión, tema, navegación por rol, cotizador, mapa Leaflet, paginación/propiedad, reserva Escrow, ABM. Scripts clásicos que comparten el ámbito global; el orden de carga está en `_scripts.html`. |
+| [`static/css/modulos/`](file:///c:/Users/joelm/Mio/Ideathon/static/css/modulos/) | Estilos divididos por sección (`00-reset.css` … `19-ajustes-tipograficos.css`). El número coincide con la sección original y el orden de carga (cascada) está en `_estilos.html`. |
 | [`static/css/variables.css`](file:///c:/Users/joelm/Mio/Ideathon/static/css/variables.css) | Tokens de color, tipografía y soporte para temas claro/oscuro. |
 
 ---
@@ -55,7 +56,7 @@ Para pruebas y flujos demostrativos, la base de datos precarga tres actores prin
 **Problema anterior:** Cuando un usuario iniciaba sesión como `Transportes Don Horacio`, no veía sus camiones ni sus viajes porque en la base de datos el camión se llamaba `"Transportes Don Horacio (Retorno Gran Rosario)"`. Asimismo, pequeñas discrepancias como `"Molino Arrocero San Lorenzo SRL"` vs `"Molino Arrocero San Lorenzo"` rompían la comparación de cadenas.
 
 **Solución aplicada:**
-En [`static/js/app.js`](file:///c:/Users/joelm/Mio/Ideathon/static/js/app.js) y [`mercado/views.py`](file:///c:/Users/joelm/Mio/Ideathon/mercado/views.py), la función `normalizarIdentidadActor`:
+En [`static/js/modulos/12-propiedad-paginacion.js`](file:///c:/Users/joelm/Mio/Ideathon/static/js/modulos/12-propiedad-paginacion.js) y [`mercado/views.py`](file:///c:/Users/joelm/Mio/Ideathon/mercado/views.py), la función `normalizarIdentidadActor`:
 1. Elimina acentos y tildes (NFKD).
 2. Pasa todo a minúsculas.
 3. **Elimina contenido entre paréntesis** `\([^)]*\)` (ej. `(Retorno Gran Rosario)`, `(Batea 85 m3)`).
@@ -85,7 +86,7 @@ Gracias a esto, `"Transportes Don Horacio"` hace match perfecto con `"Transporte
 
 1. **NO TOCAR `mercado/services/calculadora_flete.py`**: Es el código base del Carril 3 de tarifas y cubicaje. Toda integración debe usar `cotizar_operacion_completa` como caja negra.
 2. **CERO EMOJIS EN LA INTERFAZ**: Mantener el estilo sobrio, limpio y profesional según los estándares de `apple-design` y `frontend-design`.
-3. **BALANCE DE ETIQUETAS HTML**: Antes de commitear cualquier cambio en [`templates/mercado/index.html`](file:///c:/Users/joelm/Mio/Ideathon/templates/mercado/index.html), verificar que la cantidad de `<div` coincida exactamente con la cantidad de `</div>` (actualmente 369 tags balanceados).
+3. **BALANCE DE ETIQUETAS HTML**: Antes de commitear cualquier cambio en [`templates/mercado/`](file:///c:/Users/joelm/Mio/Ideathon/templates/mercado/), verificar que la cantidad de `<div` coincida exactamente con la cantidad de `</div>` **en cada parcial** (cada archivo de `partials/` abre y cierra sus propias etiquetas; en total siguen siendo 369).
 4. **ENLACES CLICKABLES**: En todas las respuestas dirigidas al usuario o reportes markdown, incluir links navegables con el esquema `file:///` a los archivos y rangos de líneas modificados.
 
 ---
@@ -101,15 +102,17 @@ py -3.10 manage.py check
 
 ### 5.2. Chequeo de Sintaxis JavaScript
 ```powershell
-node --check static\js\app.js
+Get-ChildItem static\js\modulos\*.js | ForEach-Object { node --check $_.FullName }
 ```
 
 ### 5.3. Chequeo de Balance de Divs en HTML
 ```powershell
-$content = Get-Content "templates\mercado\index.html" -Raw
-$openDivs = ([regex]::Matches($content, "<div\b")).Count
-$closeDivs = ([regex]::Matches($content, "</div>")).Count
-Write-Host "Open divs: $openDivs, Close divs: $closeDivs"
+Get-ChildItem templates\mercado -Recurse -Filter *.html | ForEach-Object {
+    $content = Get-Content $_.FullName -Raw
+    $openDivs = ([regex]::Matches($content, "<div\b")).Count
+    $closeDivs = ([regex]::Matches($content, "</div>")).Count
+    if ($openDivs -ne $closeDivs) { Write-Host "$($_.Name): $openDivs abiertos / $closeDivs cerrados" }
+}
 ```
 
 ### 5.4. Flujo Git Dual (Ramas en Sincronía)
