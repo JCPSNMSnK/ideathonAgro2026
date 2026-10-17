@@ -39,24 +39,7 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
 
 ---
 
-## 5. Contexto para IA (Prompt de lectura rápida)
-*Copiá y pegá este bloque si vas a pedirle a una IA que programe, diseñe pantallas o arme presentaciones sobre nuestro proyecto:*
-
-```markdown
-### Contexto del Proyecto: Moñái (Ideathon NEA Tech 2026)
-- **Qué es:** Plataforma web/móvil que transforma subproductos agroindustriales en negocios rentables conectando oferta agroindustrial, demanda productiva y camiones de retorno ("Flete Calzado").
-- **Foco geográfico inicial:** Región NEA (Corrientes, Misiones, Chaco, Formosa), con casos testigo en Saladas (Corrientes) para los sectores foresto-industrial (aserrín/chips), arrocero (cascarilla/afrechillo) y citrícola (bagazo/cáscara húmeda), y proyección de escalabilidad a Región Pampeana y Cuyo.
-- **Problema central:** Los subproductos tienen bajo precio por tonelada y alta relación volumen/peso (cubicaje). Un flete tradicional a tarifa plena hace inviable su traslado a más de 100 km. Hoy se comercializan de boca en boca, en grupos cerrados de WhatsApp y en negro, sin garantías de pago ni trazabilidad ambiental.
-- **Funcionalidad Estrella (MVP Demo):**
-  1. Recomendador de oportunidades: sugiere al comprador (ej. avícola o ganadero) qué subproducto cercano le sirve para cama de pollo, fibra animal o biomasa.
-  2. Calculadora Peso/Volumen + Flete Calzado: cruza la densidad del subproducto (m3 vs. toneladas) con las tarifas de referencia FADEEAC/CATAC 2026 y aplica el descuento de retorno vacío (40% a 50% menos), permitiendo elegir quién absorbe el flete (comprador, vendedor o 50/50).
-  3. Cierre con Garantía y Certificado Circular: retención de pago hasta confirmar entrega y emisión de un Certificado de Disposición Final (trazabilidad ambiental).
-- **Regla de diseño y código:** Cero jerga cripto para el usuario final. Interfaz limpia, pensada para productores y transportistas que usan el celular con baja señal. Toda la complejidad de cálculo de cubicaje y registro en blockchain (Hedera/Stellar) ocurre en el backend de forma transparente.
-```
-
----
-
-## 6. Arquitectura Modular para Desarrollo en Paralelo (Sin conflictos en Git)
+## 5. Arquitectura Modular para Desarrollo en Paralelo (Sin conflictos en Git)
 
 Para que los 4 integrantes trabajen en simultáneo sin pisarse archivos, el proyecto está dividido en **4 carriles independientes**:
 
