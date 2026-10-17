@@ -1085,7 +1085,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="calc-comprador">Establecimiento Comprador Titular</label>
-                                <input type="text" id="calc-comprador" class="form-control" value="Granja Avícola San Isidro SRL">
+                                <input type="text" id="calc-comprador" class="form-control" value="" placeholder="Nombre o Razón Social del Comprador">
                             </div>
                             <div class="form-group">
                                 <label for="calc-destino">Localidad de Descarga (API Georef Argentina)</label>
@@ -1163,7 +1163,7 @@
                         Para administrar tus propios lotes de cascarilla, aserrín, orujo o citrus, definir quién absorbe el flete para evacuación urgente en 48 hs y auditar tus Certificados Ambientales con trazabilidad Hedera HCS, identificá tu planta.
                     </p>
                     <div class="auth-gated-actions">
-                        <button type="button" class="btn-primary" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo SRL', 'Saladas, Corrientes')">
+                        <button type="button" class="btn-primary" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo', 'Saladas, Corrientes')">
                             Ingresar como Molino San Lorenzo (Saladas) →
                         </button>
                         <button type="button" class="btn-secondary" onclick="abrirModalLogin()">
@@ -1357,7 +1357,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="pub-empresa">Razón Social o Planta Vendedora (Titular)</label>
-                                    <input type="text" id="pub-empresa" class="form-control" value="Molino Arrocero San Lorenzo SRL" required>
+                                    <input type="text" id="pub-empresa" class="form-control" value="Molino Arrocero San Lorenzo" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="pub-provincia">Provincia (Padrón Oficial IGN)</label>
@@ -2008,11 +2008,11 @@
                         <span class="login-role-sample">Ejemplo: Granja Avícola San Isidro SRL (Goya)</span>
                     </button>
 
-                    <button type="button" class="login-role-option" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo SRL', 'Saladas, Corrientes')">
+                    <button type="button" class="login-role-option" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo', 'Saladas, Corrientes')">
                         <div class="login-role-badge">02 · VENDEDOR</div>
                         <div class="login-role-name">Agroindustria Generadora</div>
                         <p class="login-role-hint">Gestiona sus propios lotes en planta y audita sus Certificados Ambientales.</p>
-                        <span class="login-role-sample">Ejemplo: Molino San Lorenzo SRL (Saladas)</span>
+                        <span class="login-role-sample">Ejemplo: Molino Arrocero San Lorenzo (Saladas)</span>
                     </button>
 
                     <button type="button" class="login-role-option" onclick="identificarseComoRol('logistica', 'Horacio Giménez', 'Transportes Don Horacio', 'Corrientes Capital')">

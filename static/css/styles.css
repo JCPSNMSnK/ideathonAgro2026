@@ -228,6 +228,16 @@ h4 {
     stroke: var(--texto-sobre-primario);
 }
 
+.role-tab-btn.nav-role-locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.role-tab-btn.nav-role-locked:hover {
+    background: transparent;
+    color: var(--texto-secundario);
+}
+
 .nav-inline-divider {
     display: inline-block;
     width: 1px;

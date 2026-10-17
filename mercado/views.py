@@ -73,7 +73,7 @@ def _normalizar_identidad_actor(texto: str) -> str:
     s = unicodedata.normalize("NFKD", str(texto)).encode("ascii", "ignore").decode("ascii").lower()
     s = re.sub(r"\([^)]*\)", " ", s)
     s = re.sub(r"[^a-z0-9\s]", " ", s)
-    palabras_ignorar = {"srl", "sa", "sas", "sh", "s", "r", "l", "a", "de", "del", "la", "el", "los", "las", "granja", "establecimiento", "transportes", "transporte"}
+    palabras_ignorar = {"srl", "sa", "sas", "sh", "s", "r", "l", "a", "de", "del", "la", "el", "los", "las", "granja", "establecimiento", "transportes", "transporte", "molino", "molinos", "aserradero", "cooperativa", "coop"}
     tokens = [t for t in s.split() if t and t not in palabras_ignorar]
     return " ".join(tokens)
 

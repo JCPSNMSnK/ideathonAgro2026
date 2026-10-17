@@ -142,11 +142,11 @@ function cerrarSesion() {
     const inputLocalidad = document.getElementById("pub-localidad");
     const inputTransportista = document.getElementById("cam-transportista");
 
-    if (inputComprador) inputComprador.value = "Granja Avícola San Isidro SRL";
+    if (inputComprador) inputComprador.value = "";
     if (inputDestino) inputDestino.value = "Goya, Corrientes";
-    if (inputEmpresa) inputEmpresa.value = "Molino Arrocero San Lorenzo SRL";
+    if (inputEmpresa) inputEmpresa.value = "Molino Arrocero San Lorenzo";
     if (inputLocalidad) inputLocalidad.value = "Saladas";
-    if (inputTransportista) inputTransportista.value = "Transporte Don Horacio";
+    if (inputTransportista) inputTransportista.value = "Transportes Don Horacio";
 
     aplicarDatosSesionEnUI();
     cambiarVistaRol("vista-inicio");
@@ -255,6 +255,17 @@ function aplicarDatosSesionEnUI() {
     const logisticaGated = document.getElementById("logistica-gated-view");
     const logisticaPrivate = document.getElementById("logistica-private-view");
 
+    const navBtnVendedor = document.getElementById("nav-btn-vendedor");
+    const navBtnLogistica = document.getElementById("nav-btn-logistica");
+    if (navBtnVendedor) {
+        navBtnVendedor.classList.remove("nav-role-locked");
+        navBtnVendedor.removeAttribute("title");
+    }
+    if (navBtnLogistica) {
+        navBtnLogistica.classList.remove("nav-role-locked");
+        navBtnLogistica.removeAttribute("title");
+    }
+
     const rolMap = {
         comprador: "Comprador",
         vendedor: "Vendedor",
@@ -293,10 +304,24 @@ function aplicarDatosSesionEnUI() {
         btnLogout.style.display = "inline-flex";
     }
 
-    if (vendedorGated) vendedorGated.style.display = "none";
-    if (vendedorPrivate) vendedorPrivate.style.display = "block";
-    if (logisticaGated) logisticaGated.style.display = "none";
-    if (logisticaPrivate) logisticaPrivate.style.display = "block";
+    // Aislamiento estricto de vistas privadas por rol
+    const esVendedor = usuarioActivo.rol === "vendedor";
+    const esLogistica = usuarioActivo.rol === "logistica";
+
+    if (vendedorGated) vendedorGated.style.display = esVendedor ? "none" : "block";
+    if (vendedorPrivate) vendedorPrivate.style.display = esVendedor ? "block" : "none";
+    if (logisticaGated) logisticaGated.style.display = esLogistica ? "none" : "block";
+    if (logisticaPrivate) logisticaPrivate.style.display = esLogistica ? "block" : "none";
+
+    // Indicador visual en navbar de rol restringido
+    if (navBtnVendedor && usuarioActivo.rol !== "vendedor") {
+        navBtnVendedor.classList.add("nav-role-locked");
+        navBtnVendedor.title = `Sesión activa como ${rolTexto} (${orgNombre}). Requiere cuenta de Vendedor.`;
+    }
+    if (navBtnLogistica && usuarioActivo.rol !== "logistica") {
+        navBtnLogistica.classList.add("nav-role-locked");
+        navBtnLogistica.title = `Sesión activa como ${rolTexto} (${orgNombre}). Requiere cuenta de Logística.`;
+    }
 
     const inputComprador = document.getElementById("calc-comprador");
     const inputDestino = document.getElementById("calc-destino");
@@ -306,7 +331,7 @@ function aplicarDatosSesionEnUI() {
 
     if (usuarioActivo.rol === "comprador") {
         if (inputComprador) inputComprador.value = orgNombre;
-        if (inputDestino) inputDestino.value = usuarioActivo.localidad;
+        if (inputDestino && !inputDestino.value) inputDestino.value = usuarioActivo.localidad || "Goya, Corrientes";
     } else if (usuarioActivo.rol === "vendedor") {
         if (inputEmpresa) inputEmpresa.value = orgNombre;
         if (inputLocalidad) inputLocalidad.value = (usuarioActivo.localidad || "Saladas").split(",")[0].trim();
@@ -526,6 +551,21 @@ function ejecutarCambioVista(panelId) {
 }
 
 function cambiarVistaRol(panelId) {
+    if (usuarioActivo) {
+        if (panelId === "vista-vendedor" && usuarioActivo.rol !== "vendedor") {
+            const org = usuarioActivo.organizacion || usuarioActivo.nombre || "tu cuenta";
+            alert(`Acceso no permitido: Estás autenticado como ${usuarioActivo.rol.toUpperCase()} (${org}). Para gestionar lotes como Vendedor debés iniciar sesión con una cuenta de Agroindustria.`);
+            abrirModalLogin();
+            return;
+        }
+        if (panelId === "vista-logistica" && usuarioActivo.rol !== "logistica") {
+            const org = usuarioActivo.organizacion || usuarioActivo.nombre || "tu cuenta";
+            alert(`Acceso no permitido: Estás autenticado como ${usuarioActivo.rol.toUpperCase()} (${org}). Para publicar camiones y ver liquidaciones de Logística debés iniciar sesión con una cuenta de Transportista.`);
+            abrirModalLogin();
+            return;
+        }
+    }
+
     if (document.startViewTransition) {
         document.startViewTransition(() => ejecutarCambioVista(panelId));
     } else {
@@ -1423,13 +1463,16 @@ function normalizarIdentidadActor(texto) {
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
-        .replace(/\b(srl|sa|s\.a\.|s\.r\.l\.|coop\.|ltda)\b/g, "")
+        .replace(/\([^)]*\)/g, " ")
+        .replace(/\b(srl|sa|s\.a\.|s\.r\.l\.|coop\.|cooperativa|ltda|sas|sh)\b/g, " ")
+        .replace(/\b(transportes|transporte|molino|molinos|granja|establecimiento|aserradero)\b/g, " ")
         .replace(/[^a-z0-9\s]/g, " ")
         .replace(/\s+/g, " ")
         .trim();
 }
 
 function esRecursoPropio(propietarioRecurso, identidadActor) {
+    if (!propietarioRecurso || !identidadActor) return false;
     const p = normalizarIdentidadActor(propietarioRecurso);
     const a = normalizarIdentidadActor(identidadActor);
     if (!p || !a) return false;
@@ -1953,6 +1996,20 @@ function irAPaginaCertificadosVendedor(nuevaPagina) {
 
 function renderizarCertificadosVendedor() {
     const vendedorActivo = obtenerIdentidadRol("vendedor");
+    const container = document.getElementById("lista-certificados-vendedor");
+
+    if (!vendedorActivo) {
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-state-card">
+                    <h4>Iniciá sesión como Vendedor para auditar tus certificados</h4>
+                    <p>Cada agroindustria accede de forma privada a los certificados de economía circular emitidos para sus propios lotes.</p>
+                </div>
+            `;
+        }
+        return;
+    }
+
     const misCerts = operacionesCertificados.filter((op) =>
         esRecursoPropio(op.vendedor, vendedorActivo)
     );
@@ -1975,14 +2032,13 @@ function renderizarCertificadosVendedor() {
     const start = (page - 1) * perPage;
     const itemsPagina = listaFiltrada.slice(start, start + perPage);
 
-    const container = document.getElementById("lista-certificados-vendedor");
     if (!container) return;
 
     if (itemsPagina.length === 0) {
         container.innerHTML = `
             <div class="empty-state-card">
-                <h4>Sin certificados emitidos para "${vendedorActivo}" en este filtro</h4>
-                <p>Cambiá a "Todos los del Mercado" o seleccioná otra planta agroindustrial arriba para auditar sus certificados.</p>
+                <h4>Sin certificados emitidos para "${vendedorActivo}" aún</h4>
+                <p>Cuando un comprador reserve o firme un lote de tu planta, el Certificado Ambiental Oficial aparecerá aquí con trazabilidad Hedera HCS.</p>
             </div>
         `;
     } else {
@@ -2075,6 +2131,20 @@ function irAPaginaViajesLogistica(nuevaPagina) {
 
 function renderizarViajesLogistica() {
     const transportistaActivo = obtenerIdentidadRol("logistica");
+    const container = document.getElementById("lista-viajes-logistica");
+
+    if (!transportistaActivo) {
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-state-card">
+                    <h4>Iniciá sesión como Logística para auditar tus viajes y cobros</h4>
+                    <p>Cada empresa transportista accede de forma privada a sus liquidaciones y fletes calzados en tránsito.</p>
+                </div>
+            `;
+        }
+        return;
+    }
+
     const misViajes = operacionesCertificados.filter((op) =>
         esRecursoPropio(op.transportista, transportistaActivo)
     );
@@ -2097,14 +2167,13 @@ function renderizarViajesLogistica() {
     const start = (page - 1) * perPage;
     const itemsPagina = listaFiltrada.slice(start, start + perPage);
 
-    const container = document.getElementById("lista-viajes-logistica");
     if (!container) return;
 
     if (itemsPagina.length === 0) {
         container.innerHTML = `
             <div class="empty-state-card">
-                <h4>No hay viajes calzados registrados para "${transportistaActivo}" en este filtro</h4>
-                <p>Cambiá a "Todos los Viajes" o seleccioná otra empresa transportista en el selector superior.</p>
+                <h4>No hay viajes calzados registrados para "${transportistaActivo}" aún</h4>
+                <p>Publicá tu unidad con retorno vacío en la pestaña "Publicar Viaje de Regreso" para calzar cargas con -45% FADEEAC y cobrar con pago en garantía.</p>
             </div>
         `;
     } else {
@@ -2231,9 +2300,9 @@ async function confirmarReservaConGarantia() {
     const modoTransporte = document.getElementById("calc-modo-transporte")?.value || "VUELTA";
     const tipoVehiculoPropio = document.getElementById("calc-tipo-vehiculo-propio")?.value || "CAMION_CHASIS";
     const compradorNombre =
-        document.getElementById("calc-comprador")?.value ||
+        (document.getElementById("calc-comprador")?.value || "").trim() ||
         obtenerIdentidadRol("comprador") ||
-        "Granja Avícola San Isidro SRL";
+        (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "Comprador Agropecuario");
     const destino = document.getElementById("calc-destino")?.value || (usuarioActivo ? usuarioActivo.localidad : "Goya, Corrientes");
     const ventanaCarga = document.getElementById("calc-ventana-carga")?.value || "";
     const destinoConVentana = ventanaCarga ? `${destino} · Turno: ${ventanaCarga}` : destino;
@@ -2600,12 +2669,13 @@ async function enviarNuevoLote(event) {
     const provinciaSeleccionada =
         document.getElementById("pub-provincia")?.value || partesLoc[1] || "Corrientes";
 
-    const plantaActiva = obtenerIdentidadRol("vendedor");
+    const plantaActiva = obtenerIdentidadRol("vendedor") || (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "");
+    const empresaNombre = (document.getElementById("pub-empresa")?.value || plantaActiva || "Molino Arrocero San Lorenzo").trim();
 
     const payload = {
         titulo: document.getElementById("pub-titulo").value,
         categoria: document.getElementById("pub-categoria").value,
-        empresa_vendedora: document.getElementById("pub-empresa").value || plantaActiva,
+        empresa_vendedora: empresaNombre,
         localidad_origen: localidadLimpia,
         provincia: provinciaSeleccionada,
         toneladas_disponibles: document.getElementById("pub-toneladas").value,
@@ -2620,7 +2690,8 @@ async function enviarNuevoLote(event) {
         sublote_min_tn: subloteMin,
         fecha_disponibilidad: fechaFutura,
         actor_rol: "vendedor",
-        actor_organizacion: plantaActiva,
+        actor_organizacion: empresaNombre,
+        actor_nombre: usuarioActivo ? usuarioActivo.nombre : empresaNombre,
     };
 
     const url = editId ? `/api/lote/${editId}/editar/` : "/api/publicar/";
@@ -2714,10 +2785,11 @@ async function eliminarCamionABM(camionId, transportista) {
 async function enviarNuevoCamion(event) {
     event.preventDefault();
     const editId = document.getElementById("cam-edit-id")?.value;
-    const empresaActiva = obtenerIdentidadRol("logistica");
+    const empresaActiva = obtenerIdentidadRol("logistica") || (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "");
+    const transportistaNombre = (document.getElementById("cam-transportista")?.value || empresaActiva || "Transportes Don Horacio").trim();
 
     const payload = {
-        transportista: document.getElementById("cam-transportista").value || empresaActiva,
+        transportista: transportistaNombre,
         origen_viaje: document.getElementById("cam-origen").value,
         destino_viaje: document.getElementById("cam-destino").value,
         pasa_por: document.getElementById("cam-pasa-por").value,
@@ -2727,7 +2799,8 @@ async function enviarNuevoCamion(event) {
         descuento_retorno_pct: document.getElementById("cam-descuento").value,
         capacidad_max_tn: 30,
         actor_rol: "logistica",
-        actor_organizacion: empresaActiva,
+        actor_organizacion: transportistaNombre,
+        actor_nombre: usuarioActivo ? usuarioActivo.nombre : transportistaNombre,
     };
 
     const url = editId ? `/api/camion/${editId}/editar/` : "/api/publicar-camion/";
