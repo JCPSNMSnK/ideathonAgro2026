@@ -17,7 +17,9 @@
             } catch (e) {}
         })();
     </script>
-    <title>Moñái — Logística Circular y Flete Calzado del NEA</title>
+    <title>Moñái — Logística Circular y Flete Calzado en Argentina</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="stylesheet" href="{% static 'css/variables.css' %}?v={% now 'U' %}">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v={% now 'U' %}">
 </head>
@@ -566,14 +568,14 @@
                 </div>
             </div>
 
-            <!-- CONTENEDOR DEL MAPA INTERACTIVO DE PRODUCTORES DE ARGENTINA -->
+            <!-- CONTENEDOR DEL MAPA INTERACTIVO REAL DE PRODUCTORES DE ARGENTINA (LEAFLET + GEOREF IGN + OSRM) -->
             <div id="seccion-mapa-productores" class="producers-map-container" style="display: none;">
                 <div class="map-container-header">
                     <div>
-                        <div class="map-header-tag">CORREDORES NACIONALES · RN 12 · RN 14 · RN 9 · RN 7 · RN 22</div>
-                        <h3 class="map-header-title">Mapa Federal de Agroindustrias y Lotes Disponibles</h3>
+                        <div class="map-header-tag">CARTOGRAFÍA REAL · API GEOREF DATOS ARGENTINA (IGN) + RUTEO VIAL OSRM</div>
+                        <h3 class="map-header-title">Mapa Federal Interactivo de Agroindustrias y Corredores Reales</h3>
                         <p class="map-header-desc">
-                            Visualizá excedentes agroindustriales de todo el país. Hacé clic en cualquier productor para ver su stock, calcular el flete o coordinar retiro particular con tu propio vehículo.
+                            Navegá por toda la República Argentina con coordenadas oficiales del <strong>IGN (Instituto Geográfico Nacional)</strong>. Hacé clic en cualquier productor para trazar la <strong>ruta vial real por carreteras nacionales (OSRM)</strong>, calcular kilómetros exactos o simular retiro en tu propio vehículo.
                         </p>
                     </div>
                     <div class="map-legend-pills">
@@ -584,34 +586,49 @@
                     </div>
                 </div>
 
-                <!-- Barra de Filtros Regionales de Argentina -->
-                <div class="map-region-filter-bar">
-                    <span class="map-region-label">Región:</span>
-                    <button type="button" class="map-region-pill active" onclick="filtrarMapaPorRegion('TODAS', this)">🇦🇷 Toda Argentina</button>
-                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NEA', this)">🌿 Litoral / NEA</button>
-                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PAMPEANA', this)">🌾 Pampeana / Centro</button>
-                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('CUYO', this)">🍇 Cuyo</button>
-                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NOA', this)">☀️ NOA</button>
-                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PATAGONIA', this)">🍎 Patagonia / Alto Valle</button>
+                <!-- Barra de Filtros Regionales + Buscador en Vivo API Georef Argentina -->
+                <div class="map-region-filter-bar" style="justify-content: space-between; gap: 0.75rem;">
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;">
+                        <span class="map-region-label">Región:</span>
+                        <button type="button" class="map-region-pill active" onclick="filtrarMapaPorRegion('TODAS', this)">🇦🇷 Toda Argentina</button>
+                        <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NEA', this)">🌿 Litoral / NEA</button>
+                        <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PAMPEANA', this)">🌾 Pampeana / Centro</button>
+                        <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('CUYO', this)">🍇 Cuyo</button>
+                        <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NOA', this)">☀️ NOA</button>
+                        <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PATAGONIA', this)">🍎 Patagonia / Alto Valle</button>
+                    </div>
+
+                    <div class="map-georef-search-wrap" style="display: flex; align-items: center; gap: 0.45rem; flex: 1; max-width: 370px;">
+                        <input type="text"
+                               id="mapa-georef-input"
+                               list="datalist-localidades-argentina"
+                               class="form-control"
+                               style="padding: 0.42rem 0.75rem; font-size: 0.82rem;"
+                               placeholder="🔍 Tu localidad (API Georef: ej. Rafaela, Junín, Oberá)..."
+                               oninput="autocompletarLocalidadGeoref(this.value)">
+                        <button type="button"
+                                class="chip-btn"
+                                style="white-space: nowrap; padding: 0.42rem 0.75rem; font-size: 0.80rem;"
+                                onclick="fijarDestinoCompradorDesdeMapa()">
+                            Ubicar mi Campo
+                        </button>
+                    </div>
                 </div>
 
-                <!-- SVG Interactivo del Corredor NEA con proyección de nodos y rutas -->
+                <!-- Telemetría de Ruta Vial Real (OSRM + IGN) -->
+                <div id="map-osrm-telemetry" class="map-telemetry-bar font-mono">
+                    <span>🛰️ <strong>Fuente Oficial:</strong> API Georef Datos Argentina (IGN) + OSRM Road Router</span>
+                    <span id="map-osrm-route-summary">Seleccioná un lote en el mapa para trazar la ruta vial real por carreteras nacionales</span>
+                </div>
+
+                <!-- Lienzo de Mapa Real Leaflet + Ficha Flotante -->
                 <div class="interactive-map-stage" id="mapa-stage-wrapper">
-                    <svg id="svg-mapa-nea" viewBox="0 0 880 500" class="map-canvas-svg" preserveAspectRatio="xMidYMid meet" aria-label="Mapa interactivo de corredores del NEA">
-                        <defs>
-                            <linearGradient id="gradRutaCalzada" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="var(--color-primario)" stop-opacity="0.8"/>
-                                <stop offset="100%" stop-color="var(--color-exito)" stop-opacity="0.9"/>
-                            </linearGradient>
-                            <filter id="mapShadow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.25"/>
-                            </filter>
-                        </defs>
-                        <!-- Capa de Corredores Viales (RN 12, RN 14, RN 118, RN 16) -->
+                    <div id="leaflet-mapa-argentina" class="leaflet-map-canvas" role="region" aria-label="Mapa interactivo oficial de productores y rutas de Argentina"></div>
+
+                    <!-- SVG de respaldo oculto (solo si no carga CDN en entorno aislado) -->
+                    <svg id="svg-mapa-nea" viewBox="0 0 880 500" class="map-canvas-svg" style="display:none;" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                         <g id="map-routes-layer" class="map-routes-layer"></g>
-                        <!-- Capa de Conexiones Animadas hacia el Comprador -->
                         <g id="map-flow-layer" class="map-flow-layer"></g>
-                        <!-- Capa de Nodos y Marcadores -->
                         <g id="map-nodes-layer" class="map-nodes-layer"></g>
                     </svg>
 
@@ -980,8 +997,15 @@
                             <input type="text" id="calc-comprador" class="form-control" value="Granja Avícola San Isidro SRL">
                         </div>
                         <div class="form-group">
-                            <label for="calc-destino">Localidad de Descarga</label>
-                            <input type="text" id="calc-destino" class="form-control" value="Goya, Corrientes">
+                            <label for="calc-destino">Localidad de Descarga (API Georef Argentina)</label>
+                            <input type="text"
+                                   id="calc-destino"
+                                   list="datalist-localidades-argentina"
+                                   class="form-control"
+                                   value="Goya, Corrientes"
+                                   placeholder="Escribí cualquier localidad de Argentina..."
+                                   oninput="autocompletarLocalidadGeoref(this.value)"
+                                   onchange="actualizarRutaRealDesdeDestino(this.value)">
                         </div>
                     </div>
 
@@ -1016,9 +1040,9 @@
                         </svg>
                     </div>
                     <span class="role-badge-pill">ESPACIO AGROINDUSTRIAL EXCLUSIVO</span>
-                    <h2 class="auth-gated-title">Portal de Gestión para Agroindustrias del NEA</h2>
+                    <h2 class="auth-gated-title">Portal de Gestión para Agroindustrias de Argentina</h2>
                     <p class="auth-gated-desc">
-                        Para publicar nuevos lotes de cascarilla, aserrín o citrus, definir quién absorbe el flete para evacuación urgente en 48 hs y descargar tus Remitos Circulares oficiales con trazabilidad Hedera HCS, identificá tu empresa.
+                        Para publicar nuevos lotes de cascarilla, aserrín, orujo o citrus, definir quién absorbe el flete para evacuación urgente en 48 hs y descargar tus Remitos Circulares oficiales con trazabilidad Hedera HCS, identificá tu empresa.
                     </p>
                     <div class="auth-gated-actions">
                         <button type="button" class="btn-primary" onclick="identificarseComoRol('vendedor', 'Ing. Carlos Romero', 'Molino Arrocero San Lorenzo SRL', 'Saladas, Corrientes')">
@@ -1064,8 +1088,8 @@
                                     <option value="ARROZ">Sector Arrocero (Cascarilla / Afrechillo)</option>
                                     <option value="MADERA">Foresto-Industria (Aserrín / Viruta / Chips)</option>
                                     <option value="CITRUS">Sector Citrícola (Bagazo / Cáscara húmeda)</option>
-                                    <option value="ALGODON">Sector Algodonero (Semilla / Cascarilla)</option>
-                                    <option value="OTRO">Otro Subproducto Regional</option>
+                                    <option value="ALGODON">Sector Algodonero / Oleaginoso (Semilla / Expeller)</option>
+                                    <option value="OTRO">Otro Subproducto Regional (Orujo / Bagazo / Pomaza)</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -1080,9 +1104,25 @@
                                 <input type="text" id="pub-empresa" class="form-control" value="Molino Arrocero San Lorenzo SRL" required>
                             </div>
                             <div class="form-group">
-                                <label for="pub-localidad">Localidad de Planta</label>
-                                <input type="text" id="pub-localidad" class="form-control" value="Saladas" required>
+                                <label for="pub-provincia">Provincia (Padrón Oficial IGN)</label>
+                                <select id="pub-provincia" class="form-control" onchange="autocompletarLocalidadGeoref(document.getElementById('pub-localidad').value, this.value)">
+                                    {% for prov in provincias_oficiales %}
+                                    <option value="{{ prov.nombre }}" {% if prov.nombre == "Corrientes" %}selected{% endif %}>{{ prov.nombre }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pub-localidad">Localidad de Planta (API Georef Datos Argentina)</label>
+                            <input type="text"
+                                   id="pub-localidad"
+                                   list="datalist-localidades-argentina"
+                                   class="form-control"
+                                   value="Saladas"
+                                   placeholder="Escribí la localidad de tu planta..."
+                                   oninput="autocompletarLocalidadGeoref(this.value, document.getElementById('pub-provincia').value)"
+                                   required>
                         </div>
 
                         <div class="form-row">
@@ -1619,8 +1659,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="login-localidad">Localidad o Zona del NEA</label>
-                        <input type="text" id="login-localidad" class="form-control" placeholder="Ej: Goya, Saladas, Mercedes, Virasoro..." required>
+                        <label for="login-localidad">Localidad de Argentina (API Georef Datos Argentina)</label>
+                        <input type="text"
+                               id="login-localidad"
+                               list="datalist-localidades-argentina"
+                               class="form-control"
+                               placeholder="Ej: Goya, Rafaela, Río Cuarto, San Martín..."
+                               oninput="autocompletarLocalidadGeoref(this.value)"
+                               required>
                     </div>
 
                     <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.75rem;">
@@ -1712,8 +1758,18 @@
         </div>
     </div>
 
+    <!-- Datalist oficial alimentado en vivo por API Georef Datos Argentina (apis.datos.gob.ar) -->
+    <datalist id="datalist-localidades-argentina">
+        {% for loc in localidades_comprador %}
+        <option value="{{ loc.nombre }}"></option>
+        {% endfor %}
+    </datalist>
+
     <script id="datos-mapa-nea" type="application/json">
         {{ nodos_mapa_nea_json|safe }}
+    </script>
+    <script id="datos-casos-demo-landing" type="application/json">
+        {{ casos_demo_landing_json|safe }}
     </script>
     <script src="{% static 'js/app.js' %}?v={% now 'U' %}"></script>
 </body>

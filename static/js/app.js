@@ -317,13 +317,14 @@ function aplicarDatosSesionEnUI() {
 }
 
 /* =============================================================================
-   2. CASOS REALES PRECARGADOS PARA LA PSEUDO-DEMOSTRACIÓN DE LA LANDING
+   2. CASOS REALES DINÁMICOS PARA EL SIMULADOR DE LA LANDING (CONECTADO AL BACKEND)
    ============================================================================= */
 const CASOS_DEMO_LANDING = [
     {
+        clave: "arrocero",
         indice: 0,
         loteIndex: 0,
-        ruta: "Saladas, Corrientes → Goya, Corrientes (250 km)",
+        ruta: "Saladas, Corrientes → Goya, Corrientes (135 km)",
         actor: "Molino Arrocero San Lorenzo · Destino: Cama Avícola de Galpón",
         modalidad: "Flete: 100% Comprador",
         densidad: "Densidad: 165 kg/m³",
@@ -335,16 +336,17 @@ const CASOS_DEMO_LANDING = [
         pesoPctNum: 50,
         explicacionTrampa:
             "Con 15 tn de cascarilla seca (165 kg/m³) llenás el 100% del volumen físico de la batea (90 m³) aunque el camión esté a mitad de peso. El flete tradicional te cobra el viaje de 30 tn.",
-        precioRojo: "$1.400.000",
-        descRojo: "Representa el 73,7% del costo total puesto en campo. La venta se cae y el residuo se quema.",
+        precioRojo: "$ 1.400.000",
+        descRojo: "Tarifa Plena FADEEAC calculada sobre volumen aforado.",
         descuentoPct: "-45%",
-        precioVerde: "$770.000",
+        precioVerde: "$ 770.000",
         descVerde: "Camión que descargó en Corrientes y vuelve vacío hacia Goya por RN 12. Negocio rentable.",
-        ahorro: "$630.000 ARS",
-        distanciaKm: 250,
+        ahorro: "$ 630.000 ARS",
+        distanciaKm: 135,
         toneladas: 15,
     },
     {
+        clave: "forestal",
         indice: 1,
         loteIndex: 1,
         ruta: "Saladas, Corrientes → Mercedes, Corrientes (165 km)",
@@ -352,23 +354,24 @@ const CASOS_DEMO_LANDING = [
         modalidad: "Flete: 50% y 50% Compartido",
         densidad: "Densidad: 210 kg/m³",
         volumenM3: "66.7 m³",
-        volumenPctTexto: "74% Volumen acoplado",
-        volumenPctNum: 74,
+        volumenPctTexto: "78% Volumen acoplado",
+        volumenPctNum: 78,
         pesoTn: "14 tn",
         pesoPctTexto: "47% Capacidad",
         pesoPctNum: 47,
         explicacionTrampa:
-            "El aserrín seco ocupa gran volumen con bajo peso. Al dividir 50/50 un camión de retorno (-48%), el aserradero libera su playa colapsada y el productor recibe insumo a mitad de costo.",
-        precioRojo: "$1.300.000",
-        descRojo: "Flete tradicional consume más del 80% del valor del aserrín en planta.",
+            "El aserrín seco ocupa gran volumen con bajo peso. Al dividir 50/50 un camión de retorno, el aserradero libera su playa colapsada y el productor recibe insumo a mitad de costo.",
+        precioRojo: "$ 1.300.000",
+        descRojo: "Flete tradicional consume más del 75% del valor del aserrín en planta.",
         descuentoPct: "-48%",
-        precioVerde: "$676.000",
+        precioVerde: "$ 676.000",
         descVerde: "Semirremolque baranda volcable en retorno hacia Mercedes/Curuzú Cuatiá.",
-        ahorro: "$624.000 ARS",
+        ahorro: "$ 624.000 ARS",
         distanciaKm: 165,
         toneladas: 14,
     },
     {
+        clave: "citricola",
         indice: 2,
         loteIndex: 2,
         ruta: "Bella Vista, Corrientes → Goya, Corrientes (85 km)",
@@ -376,27 +379,50 @@ const CASOS_DEMO_LANDING = [
         modalidad: "Flete: 100% Vendedor (Urgencia 48 hs)",
         densidad: "Densidad: 650 kg/m³",
         volumenM3: "36.9 m³",
-        volumenPctTexto: "41% Volumen",
-        volumenPctNum: 41,
+        volumenPctTexto: "43% Volumen",
+        volumenPctNum: 43,
         pesoTn: "24 tn",
         pesoPctTexto: "80% Capacidad Peso",
         pesoPctNum: 80,
         explicacionTrampa:
             "La cáscara húmeda de citrus fermenta en 48 hs generando multas ambientales. La juguera absorbe el Flete Calzado (-45%) porque le sale más barato que el pasivo ambiental.",
-        precioRojo: "$950.000",
+        precioRojo: "$ 950.000",
         descRojo: "Contratar batea estanca de urgencia a tarifa plena frena la evacuación diaria.",
         descuentoPct: "-45%",
-        precioVerde: "$520.000",
+        precioVerde: "$ 520.000",
         descVerde: "Flete absorbido por la citrícola con camión de retorno + Certificado Ambiental Hedera.",
-        ahorro: "$430.000 ARS",
+        ahorro: "$ 430.000 ARS",
         distanciaKm: 85,
         toneladas: 24,
     },
 ];
 
+function hidratarCasosDemoDesdeBackend() {
+    try {
+        const el = document.getElementById("datos-casos-demo-landing");
+        if (!el || !el.textContent) return;
+        const din = JSON.parse(el.textContent.trim());
+        CASOS_DEMO_LANDING.forEach((c) => {
+            const srv = din[c.clave];
+            if (!srv) return;
+            c.loteId = srv.loteId;
+            if (srv.Route) c.ruta = srv.Route;
+            if (srv.Rule) c.modalidad = `Flete: ${srv.Rule}`;
+            if (srv.tradicional && srv.tradicional.flete) c.precioRojo = srv.tradicional.flete;
+            if (srv.tradicional && srv.tradicional.fleteNote) c.descRojo = `${srv.tradicional.fleteNote} · ${srv.tradicional.verdict || ""}`;
+            if (srv.subruta && srv.subruta.flete) c.precioVerde = srv.subruta.flete;
+            if (srv.subruta && srv.subruta.fleteNote) c.descVerde = `${srv.subruta.fleteNote} · ${srv.subruta.verdict || ""}`;
+            if (srv.Savings) c.ahorro = srv.Savings.split("(")[0].trim() + " ARS";
+        });
+    } catch (e) {
+        console.warn("Usando valores iniciales de respaldo para casos demo:", e);
+    }
+}
+
 let casoDemoActivo = CASOS_DEMO_LANDING[0];
 
 function seleccionarCasoDemoLanding(index) {
+    hidratarCasosDemoDesdeBackend();
     const caso = CASOS_DEMO_LANDING[index] || CASOS_DEMO_LANDING[0];
     casoDemoActivo = caso;
 
@@ -433,7 +459,10 @@ function seleccionarCasoDemoLanding(index) {
 
 function abrirCasoDemoEnCotizador() {
     const selectLote = document.getElementById("calc-lote-id");
-    if (selectLote && selectLote.options[casoDemoActivo.loteIndex]) {
+    if (casoDemoActivo.loteId && selectLote) {
+        selectLote.value = String(casoDemoActivo.loteId);
+        seleccionarLote(casoDemoActivo.loteId, casoDemoActivo.toneladas, casoDemoActivo.distanciaKm);
+    } else if (selectLote && selectLote.options[casoDemoActivo.loteIndex]) {
         selectLote.selectedIndex = casoDemoActivo.loteIndex;
         const loteId = selectLote.value;
         seleccionarLote(loteId, casoDemoActivo.toneladas, casoDemoActivo.distanciaKm);
@@ -732,11 +761,25 @@ function actualizarBotonesSubloteCotizador(toneladasSeleccionadas) {
 }
 
 /* =============================================================================
-   6.2. MAPA FEDERAL DE PRODUCTORES (ARGENTINA · CANVAS VECTORIAL SVG)
+   6.2. MAPA FEDERAL INTERACTIVO REAL (LEAFLET.JS + API GEOREF IGN + OSRM ROUTING)
    ============================================================================= */
 let datosMapaNEA = null;
 let modoMercadoActual = "catalogo";
 let regionMapaFiltro = "TODAS";
+let leafletMapInstance = null;
+let leafletMarkersLayer = null;
+let leafletRouteLayer = null;
+let georefDebounceTimer = null;
+let ultimoProdSeleccionadoMapa = null;
+
+const VISTAS_REGIONALES_ARGENTINA = {
+    TODAS: { center: [-32.2, -62.5], zoom: 5 },
+    NEA: { center: [-28.25, -58.4], zoom: 7 },
+    PAMPEANA: { center: [-32.8, -61.8], zoom: 6 },
+    CUYO: { center: [-33.2, -67.8], zoom: 7 },
+    NOA: { center: [-26.2, -64.8], zoom: 6 },
+    PATAGONIA: { center: [-39.0, -67.6], zoom: 7 },
+};
 
 function cargarDatosMapa() {
     try {
@@ -749,25 +792,51 @@ function cargarDatosMapa() {
     }
 }
 
+function filtrarProdsPorRegion(prods, region) {
+    if (!region || region === "TODAS") return prods;
+    return prods.filter((p) => {
+        if (p.region && p.region.toUpperCase() === region) return true;
+        const prov = (p.provincia || "").toUpperCase();
+        const loc = (p.localidad || "").toUpperCase();
+        if (region === "NEA") {
+            return prov.includes("CORRIENTES") || prov.includes("CHACO") || prov.includes("MISIONES") || prov.includes("FORMOSA") || prov.includes("ENTRE R");
+        } else if (region === "PAMPEANA") {
+            return prov.includes("SANTA FE") || prov.includes("CÓRDOBA") || prov.includes("CORDOBA") || prov.includes("BUENOS AIRES") || prov.includes("PAMPA");
+        } else if (region === "CUYO") {
+            return prov.includes("MENDOZA") || prov.includes("SAN LUIS") || prov.includes("SAN JUAN");
+        } else if (region === "NOA") {
+            return prov.includes("TUCUM") || prov.includes("SALTA") || prov.includes("JUJUY") || prov.includes("SANTIAGO") || prov.includes("CATAMARCA") || prov.includes("RIOJA");
+        } else if (region === "PATAGONIA") {
+            return prov.includes("RÍO NEGRO") || prov.includes("RIO NEGRO") || prov.includes("NEUQU") || prov.includes("CHUBUT") || prov.includes("SANTA CRUZ") || loc.includes("ROCA");
+        }
+        return true;
+    });
+}
+
 function filtrarMapaPorRegion(region, btnEl) {
     regionMapaFiltro = region;
-    document.querySelectorAll(".map-region-pill").forEach(btn => btn.classList.remove("active"));
+    document.querySelectorAll(".map-region-pill").forEach((btn) => btn.classList.remove("active"));
     if (btnEl) btnEl.classList.add("active");
-    renderizarMapaProductores();
+    cerrarCardMapa();
+    renderizarMapaProductores(true);
 }
 
 function cambiarModoMercado(modo) {
     modoMercadoActual = modo;
     const btnCatalogo = document.getElementById("btn-vista-catalogo");
     const btnMapa = document.getElementById("btn-vista-mapa");
-    const seccionCatalogo = document.getElementById("seccion-grilla-catalogo");
     const seccionMapa = document.getElementById("seccion-mapa-productores");
 
     if (modo === "mapa") {
         if (btnCatalogo) btnCatalogo.classList.remove("active");
         if (btnMapa) btnMapa.classList.add("active");
         if (seccionMapa) seccionMapa.style.display = "block";
-        renderizarMapaProductores();
+        setTimeout(() => {
+            renderizarMapaProductores(false);
+            if (leafletMapInstance) {
+                leafletMapInstance.invalidateSize();
+            }
+        }, 60);
     } else {
         if (btnCatalogo) btnCatalogo.classList.add("active");
         if (btnMapa) btnMapa.classList.remove("active");
@@ -775,200 +844,243 @@ function cambiarModoMercado(modo) {
     }
 }
 
-function calcularBoundingBoxProductores(productores, comp) {
-    const lats = [comp.lat];
-    const lngs = [comp.lng];
-    productores.forEach(p => {
-        if (p.lat && p.lng) {
-            lats.push(p.lat);
-            lngs.push(p.lng);
+function inicializarInstanciaLeaflet() {
+    const mapContainer = document.getElementById("leaflet-mapa-argentina");
+    if (!mapContainer || typeof L === "undefined") return null;
+    if (leafletMapInstance) return leafletMapInstance;
+
+    const capaCartoVoyager = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+        {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://ign.gob.ar">IGN Argentina</a>',
+            subdomains: "abcd",
+            maxZoom: 18,
         }
+    );
+
+    const capaOpenStreetMap = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution: '&copy; OpenStreetMap contributors · Rutas DNV Argentina',
+            maxZoom: 18,
+        }
+    );
+
+    const capaArgenmapIGN = L.tileLayer(
+        "https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png",
+        {
+            attribution: '&copy; <a href="https://www.ign.gob.ar/">Instituto Geográfico Nacional (IGN)</a> — Argenmap Oficial',
+            maxZoom: 18,
+        }
+    );
+
+    leafletMapInstance = L.map(mapContainer, {
+        center: [-30.5, -60.2],
+        zoom: 5,
+        layers: [capaCartoVoyager],
+        scrollWheelZoom: true,
     });
 
-    const latMin = Math.min(...lats);
-    const latMax = Math.max(...lats);
-    const lngMin = Math.min(...lngs);
-    const lngMax = Math.max(...lngs);
+    L.control
+        .layers(
+            {
+                "Mapa Claro Vial (OSM / Carto)": capaCartoVoyager,
+                "Argenmap Oficial (IGN Argentina)": capaArgenmapIGN,
+                "OpenStreetMap Clásico": capaOpenStreetMap,
+            },
+            null,
+            { position: "topright" }
+        )
+        .addTo(leafletMapInstance);
 
-    const dLat = Math.max(1.2, (latMax - latMin) * 0.16);
-    const dLng = Math.max(1.6, (lngMax - lngMin) * 0.16);
+    leafletRouteLayer = L.layerGroup().addTo(leafletMapInstance);
+    leafletMarkersLayer = L.layerGroup().addTo(leafletMapInstance);
 
-    return {
-        latMin: latMin - dLat,
-        latMax: latMax + dLat,
-        lngMin: lngMin - dLng,
-        lngMax: lngMax + dLng,
-    };
+    return leafletMapInstance;
 }
 
-function proyectarCoordASVG(lat, lng, bounds) {
-    const b = bounds || {
-        latMin: -39.8,
-        latMax: -24.5,
-        lngMin: -69.8,
-        lngMax: -55.0,
-    };
-
-    const width = 880;
-    const height = 500;
-    const padding = 50;
-
-    const spanLng = (b.lngMax - b.lngMin) || 1;
-    const spanLat = (b.latMax - b.latMin) || 1;
-
-    const x = padding + ((lng - b.lngMin) / spanLng) * (width - 2 * padding);
-    const y = padding + ((b.latMax - lat) / spanLat) * (height - 2 * padding);
-
-    return { x: Math.round(x), y: Math.round(y) };
-}
-
-function renderizarMapaProductores() {
+function renderizarMapaProductores(forzarZoomRegion = false) {
     if (!datosMapaNEA) cargarDatosMapa();
     if (!datosMapaNEA) return;
 
-    const svg = document.getElementById("svg-mapa-nea");
-    const routesLayer = document.getElementById("map-routes-layer");
-    const flowLayer = document.getElementById("map-flow-layer");
-    const nodesLayer = document.getElementById("map-nodes-layer");
+    const comp = datosMapaNEA.comprador || {
+        lat: -29.14,
+        lng: -59.2626,
+        nombre: "Goya, Corrientes",
+    };
 
-    if (!svg || !routesLayer || !nodesLayer) return;
+    const todosProds = datosMapaNEA.productores || [];
+    const prodsVisibles = filtrarProdsPorRegion(todosProds, regionMapaFiltro);
 
-    routesLayer.innerHTML = "";
-    flowLayer.innerHTML = "";
-    nodesLayer.innerHTML = "";
+    // Si Leaflet está disponible, usar el mapa interactivo real con ruteo OSRM
+    const map = inicializarInstanciaLeaflet();
+    if (map && leafletMarkersLayer && leafletRouteLayer) {
+        leafletMarkersLayer.clearLayers();
+        leafletRouteLayer.clearLayers();
 
-    const comp = datosMapaNEA.comprador || { lat: -29.14, lng: -59.2626, nombre: "Goya, Corrientes" };
+        const boundsCoords = [[comp.lat, comp.lng]];
 
-    // Filtrar productores según región seleccionada
-    let prodsVisibles = datosMapaNEA.productores || [];
-    if (regionMapaFiltro !== "TODAS") {
-        prodsVisibles = prodsVisibles.filter(p => {
-            const zona = (p.zona || "").toUpperCase();
-            const prov = (p.provincia || "").toUpperCase();
-            const loc = (p.localidad || "").toUpperCase();
-            if (regionMapaFiltro === "NEA") {
-                return prov.includes("CORRIENTES") || prov.includes("CHACO") || prov.includes("MISIONES") || loc.includes("SALADAS") || loc.includes("VIRASORO") || loc.includes("GOYA");
-            } else if (regionMapaFiltro === "PAMPEANA") {
-                return prov.includes("SANTA FE") || prov.includes("CÓRDOBA") || prov.includes("CORDOBA") || prov.includes("BUENOS AIRES") || loc.includes("ROSARIO") || loc.includes("RECONQUISTA") || loc.includes("PERGAMINO") || loc.includes("CUARTO");
-            } else if (regionMapaFiltro === "CUYO") {
-                return prov.includes("MENDOZA") || prov.includes("SAN LUIS") || prov.includes("SAN JUAN") || loc.includes("MARTÍN") || loc.includes("MERCEDES");
-            } else if (regionMapaFiltro === "NOA") {
-                return prov.includes("TUCUMÁN") || prov.includes("TUCUMAN") || prov.includes("SALTA") || prov.includes("JUJUY");
-            } else if (regionMapaFiltro === "PATAGONIA") {
-                return prov.includes("RÍO NEGRO") || prov.includes("RIO NEGRO") || prov.includes("NEUQUÉN") || loc.includes("ROCA") || loc.includes("CIPOLLETTI");
-            }
-            return true;
+        // 1. Marcador del Establecimiento Comprador (Tu Campo)
+        const iconoComprador = L.divIcon({
+            className: "leaflet-custom-div-icon",
+            html: `
+                <div class="l-marker-pin l-marker-buyer" title="Tu Establecimiento: ${comp.nombre}">
+                    <span class="l-marker-pulse"></span>
+                    <span class="l-marker-core">🏡</span>
+                    <span class="l-marker-label">${(comp.nombre || "Tu Campo").split(",")[0]}</span>
+                </div>
+            `,
+            iconSize: [120, 42],
+            iconAnchor: [60, 21],
         });
-    }
 
-    const bounds = calcularBoundingBoxProductores(prodsVisibles, comp);
-    const pComp = proyectarCoordASVG(comp.lat, comp.lng, bounds);
+        const markerComp = L.marker([comp.lat, comp.lng], { icon: iconoComprador, zIndexOffset: 900 });
+        markerComp.bindTooltip(
+            `<strong>🏡 Tu Establecimiento Receptor</strong><br>${comp.nombre}<br><small>Centroide Oficial IGN: ${comp.lat}, ${comp.lng}</small>`,
+            { direction: "top", offset: [0, -14] }
+        );
+        leafletMarkersLayer.addLayer(markerComp);
 
-    // 1. Dibujar Corredores Viales Troncales de Argentina
-    const rutasTroncales = [
-        // RN 12: Corrientes -> Empedrado -> Saladas -> Bella Vista -> Goya
-        [
-            proyectarCoordASVG(-27.4692, -58.8306, bounds),
-            proyectarCoordASVG(-27.9542, -58.8042, bounds),
-            proyectarCoordASVG(-28.2539, -58.6258, bounds),
-            proyectarCoordASVG(-28.5089, -59.0453, bounds),
-            proyectarCoordASVG(-29.1400, -59.2626, bounds),
-        ],
-        // RN 14: Posadas -> Virasoro -> Santo Tomé -> Paso de los Libres -> Concordia
-        [
-            proyectarCoordASVG(-27.3621, -55.8961, bounds),
-            proyectarCoordASVG(-28.0500, -56.0167, bounds),
-            proyectarCoordASVG(-28.5492, -56.0408, bounds),
-            proyectarCoordASVG(-31.3930, -58.0209, bounds),
-        ],
-        // RN 16: Sáenz Peña -> Resistencia -> Corrientes
-        [
-            proyectarCoordASVG(-26.7852, -60.4388, bounds),
-            proyectarCoordASVG(-27.4514, -58.9867, bounds),
-            proyectarCoordASVG(-27.4692, -58.8306, bounds),
-        ],
-        // RN 11: Resistencia -> Reconquista -> Santa Fe -> Rosario
-        [
-            proyectarCoordASVG(-27.4514, -58.9867, bounds),
-            proyectarCoordASVG(-29.1500, -59.6500, bounds),
-            proyectarCoordASVG(-31.6333, -60.7000, bounds),
-            proyectarCoordASVG(-32.9468, -60.6393, bounds),
-        ],
-        // RN 9 / RN 8: Rosario -> Pergamino -> Córdoba / Río Cuarto
-        [
-            proyectarCoordASVG(-32.9468, -60.6393, bounds),
-            proyectarCoordASVG(-33.8994, -60.5736, bounds),
-            proyectarCoordASVG(-33.1307, -64.3499, bounds),
-        ],
-        // RN 7: San Luis -> San Martín / Mendoza
-        [
-            proyectarCoordASVG(-33.1307, -64.3499, bounds),
-            proyectarCoordASVG(-33.6757, -65.4578, bounds),
-            proyectarCoordASVG(-33.0811, -68.4681, bounds),
-        ],
-    ];
+        // 2. Corredores de conexión y Marcadores de cada Productor / Lote
+        prodsVisibles.forEach((prod) => {
+            if (!prod.lat || !prod.lng) return;
+            boundsCoords.push([prod.lat, prod.lng]);
 
-    rutasTroncales.forEach(puntos => {
-        let d = `M ${puntos[0].x} ${puntos[0].y}`;
-        for (let i = 1; i < puntos.length; i++) {
-            d += ` L ${puntos[i].x} ${puntos[i].y}`;
+            // Línea base de referencia hasta que el usuario haga clic y trace la ruta vial real OSRM
+            const colorBase = prod.es_urgente ? "#dc2626" : prod.es_lote_futuro ? "#7c3aed" : "#15803d";
+            const lineaRef = L.polyline(
+                [
+                    [prod.lat, prod.lng],
+                    [comp.lat, comp.lng],
+                ],
+                {
+                    color: colorBase,
+                    weight: 2,
+                    opacity: 0.35,
+                    dashArray: "6, 8",
+                }
+            );
+            leafletRouteLayer.addLayer(lineaRef);
+
+            const tipoClase = prod.es_urgente
+                ? "l-marker-urgent"
+                : prod.es_lote_futuro
+                ? "l-marker-future"
+                : "l-marker-producer";
+            const emoji = prod.es_urgente ? "⚡" : prod.es_lote_futuro ? "🌱" : "🏭";
+
+            const iconoProd = L.divIcon({
+                className: "leaflet-custom-div-icon",
+                html: `
+                    <div class="l-marker-pin ${tipoClase}">
+                        ${prod.es_urgente ? '<span class="l-marker-pulse-red"></span>' : ""}
+                        <span class="l-marker-core">${emoji}</span>
+                        <span class="l-marker-label">${prod.localidad} · ${prod.toneladas} tn</span>
+                    </div>
+                `,
+                iconSize: [140, 42],
+                iconAnchor: [70, 21],
+            });
+
+            const mProd = L.marker([prod.lat, prod.lng], {
+                icon: iconoProd,
+                zIndexOffset: prod.es_urgente ? 700 : 500,
+            });
+
+            mProd.on("click", () => {
+                seleccionarProductorEnMapaLeaflet(prod);
+            });
+
+            leafletMarkersLayer.addLayer(mProd);
+        });
+
+        // Ajustar encuadre del mapa según la región o los nodos visibles
+        if (forzarZoomRegion && VISTAS_REGIONALES_ARGENTINA[regionMapaFiltro]) {
+            const v = VISTAS_REGIONALES_ARGENTINA[regionMapaFiltro];
+            map.flyTo(v.center, v.zoom, { duration: 0.65 });
+        } else if (boundsCoords.length > 1) {
+            map.fitBounds(boundsCoords, { padding: [45, 45], maxZoom: 8 });
         }
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", d);
-        path.setAttribute("class", "map-trunk-road");
-        routesLayer.appendChild(path);
-    });
 
-    // 2. Líneas de Flujo desde cada Productor hacia el Comprador
-    prodsVisibles.forEach(prod => {
-        const pProd = proyectarCoordASVG(prod.lat, prod.lng, bounds);
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        const cx = (pProd.x + pComp.x) / 2;
-        const cy = Math.min(pProd.y, pComp.y) - 25;
-        path.setAttribute("d", `M ${pProd.x} ${pProd.y} Q ${cx} ${cy} ${pComp.x} ${pComp.y}`);
-        path.setAttribute("class", prod.es_urgente ? "map-flow-line map-flow-urgent" : "map-flow-line");
-        flowLayer.appendChild(path);
-    });
-
-    // 3. Nodo del Comprador (Establecimiento Activo)
-    const gComp = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    gComp.setAttribute("class", "map-node-buyer");
-    gComp.setAttribute("transform", `translate(${pComp.x}, ${pComp.y})`);
-    gComp.innerHTML = `
-        <circle r="18" class="buyer-pulse-halo" />
-        <circle r="9" class="buyer-center-dot" />
-        <text y="24" class="map-node-label">${comp.nombre || "Tu Establecimiento"}</text>
-    `;
-    nodesLayer.appendChild(gComp);
-
-    // 4. Nodos de Productores con badges de urgencia / futuro
-    prodsVisibles.forEach(prod => {
-        const pt = proyectarCoordASVG(prod.lat, prod.lng, bounds);
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        const nodeClass = prod.es_urgente ? "map-node-urgent" : (prod.es_lote_futuro ? "map-node-future" : "map-node-producer");
-        g.setAttribute("class", `map-producer-node ${nodeClass}`);
-        g.setAttribute("transform", `translate(${pt.x}, ${pt.y})`);
-        g.setAttribute("role", "button");
-        g.setAttribute("tabindex", "0");
-        g.setAttribute("aria-label", `${prod.titulo} en ${prod.localidad}`);
-
-        let badgeIcon = "🏭";
-        if (prod.es_urgente) badgeIcon = "⚡";
-        else if (prod.es_lote_futuro) badgeIcon = "🌱";
-
-        g.innerHTML = `
-            <circle r="14" class="node-outer-ring" />
-            <circle r="8" class="node-center-point" />
-            <text y="-18" class="node-title-tag">${prod.localidad} (${prod.toneladas} tn)</text>
-            <text y="4" class="node-icon-emoji">${badgeIcon}</text>
-        `;
-
-        g.addEventListener("click", () => mostrarCardEnMapa(prod, pt));
-        nodesLayer.appendChild(g);
-    });
+        // Si hay al menos un productor visible, trazar la ruta vial real OSRM del primero o del activo
+        const prodInicial = ultimoProdSeleccionadoMapa && prodsVisibles.some((p) => p.id === ultimoProdSeleccionadoMapa.id)
+            ? ultimoProdSeleccionadoMapa
+            : prodsVisibles[0];
+        if (prodInicial) {
+            trazarRutaVialOSRM(prodInicial, comp, false);
+        }
+        return;
+    }
 }
 
-function mostrarCardEnMapa(prod, pt) {
+async function trazarRutaVialOSRM(prod, comp, abrirFicha = true) {
+    if (!prod || !comp) return;
+    ultimoProdSeleccionadoMapa = prod;
+
+    const summaryEl = document.getElementById("map-osrm-route-summary");
+    if (summaryEl) {
+        summaryEl.textContent = `Calculando ruta vial real por carreteras nacionales (${prod.localidad} → ${comp.nombre})...`;
+    }
+
+    try {
+        const params = new URLSearchParams({
+            origen: `${prod.localidad}, ${prod.provincia}`,
+            origen_lat: prod.lat,
+            origen_lng: prod.lng,
+            destino: comp.nombre,
+            destino_lat: comp.lat,
+            destino_lng: comp.lng,
+        });
+        const res = await fetch(`/api/georef/ruta/?${params.toString()}`);
+        const data = await res.json();
+        if (data.ok && data.ruta) {
+            const r = data.ruta;
+            prod.distancia_km = r.distancia_km || prod.distancia_km;
+            prod.duracion_formateada = r.duracion_formateada || "";
+            prod.resumen_rutas = r.resumen_rutas || prod.ruta;
+
+            if (summaryEl) {
+                summaryEl.innerHTML = `🛣️ <strong>${prod.localidad} → ${comp.nombre}:</strong> ${r.distancia_km} km viales reales (${r.duracion_formateada}) vía <strong>${r.resumen_rutas}</strong>`;
+            }
+
+            if (leafletMapInstance && leafletRouteLayer && Array.isArray(r.coordenadas_ruta) && r.coordenadas_ruta.length > 1) {
+                // Limpiar polilínea activa previa y dibujar la ruta real OSRM
+                leafletRouteLayer.eachLayer((layer) => {
+                    if (layer.options && layer.options.className === "osrm-active-route-line") {
+                        leafletRouteLayer.removeLayer(layer);
+                    }
+                });
+
+                const colorRuta = prod.es_urgente ? "#dc2626" : "#15803d";
+                const polyActiva = L.polyline(r.coordenadas_ruta, {
+                    color: colorRuta,
+                    weight: 5,
+                    opacity: 0.9,
+                    className: "osrm-active-route-line",
+                });
+                leafletRouteLayer.addLayer(polyActiva);
+            }
+        }
+    } catch (e) {
+        console.warn("Error consultando ruta vial OSRM:", e);
+    }
+
+    if (abrirFicha) {
+        mostrarCardEnMapa(prod);
+    }
+}
+
+function seleccionarProductorEnMapaLeaflet(prod) {
+    const comp = (datosMapaNEA && datosMapaNEA.comprador) || {
+        lat: -29.14,
+        lng: -59.2626,
+        nombre: "Goya, Corrientes",
+    };
+    mostrarCardEnMapa(prod);
+    trazarRutaVialOSRM(prod, comp, true);
+}
+
+function mostrarCardEnMapa(prod) {
     const card = document.getElementById("map-producer-card");
     const content = document.getElementById("map-card-content");
     if (!card || !content) return;
@@ -980,6 +1092,8 @@ function mostrarCardEnMapa(prod, pt) {
         etiquetaBadge = `<span class="badge-lote-futuro">📅 Lote Futuro (${prod.fecha_entrega_futura || "Zafra"})</span>`;
     }
 
+    const duracionTexto = prod.duracion_formateada ? ` · ⏱️ ${prod.duracion_formateada}` : "";
+
     content.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.4rem;">
             <span class="badge-cat badge-cat-${(prod.categoria || "arroz").toLowerCase()}">${prod.categoria}</span>
@@ -987,42 +1101,140 @@ function mostrarCardEnMapa(prod, pt) {
         </div>
         <h4 style="font-size:1.05rem; font-family:var(--fuente-display); margin-bottom:0.25rem; color:var(--texto-principal);">${prod.titulo}</h4>
         <div style="font-size:0.80rem; color:var(--texto-secundario); margin-bottom:0.6rem;">
-            📍 <strong>${prod.empresa}</strong> · ${prod.localidad}, ${prod.provincia} (${prod.ruta || "RN 12"})
+            📍 <strong>${prod.empresa}</strong> · ${prod.localidad}, ${prod.provincia} (${prod.resumen_rutas || prod.ruta || "RN"})
         </div>
         <div class="map-card-metrics">
             <div><span>Disponible:</span><strong>${prod.toneladas} tn (${prod.volumen_m3} m³)</strong></div>
-            <div><span>Distancia:</span><strong>${prod.distancia_km} km</strong></div>
+            <div><span>Ruta Vial OSRM:</span><strong>${prod.distancia_km} km${duracionTexto}</strong></div>
             <div><span>Precio:</span><strong>$${Number(prod.precio_tn).toLocaleString("es-AR")}/tn</strong></div>
         </div>
-        <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
-            <button type="button" class="btn-primary" style="padding:0.45rem 0.9rem; font-size:0.82rem; min-height:36px;"
+        <div style="display:flex; flex-wrap:wrap; gap:0.45rem; margin-top:0.75rem;">
+            <button type="button" class="btn-primary" style="padding:0.45rem 0.85rem; font-size:0.80rem; min-height:34px; flex:1;"
                     onclick="comprarSubloteDesdeMapa('${prod.id}', '${prod.sublote_min_tn || 5}', '${prod.distancia_km}')">
-                Cotizar Sublote (${prod.sublote_min_tn || 5} tn) →
+                Sublote (${prod.sublote_min_tn || 5} tn) →
             </button>
-            <button type="button" class="chip-btn" style="padding:0.45rem 0.75rem; font-size:0.82rem;"
-                    onclick="seleccionarLote('${prod.id}', '${prod.toneladas}', '${prod.distancia_km}')">
+            <button type="button" class="chip-btn" style="padding:0.45rem 0.7rem; font-size:0.80rem;"
+                    onclick="comprarSubloteDesdeMapa('${prod.id}', '1', '${prod.distancia_km}')">
+                🛻 Retiro 1 tn
+            </button>
+            <button type="button" class="chip-btn" style="padding:0.45rem 0.7rem; font-size:0.80rem;"
+                    onclick="comprarSubloteDesdeMapa('${prod.id}', '${prod.toneladas}', '${prod.distancia_km}')">
                 Lote Entero
             </button>
         </div>
     `;
 
     card.style.display = "block";
-    // Posicionamiento adaptativo de la tarjeta flotante
-    const leftPos = Math.min(Math.max(20, pt.x - 140), 580);
-    const topPos = pt.y > 260 ? pt.y - 230 : pt.y + 25;
-    card.style.left = `${leftPos}px`;
-    card.style.top = `${topPos}px`;
+    card.style.right = "18px";
+    card.style.bottom = "18px";
+    card.style.left = "auto";
+    card.style.top = "auto";
 }
 
 function comprarSubloteDesdeMapa(loteId, toneladas, distanciaKm) {
     cerrarCardMapa();
-    cambiarModoMercado("catalogo");
     comprarSubloteDirecto(loteId, toneladas, distanciaKm);
 }
 
 function cerrarCardMapa() {
     const card = document.getElementById("map-producer-card");
     if (card) card.style.display = "none";
+}
+
+/* =============================================================================
+   6.2.1. AUTOCOMPLETADO OFICIAL EN VIVO (API GEOREF DATOS ARGENTINA + OSRM)
+   ============================================================================= */
+function autocompletarLocalidadGeoref(texto, provinciaOpcional) {
+    const q = (texto || "").trim();
+    if (q.length < 2) return;
+
+    if (georefDebounceTimer) clearTimeout(georefDebounceTimer);
+    georefDebounceTimer = setTimeout(async () => {
+        try {
+            const params = new URLSearchParams({ q: q, max: "12" });
+            if (provinciaOpcional) params.set("provincia", provinciaOpcional);
+
+            const res = await fetch(`/api/georef/localidades/?${params.toString()}`);
+            const data = await res.json();
+            if (!data.ok || !Array.isArray(data.localidades)) return;
+
+            const datalist = document.getElementById("datalist-localidades-argentina");
+            if (!datalist) return;
+
+            datalist.innerHTML = "";
+            data.localidades.forEach((loc) => {
+                const opt = document.createElement("option");
+                opt.value = loc.etiqueta || `${loc.nombre}, ${loc.provincia}`;
+                opt.label = `${loc.zona || loc.provincia} · IGN (${loc.lat}, ${loc.lng})`;
+                datalist.appendChild(opt);
+            });
+        } catch (err) {
+            console.warn("Autocompletado Georef no disponible temporalmente:", err);
+        }
+    }, 220);
+}
+
+async function actualizarRutaRealDesdeDestino(destinoTexto) {
+    const destino = (destinoTexto || "").trim();
+    if (destino.length < 3) return;
+
+    if (!datosMapaNEA) cargarDatosMapa();
+    const selectLote = document.getElementById("calc-lote-id");
+    const loteId = selectLote ? parseInt(selectLote.value, 10) : null;
+    const prodActivo =
+        (datosMapaNEA &&
+            datosMapaNEA.productores &&
+            datosMapaNEA.productores.find((p) => p.id === loteId)) ||
+        (datosMapaNEA && datosMapaNEA.productores ? datosMapaNEA.productores[0] : null);
+
+    try {
+        const params = new URLSearchParams({
+            origen: prodActivo ? `${prodActivo.localidad}, ${prodActivo.provincia}` : "Saladas, Corrientes",
+            destino: destino,
+        });
+        if (prodActivo && prodActivo.lat && prodActivo.lng) {
+            params.set("origen_lat", prodActivo.lat);
+            params.set("origen_lng", prodActivo.lng);
+        }
+
+        const res = await fetch(`/api/georef/ruta/?${params.toString()}`);
+        const data = await res.json();
+        if (data.ok && data.ruta && data.destino) {
+            const inputKm = document.getElementById("calc-distancia-km");
+            if (inputKm && data.ruta.distancia_km) {
+                inputKm.value = data.ruta.distancia_km;
+            }
+
+            if (datosMapaNEA) {
+                datosMapaNEA.comprador = {
+                    codigo: destino.toUpperCase(),
+                    nombre: `${data.destino.nombre}${data.destino.provincia ? ", " + data.destino.provincia : ""}`,
+                    lat: data.destino.lat,
+                    lng: data.destino.lng,
+                    ruta: data.destino.ruta || data.ruta.resumen_rutas,
+                    zona: data.destino.zona || "",
+                };
+            }
+
+            recalcularCotizacionEnVivo();
+            if (modoMercadoActual === "mapa") {
+                renderizarMapaProductores(false);
+            }
+        }
+    } catch (e) {
+        console.warn("No se pudo actualizar ruta real desde destino:", e);
+    }
+}
+
+function fijarDestinoCompradorDesdeMapa() {
+    const inputMapa = document.getElementById("mapa-georef-input");
+    const valor = (inputMapa ? inputMapa.value : "").trim();
+    if (!valor) return;
+
+    const inputDestino = document.getElementById("calc-destino");
+    if (inputDestino) inputDestino.value = valor;
+
+    actualizarRutaRealDesdeDestino(valor);
 }
 
 /* =============================================================================
@@ -1387,11 +1599,18 @@ async function enviarNuevoLote(event) {
     const urgencia = document.getElementById("pub-urgencia-toggle")?.value || "NORMAL";
     const fechaFutura = document.getElementById("pub-fecha-futura")?.value || "";
     const subloteMin = document.getElementById("pub-sublote-min")?.value || "5";
+    const locRaw = (document.getElementById("pub-localidad")?.value || "Saladas").trim();
+    const partesLoc = locRaw.split(",").map((s) => s.trim()).filter(Boolean);
+    const localidadLimpia = partesLoc[0] || "Saladas";
+    const provinciaSeleccionada =
+        document.getElementById("pub-provincia")?.value || partesLoc[1] || "Corrientes";
+
     const payload = {
         titulo: document.getElementById("pub-titulo").value,
         categoria: document.getElementById("pub-categoria").value,
         empresa_vendedora: document.getElementById("pub-empresa").value,
-        localidad_origen: document.getElementById("pub-localidad").value,
+        localidad_origen: localidadLimpia,
+        provincia: provinciaSeleccionada,
         toneladas_disponibles: document.getElementById("pub-toneladas").value,
         densidad_kg_m3: document.getElementById("pub-densidad").value,
         precio_tonelada_ars: document.getElementById("pub-precio").value,

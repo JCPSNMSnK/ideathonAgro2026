@@ -12,12 +12,19 @@ from django.views.decorators.http import require_http_methods
 
 from mercado.models import LoteSubproducto, CamionRetorno, OperacionTrazabilidad
 from mercado.services.seed_data import asegurar_datos_iniciales_nea
+from mercado.services.georef_service import (
+    buscar_localidades_oficiales,
+    calcular_ruta_vial_osrm,
+    geocodificar_localidad_argentina,
+    obtener_provincias_oficiales,
+)
 from mercado.services.recomendador import (
     PERFILES_PRODUCTIVOS,
     LOCALIDADES_COMPRADOR_NEA,
     PERFILES_USUARIO_DEMO,
     obtener_lotes_recomendados,
     obtener_datos_mapa_productores,
+    obtener_casos_demo_landing_dinamicos,
     obtener_camiones_con_oportunidades,
     obtener_perfil_detalle,
     obtener_localidad_detalle,
@@ -57,12 +64,12 @@ from mercado.services.trazabilidad_blockchain import (
 def home_demo(request):
     """
     Renderiza la interfaz principal de la Demo.
-    Si la base está vacía, precarga automáticamente los casos del NEA.
+    Si la base está vacía, precarga automáticamente los casos iniciales.
     """
     asegurar_datos_iniciales_nea()
 
     perfil_param = request.GET.get("perfil", "TODOS").upper().strip()
-    localidad_param = request.GET.get("localidad", "GOYA").upper().strip()
+    localidad_param = request.GET.get("localidad", "GOYA").strip()
     q = request.GET.get("q", "").strip()
 
     perfil_actual_obj = obtener_perfil_detalle(perfil_param)
@@ -78,8 +85,12 @@ def home_demo(request):
     todos_los_lotes = LoteSubproducto.objects.all().order_by("-creado_en")
     certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:8]
     nodos_mapa_nea_json = obtener_datos_mapa_productores(
-        lotes, localidad_actual_obj["codigo"]
+        lotes, localidad_actual_obj["codigo"], camiones=camiones
     )
+    casos_demo_landing_json = obtener_casos_demo_landing_dinamicos(
+        lotes=todos_los_lotes, camiones=todos_los_camiones
+    )
+    provincias_oficiales = obtener_provincias_oficiales()
 
     context = {
         "perfiles": PERFILES_PRODUCTIVOS,
@@ -96,6 +107,8 @@ def home_demo(request):
         "todos_los_camiones": todos_los_camiones,
         "certificados_recientes": certificados_recientes,
         "nodos_mapa_nea_json": nodos_mapa_nea_json,
+        "casos_demo_landing_json": casos_demo_landing_json,
+        "provincias_oficiales": provincias_oficiales,
     }
     return render(request, "mercado/index.html", context)
 
@@ -435,3 +448,73 @@ def api_eliminar_camion(request, camion_id: int):
         return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "mensaje": f"Error al eliminar camión: {str(e)}"}, status=400)
+
+
+@require_http_methods(["GET"])
+def api_georef_localidades(request):
+    """
+    Endpoint conectado a la API Oficial Georef de Datos Argentina
+    (https://apis.datos.gob.ar/georef/api/localidades) para autocompletar localidades
+    y obtener coordenadas oficiales del IGN (Instituto Geográfico Nacional) en todo el país.
+    """
+    q = (request.GET.get("q") or request.GET.get("nombre") or "").strip()
+    provincia = (request.GET.get("provincia") or "").strip() or None
+    try:
+        max_results = max(1, min(25, int(request.GET.get("max", 12))))
+    except (ValueError, TypeError):
+        max_results = 12
+
+    localidades = buscar_localidades_oficiales(
+        query=q,
+        provincia=provincia,
+        max_results=max_results,
+    )
+    return JsonResponse(
+        {
+            "ok": True,
+            "fuente": "API Georef Datos Argentina (apis.datos.gob.ar / IGN)",
+            "cantidad": len(localidades),
+            "localidades": localidades,
+        }
+    )
+
+
+@require_http_methods(["GET"])
+def api_georef_ruta_vial(request):
+    """
+    Endpoint de ruteo vial real y geocodificación nacional:
+    Resuelve coordenadas oficiales vía Georef Argentina (IGN) si se pasan nombres de
+    localidades y calcula la ruta terrestre real (km viales, duración y polilínea GeoJSON)
+    usando el motor público OSRM (https://router.project-osrm.org).
+    """
+    origen_texto = (request.GET.get("origen") or "").strip()
+    destino_texto = (request.GET.get("destino") or "").strip()
+
+    try:
+        if request.GET.get("origen_lat") and request.GET.get("origen_lng"):
+            lat1 = float(request.GET["origen_lat"])
+            lng1 = float(request.GET["origen_lng"])
+            nodo_origen = {"nombre": origen_texto or "Origen", "lat": lat1, "lng": lng1}
+        else:
+            nodo_origen = geocodificar_localidad_argentina(origen_texto or "Saladas, Corrientes")
+            lat1, lng1 = float(nodo_origen["lat"]), float(nodo_origen["lng"])
+
+        if request.GET.get("destino_lat") and request.GET.get("destino_lng"):
+            lat2 = float(request.GET["destino_lat"])
+            lng2 = float(request.GET["destino_lng"])
+            nodo_destino = {"nombre": destino_texto or "Destino", "lat": lat2, "lng": lng2}
+        else:
+            nodo_destino = geocodificar_localidad_argentina(destino_texto or "Goya, Corrientes")
+            lat2, lng2 = float(nodo_destino["lat"]), float(nodo_destino["lng"])
+    except (ValueError, TypeError) as e:
+        return JsonResponse({"ok": False, "mensaje": f"Coordenadas inválidas: {e}"}, status=400)
+
+    ruta = calcular_ruta_vial_osrm(lat1, lng1, lat2, lng2, incluir_geometria=True)
+    return JsonResponse(
+        {
+            "ok": True,
+            "origen": nodo_origen,
+            "destino": nodo_destino,
+            "ruta": ruta,
+        }
+    )

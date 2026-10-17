@@ -12,4 +12,6 @@ urlpatterns = [
     path("api/publicar-camion/", views.api_publicar_camion, name="api_publicar_camion"),
     path("api/camion/<int:camion_id>/editar/", views.api_editar_camion, name="api_editar_camion"),
     path("api/camion/<int:camion_id>/eliminar/", views.api_eliminar_camion, name="api_eliminar_camion"),
+    path("api/georef/localidades/", views.api_georef_localidades, name="api_georef_localidades"),
+    path("api/georef/ruta/", views.api_georef_ruta_vial, name="api_georef_ruta_vial"),
 ]

@@ -17,6 +17,13 @@ import re
 from typing import Dict, Iterable, List, Optional
 from django.db.models import Q
 from mercado.models import CamionRetorno, LoteSubproducto
+from mercado.services.calculadora_flete import cotizar_operacion_completa
+from mercado.services.georef_service import (
+    calcular_km_haversine_vial,
+    geocodificar_localidad_argentina,
+    inferir_region_por_provincia,
+    obtener_provincias_oficiales,
+)
 
 PERFILES_PRODUCTIVOS: List[Dict[str, str]] = [
     {
@@ -515,60 +522,26 @@ COORDENADAS_NODOS_NEA = COORDENADAS_NODOS_ARGENTINA
 
 
 def _calcular_km_entre_coordenadas(lat1: float, lng1: float, lat2: float, lng2: float) -> int:
-    """Calcula distancia real estimada por ruta terrestre (Haversine * 1.28 factor de sinuosidad)."""
-    rad = math.pi / 180.0
-    dlat = (lat2 - lat1) * rad
-    dlng = (lng2 - lng1) * rad
-    a = (
-        math.sin(dlat / 2.0) ** 2
-        + math.cos(lat1 * rad) * math.cos(lat2 * rad) * math.sin(dlng / 2.0) ** 2
-    )
-    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(max(0.0, 1.0 - a)))
-    km_lineal = 6371.0 * c
-    return max(20, int(round(km_lineal * 1.28)))
+    """Calcula distancia real estimada por ruta terrestre (respaldo geodésico IGN)."""
+    return calcular_km_haversine_vial(lat1, lng1, lat2, lng2)
 
 
-def obtener_coordenadas_nodo(localidad_texto: Optional[str]) -> Dict:
-    """Devuelve coordenadas (lat, lng), ruta y zona para cualquier localidad o código de Argentina."""
+def obtener_coordenadas_nodo(
+    localidad_texto: Optional[str],
+    provincia_texto: Optional[str] = None,
+) -> Dict:
+    """
+    Devuelve coordenadas oficiales IGN (lat, lng), ruta, provincia y zona para cualquier
+    localidad de la República Argentina consultando primero la caché IGN y luego en vivo
+    la API Georef de Datos Argentina (apis.datos.gob.ar/georef/api/localidades).
+    """
+    nodo_georef = geocodificar_localidad_argentina(localidad_texto, provincia_texto)
+    if nodo_georef:
+        return nodo_georef
+
     texto = (localidad_texto or "Saladas").strip()
     if texto in COORDENADAS_NODOS_ARGENTINA:
         return COORDENADAS_NODOS_ARGENTINA[texto]
-
-    texto_lower = texto.lower().replace("_", " ")
-    for nombre_nodo, info in COORDENADAS_NODOS_ARGENTINA.items():
-        if nombre_nodo.lower() in texto_lower or texto_lower in nombre_nodo.lower():
-            return info
-
-    # Búsqueda por palabras clave regionales
-    if "saenz" in texto_lower or "sáenz" in texto_lower or "chaco" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Presidencia Roque Sáenz Peña"]
-    if "virasoro" in texto_lower or "santo tom" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Gobernador Virasoro"]
-    if "bella vista" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Bella Vista"]
-    if "goya" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Goya"]
-    if "mercedes" in texto_lower or "curuz" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Mercedes"]
-    if "corrientes" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Corrientes"]
-    if "resistencia" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Resistencia"]
-    if "reconquista" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Reconquista"]
-    if "rosario" in texto_lower or "lorenzo" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Rosario"]
-    if "pergamino" in texto_lower or "buenos aires" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Pergamino"]
-    if "cuarto" in texto_lower or "maría" in texto_lower or "maria" in texto_lower or "cba" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["Río Cuarto"]
-    if "mendoza" in texto_lower or "cuyo" in texto_lower or "martín" in texto_lower or "martin" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["San Martín"]
-    if "tucum" in texto_lower or "noa" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["San Miguel de Tucumán"]
-    if "roca" in texto_lower or "cipolletti" in texto_lower or "negro" in texto_lower or "valle" in texto_lower:
-        return COORDENADAS_NODOS_ARGENTINA["General Roca"]
-
     return COORDENADAS_NODOS_ARGENTINA["Saladas"]
 
 
@@ -582,12 +555,29 @@ def obtener_perfil_por_codigo(codigo: Optional[str]) -> Dict[str, str]:
 
 
 def obtener_localidad_por_codigo(codigo: Optional[str]) -> Dict:
-    """Devuelve el diccionario de la localidad del comprador o GOYA por defecto."""
-    codigo_limpio = (codigo or "GOYA").upper().strip()
+    """
+    Devuelve el diccionario de la localidad del comprador.
+    Soporta tanto los códigos de corredores regionales como cualquier localidad oficial
+    de Argentina ingresada libremente (resuelta vía API Georef Datos Argentina / IGN).
+    """
+    raw = (codigo or "GOYA").strip()
+    codigo_limpio = raw.upper()
     for loc in LOCALIDADES_COMPRADOR_NEA:
-        if loc["codigo"] == codigo_limpio:
+        if loc["codigo"] == codigo_limpio or loc["nombre"].upper() == codigo_limpio:
             return loc
-    return LOCALIDADES_COMPRADOR_NEA[0]
+
+    # Si el usuario ingresó cualquier otra localidad del país (ej: "Junín, Buenos Aires")
+    nodo = geocodificar_localidad_argentina(raw)
+    etiqueta = f"{nodo['nombre']}, {nodo.get('provincia', 'Argentina')}"
+    return {
+        "codigo": raw,
+        "nombre": etiqueta,
+        "lat": nodo["lat"],
+        "lng": nodo["lng"],
+        "ruta": nodo.get("ruta", "Red Vial Nacional"),
+        "zona": nodo.get("zona", etiqueta),
+        "distancias_km": {},
+    }
 
 
 obtener_perfil_detalle = obtener_perfil_por_codigo
@@ -596,9 +586,8 @@ obtener_localidad_detalle = obtener_localidad_por_codigo
 
 def calcular_distancia_estimada_km(localidad_origen: str, codigo_destino: str = "GOYA") -> int:
     """
-    Devuelve los kilómetros estimados entre el origen del lote y la localidad del comprador.
-    Soporta coincidencia en matriz de distancias o cálculo geodésico Haversine con factor vial
-    para cualquier punto del país.
+    Devuelve los kilómetros viales estimados entre el origen del lote y la localidad del comprador
+    usando coordenadas oficiales IGN / Georef Argentina para cualquier punto del país.
     """
     loc_destino = obtener_localidad_por_codigo(codigo_destino)
     mapa_distancias = loc_destino.get("distancias_km", {})
@@ -612,7 +601,6 @@ def calcular_distancia_estimada_km(localidad_origen: str, codigo_destino: str = 
         if nodo.lower() in origen_lower or origen_lower in nodo.lower():
             return int(km)
 
-    # Cálculo dinámico basado en coordenadas geográficas reales
     coord_origen = obtener_coordenadas_nodo(origen_str)
     coord_destino = obtener_coordenadas_nodo(loc_destino["nombre"])
     return _calcular_km_entre_coordenadas(
@@ -662,14 +650,16 @@ def _construir_explicacion_comprador(lote: LoteSubproducto, codigo_perfil: str) 
 
 def _enriquecer_metadatos_lote(lote: LoteSubproducto) -> None:
     """
-    Enriquece el lote en memoria con coordenadas geográficas, indicadores de urgencia,
-    disponibilidad como Lote Futuro (preventa de zafra) y fraccionamiento en sublotes.
+    Enriquece el lote en memoria con coordenadas geográficas oficiales IGN/Georef,
+    región nacional, indicadores de urgencia, disponibilidad como Lote Futuro y sublotes.
     """
-    nodo = obtener_coordenadas_nodo(lote.localidad_origen)
+    nodo = obtener_coordenadas_nodo(lote.localidad_origen, lote.provincia)
     lote.lat = nodo["lat"]
     lote.lng = nodo["lng"]
     lote.ruta_corredor = nodo["ruta"]
     lote.zona_productiva = nodo["zona"]
+    lote.region = nodo.get("region") or inferir_region_por_provincia(lote.provincia)
+    lote.fuente_georef = nodo.get("fuente", "IGN / Georef Argentina")
 
     humedad_lower = (lote.humedad_estado or "").lower()
     titulo_lower = (lote.titulo or "").lower()
@@ -714,7 +704,7 @@ def _enriquecer_metadatos_lote(lote: LoteSubproducto) -> None:
     lote.permite_sublotes = tn_disp > 6.0 or lote.es_lote_futuro
 
     opciones = []
-    for paso in (lote.sublote_min_tn, 10, 15, 20):
+    for paso in (1, 2.5, lote.sublote_min_tn, 10, 15, 20):
         if 1 <= paso < tn_disp and paso not in opciones:
             opciones.append(paso)
     tn_entero = int(round(tn_disp))
@@ -742,8 +732,8 @@ def obtener_lotes_recomendados(
 ) -> List[LoteSubproducto]:
     """
     Filtra los lotes por perfil productivo y búsqueda libre, y enriquece cada lote en memoria
-    con la distancia hacia el campo del comprador, coordenadas, urgencia, lotes futuros/sublotes
-    y la explicación técnica de cubicaje (m3).
+    con la distancia hacia el campo del comprador, coordenadas IGN/Georef, urgencia,
+    lotes futuros/sublotes y la explicación técnica de cubicaje (m3).
     """
     qs = LoteSubproducto.objects.all()
 
@@ -757,6 +747,7 @@ def obtener_lotes_recomendados(
         qs = qs.filter(
             Q(titulo__icontains=termino)
             | Q(localidad_origen__icontains=termino)
+            | Q(provincia__icontains=termino)
             | Q(empresa_vendedora__icontains=termino)
             | Q(usos_recomendados__icontains=termino)
         )
@@ -813,10 +804,12 @@ def _resolver_modalidad_flete(modalidad_raw, porcentaje_raw):
 def obtener_datos_mapa_productores(
     lotes: Iterable[LoteSubproducto],
     codigo_localidad_comprador: Optional[str] = "GOYA",
+    camiones: Optional[Iterable[CamionRetorno]] = None,
 ) -> str:
     """
-    Serializa en JSON las coordenadas del comprador actual y la lista de lotes/productores
-    enriquecidos para renderizar el mapa logístico interactivo de Argentina en el frontend.
+    Serializa en JSON las coordenadas oficiales IGN/Georef del comprador actual, la lista de
+    lotes/productores y los corredores de camiones con retorno vacío para renderizar el mapa
+    interactivo Leaflet + OSRM de toda la República Argentina.
     """
     loc_comprador = obtener_localidad_por_codigo(codigo_localidad_comprador)
     coord_comprador = obtener_coordenadas_nodo(loc_comprador["nombre"])
@@ -848,10 +841,12 @@ def obtener_datos_mapa_productores(
                 "empresa": lote.empresa_vendedora,
                 "localidad": lote.localidad_origen,
                 "provincia": lote.provincia,
+                "region": getattr(lote, "region", inferir_region_por_provincia(lote.provincia)),
                 "lat": round(float(lote.lat) + offset_lat, 4),
                 "lng": round(float(lote.lng) + offset_lng, 4),
                 "ruta": lote.ruta_corredor,
                 "zona": getattr(lote, "zona_productiva", ""),
+                "fuente_georef": getattr(lote, "fuente_georef", "API Georef Datos Argentina (IGN)"),
                 "toneladas": float(lote.toneladas_disponibles),
                 "volumen_m3": float(lote.volumen_total_m3),
                 "densidad": int(lote.densidad_kg_m3),
@@ -863,8 +858,36 @@ def obtener_datos_mapa_productores(
                 "fecha_entrega_futura": lote.fecha_entrega_futura,
                 "permite_sublotes": bool(lote.permite_sublotes),
                 "sublote_min_tn": int(lote.sublote_min_tn),
-                "opciones_sublote_tn": getattr(lote, "opciones_sublote_tn", [2, 5, 10]),
+                "opciones_sublote_tn": getattr(lote, "opciones_sublote_tn", [1, 2.5, 5, 10]),
                 "modalidad_flete": lote.modalidad_flete,
+                "porcentaje_flete_vendedor": (
+                    float(lote.porcentaje_flete_vendedor)
+                    if lote.porcentaje_flete_vendedor is not None
+                    else None
+                ),
+            }
+        )
+
+    camiones_data = []
+    lista_camiones = list(camiones) if camiones is not None else list(CamionRetorno.objects.filter(disponible=True))
+    for cam in lista_camiones:
+        coord_orig = obtener_coordenadas_nodo(cam.origen_viaje)
+        coord_dest = obtener_coordenadas_nodo(cam.destino_viaje)
+        camiones_data.append(
+            {
+                "id": cam.id,
+                "transportista": cam.transportista,
+                "origen": cam.origen_viaje,
+                "destino": cam.destino_viaje,
+                "pasa_por": cam.pasa_por,
+                "tipo_carroceria": cam.tipo_carroceria,
+                "capacidad_max_tn": float(cam.capacidad_max_tn),
+                "capacidad_max_m3": float(cam.capacidad_max_m3),
+                "descuento_pct": float(cam.descuento_retorno_pct),
+                "origen_lat": coord_orig["lat"],
+                "origen_lng": coord_orig["lng"],
+                "destino_lat": coord_dest["lat"],
+                "destino_lng": coord_dest["lng"],
             }
         )
 
@@ -876,10 +899,145 @@ def obtener_datos_mapa_productores(
             "lng": coord_comprador["lng"],
             "ruta": coord_comprador["ruta"],
             "zona": coord_comprador["zona"],
+            "fuente": coord_comprador.get("fuente", "API Georef Datos Argentina (IGN)"),
         },
         "productores": productores_data,
+        "camiones": camiones_data,
     }
     return json.dumps(payload, ensure_ascii=False)
+
+
+def _formatear_ars(monto: float) -> str:
+    """Formatea un valor numérico en pesos argentinos ($ 1.234.567)."""
+    entero = int(round(float(monto or 0)))
+    signo = "- " if entero < 0 else ""
+    texto = f"{abs(entero):,}".replace(",", ".")
+    return f"{signo}$ {texto}"
+
+
+def obtener_casos_demo_landing_dinamicos(
+    lotes: Optional[Iterable[LoteSubproducto]] = None,
+    camiones: Optional[Iterable[CamionRetorno]] = None,
+) -> str:
+    """
+    Calcula en vivo los 3 casos demostrativos del Hero (Arrocero, Forestal y Citrícola)
+    usando los lotes reales de la base de datos y cotizar_operacion_completa() del
+    módulo de calculadora de fletes de Giovanni, eliminando montos hardcodeados en JS.
+    """
+    lista_lotes = list(lotes) if lotes is not None else list(LoteSubproducto.objects.all())
+    camion_default = (
+        list(camiones)[0]
+        if camiones
+        else CamionRetorno.objects.filter(disponible=True).first()
+    )
+
+    configs = [
+        {
+            "clave": "arrocero",
+            "categoria": "ARROZ",
+            "destino": "Goya, Corrientes",
+            "distancia_default": 135,
+            "badge": "Sector Arrocero · Cascarilla de Arroz",
+            "badge_tradicional": "Flete de Ida Tradicional (100% Comprador)",
+            "badge_subruta": "SubRuta · Flete Calzado (-45% Retorno)",
+        },
+        {
+            "clave": "forestal",
+            "categoria": "MADERA",
+            "destino": "Mercedes, Corrientes",
+            "distancia_default": 165,
+            "badge": "Foresto-Industria · Aserrín / Chip de Pino",
+            "badge_tradicional": "Flete Tradicional (Sin Acuerdo)",
+            "badge_subruta": "SubRuta · Flete Calzado + 50/50",
+        },
+        {
+            "clave": "citricola",
+            "categoria": "CITRUS",
+            "destino": "Goya, Corrientes",
+            "distancia_default": 85,
+            "badge": "Sector Citrícola · Urgencia Ambiental 48 hs",
+            "badge_tradicional": "Planta Juguera (Riesgo Vuelco / Multa)",
+            "badge_subruta": "SubRuta · Evacuación 48 hs (100% Vendedor)",
+        },
+    ]
+
+    resultado = {}
+    for cfg in configs:
+        lote_match = next((l for l in lista_lotes if l.categoria == cfg["categoria"]), None)
+        if not lote_match and lista_lotes:
+            lote_match = lista_lotes[0]
+        if not lote_match:
+            continue
+
+        km = calcular_distancia_estimada_km(lote_match.localidad_origen, cfg["destino"]) or cfg["distancia_default"]
+        tn = float(lote_match.toneladas_disponibles)
+        cot = cotizar_operacion_completa(
+            lote=lote_match,
+            camion=camion_default,
+            distancia_km=km,
+            toneladas_solicitadas=tn,
+        )
+
+        flete_trad = cot["flete_tradicional_fadeeac_ars"]
+        flete_subruta = cot["flete_calzado_ars"]
+        subprod_ars = cot["subtotal_subproducto_ars"]
+        comision_ars = cot["comision_total_plataforma_ars"]
+        ahorro_ars = cot["ahorro_logistico_ars"]
+        pago_comp_flete = cot["flete_paga_comprador_ars"]
+        pago_vend_flete = cot["flete_paga_vendedor_ars"]
+        modalidad_txt = cot["modalidad_flete_texto"]
+        descuento_pct = cot.get("descuento_aplicado_pct") or cot.get("ahorro_logistico_pct") or 45
+        total_trad_comprador = subprod_ars + flete_trad
+        total_subruta_comprador = cot["total_comprador_subruta_ars"]
+        estado_trad = (
+            "Rentable con flete tradicional"
+            if cot.get("negocio_rentable_tradicional")
+            else "Inviable con flete tradicional (da pérdida)"
+        )
+        estado_subruta = (
+            "Negocio Rentable con SubRuta"
+            if cot.get("negocio_rentable_subruta")
+            else cot.get("veredicto", "Ahorro logístico directo")
+        )
+
+        resultado[cfg["clave"]] = {
+            "loteId": lote_match.id,
+            "badge": cfg["badge"],
+            "Origin": f"{lote_match.localidad_origen}, {lote_match.provincia}",
+            "Route": f"{lote_match.localidad_origen} → {cfg['destino']} ({km} km)",
+            "Cargo": f"{tn:g} tn · {cot['volumen_m3']} m³ ({lote_match.densidad_kg_m3} kg/m³)",
+            "Rule": modalidad_txt,
+            "Savings": f"{_formatear_ars(ahorro_ars)} (-{int(round(float(descuento_pct)))}% en flete)",
+            "tradicional": {
+                "badge": cfg["badge_tradicional"],
+                "flete": _formatear_ars(flete_trad),
+                "fleteNote": f"Tarifa Plena FADEEAC ({km} km · {cot['factor_limitante']})",
+                "subproducto": _formatear_ars(subprod_ars),
+                "subproductoNote": f"{tn:g} tn × {_formatear_ars(lote_match.precio_tonelada_ars)}/tn",
+                "vendedorFlete": "$ 0",
+                "vendedorNote": "Sin acuerdo logístico",
+                "total": _formatear_ars(total_trad_comprador),
+                "verdict": estado_trad,
+            },
+            "subruta": {
+                "badge": cfg["badge_subruta"],
+                "flete": _formatear_ars(flete_subruta),
+                "fleteNote": (
+                    f"Comprador paga {_formatear_ars(pago_comp_flete)} de flete"
+                    if pago_comp_flete > 0
+                    else "Comprador paga $ 0 de flete (absorbido por Vendedor)"
+                ),
+                "subproducto": f"{_formatear_ars(subprod_ars)} + {_formatear_ars(comision_ars)} (2%)",
+                "subproductoNote": "Incluye Pago en Garantía + Sello Blockchain",
+                "vendedorFlete": _formatear_ars(pago_vend_flete),
+                "vendedorNote": modalidad_txt,
+                "total": _formatear_ars(total_subruta_comprador),
+                "verdict": f"{estado_subruta} · Ahorro {_formatear_ars(ahorro_ars)}",
+            },
+        }
+
+    return json.dumps(resultado, ensure_ascii=False)
+
 
 
 def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
