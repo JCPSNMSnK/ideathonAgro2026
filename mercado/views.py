@@ -1,8 +1,8 @@
 """
 Controlador principal que une los 3 servicios modulares:
-- Carril 2 (Joel): recomendador.py
-- Carril 3 (Giovanni): calculadora_flete.py
-- Carril 4 (Julio): trazabilidad_blockchain.py
+- Carril 2 (Joel): recomendador.py (Recomendador + ABM de Lotes y Camiones)
+- Carril 3 (Giovanni): calculadora_flete.py (Motor Peso/Volumen + Tarifas FADEEAC 2026)
+- Carril 4 (Julio): trazabilidad_blockchain.py (Reserva Escrow + Hedera Testnet)
 """
 import json
 from django.http import JsonResponse
@@ -15,59 +15,85 @@ from mercado.services.seed_data import asegurar_datos_iniciales_nea
 from mercado.services.recomendador import (
     PERFILES_PRODUCTIVOS,
     LOCALIDADES_COMPRADOR_NEA,
-    CASOS_DEMO_LANDING,
     PERFILES_USUARIO_DEMO,
-    obtener_perfil_por_codigo,
-    obtener_localidad_por_codigo,
     obtener_lotes_recomendados,
     obtener_datos_mapa_productores,
+    obtener_camiones_con_oportunidades,
+    obtener_perfil_detalle,
+    obtener_localidad_detalle,
     crear_nuevo_lote,
     crear_nuevo_camion_retorno,
-    enriquecer_camiones_con_cargas,
+    editar_lote_existente,
+    eliminar_lote_existente,
+    editar_camion_existente,
+    eliminar_camion_existente,
 )
 from mercado.services.calculadora_flete import cotizar_operacion_completa
-from mercado.services.trazabilidad_blockchain import registrar_operacion_con_garantia
+
+
+def _parametros_modo_transporte(datos) -> dict:
+    """
+    Lee de la query string o del JSON los parámetros opcionales del modo de transporte:
+    modo_transporte (VEHICULO_PROPIO, IDA, IDA_Y_VUELTA, VUELTA), tipo_vehiculo_propio,
+    costo_km_vehiculo_propio_ars, toneladas_contraparte y densidad_contraparte_kg_m3.
+    """
+    def numero(clave):
+        valor = datos.get(clave)
+        return float(valor) if valor not in (None, "") else None
+
+    return {
+        "modo_transporte": str(datos.get("modo_transporte") or "VUELTA").upper().strip(),
+        "tipo_vehiculo_propio": str(datos.get("tipo_vehiculo_propio") or "CAMION_CHASIS").upper().strip(),
+        "costo_km_vehiculo_propio_ars": numero("costo_km_vehiculo_propio_ars"),
+        "toneladas_contraparte": numero("toneladas_contraparte"),
+        "densidad_contraparte_kg_m3": numero("densidad_contraparte_kg_m3"),
+    }
+from mercado.services.trazabilidad_blockchain import (
+    registrar_operacion_con_garantia,
+    liberar_pago_en_garantia,
+)
 
 
 def home_demo(request):
     """
-    Renderiza la interfaz principal de la Demo (Landing + Roles Comprador, Vendedor y Logística).
+    Renderiza la interfaz principal de la Demo.
     Si la base está vacía, precarga automáticamente los casos del NEA.
     """
     asegurar_datos_iniciales_nea()
 
-    rol_activo = request.GET.get("rol", "inicio").lower().strip()
-    if rol_activo not in ("inicio", "comprador", "vendedor", "logistica"):
-        rol_activo = "inicio"
-
-    perfil_actual = request.GET.get("perfil", "TODOS").upper()
-    localidad_actual = request.GET.get("localidad", "GOYA").upper()
+    perfil_param = request.GET.get("perfil", "TODOS").upper().strip()
+    localidad_param = request.GET.get("localidad", "GOYA").upper().strip()
     q = request.GET.get("q", "").strip()
 
-    perfil_actual_obj = obtener_perfil_por_codigo(perfil_actual)
-    localidad_actual_obj = obtener_localidad_por_codigo(localidad_actual)
+    perfil_actual_obj = obtener_perfil_detalle(perfil_param)
+    localidad_actual_obj = obtener_localidad_detalle(localidad_param)
 
-    lotes = obtener_lotes_recomendados(perfil_actual, localidad_actual, q)
-    camiones = list(CamionRetorno.objects.filter(disponible=True))
-    enriquecer_camiones_con_cargas(camiones, lotes)
-    certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:5]
+    lotes = obtener_lotes_recomendados(
+        perfil_comprador=perfil_actual_obj["codigo"],
+        localidad_comprador=localidad_actual_obj["codigo"],
+        busqueda_q=q,
+    )
+    camiones = obtener_camiones_con_oportunidades(lotes=lotes)
+    todos_los_camiones = CamionRetorno.objects.all().order_by("-id")
+    todos_los_lotes = LoteSubproducto.objects.all().order_by("-creado_en")
+    certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:8]
     nodos_mapa_nea_json = obtener_datos_mapa_productores(
         lotes, localidad_actual_obj["codigo"]
     )
 
     context = {
-        "rol_activo": rol_activo,
-        "casos_demo_landing": CASOS_DEMO_LANDING,
-        "usuarios_demo": PERFILES_USUARIO_DEMO,
         "perfiles": PERFILES_PRODUCTIVOS,
         "perfil_actual": perfil_actual_obj["codigo"],
         "perfil_actual_obj": perfil_actual_obj,
         "localidades_comprador": LOCALIDADES_COMPRADOR_NEA,
         "localidad_actual": localidad_actual_obj["codigo"],
         "localidad_actual_obj": localidad_actual_obj,
+        "perfiles_usuario_demo": PERFILES_USUARIO_DEMO,
         "busqueda_q": q,
         "lotes": lotes,
+        "todos_los_lotes": todos_los_lotes,
         "camiones": camiones,
+        "todos_los_camiones": todos_los_camiones,
         "certificados_recientes": certificados_recientes,
         "nodos_mapa_nea_json": nodos_mapa_nea_json,
     }
@@ -78,27 +104,42 @@ def home_demo(request):
 def api_cotizar_flete(request):
     """
     Endpoint JSON para calcular en vivo Peso/Volumen + Tarifa FADEEAC 2026 + Flete Calzado.
-    Parámetros: ?lote_id=1&camion_id=1&distancia_km=160&toneladas=14
     """
     lote_id = request.GET.get("lote_id")
     camion_id = request.GET.get("camion_id")
-    distancia_km = int(request.GET.get("distancia_km", 160))
-    toneladas_param = request.GET.get("toneladas")
 
-    lote = get_object_or_404(LoteSubproducto, id=lote_id)
+    try:
+        distancia_km = max(20, int(request.GET.get("distancia_km", 160)))
+    except (ValueError, TypeError):
+        distancia_km = 160
+
+    try:
+        lote = get_object_or_404(LoteSubproducto, id=lote_id)
+    except Exception:
+        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
+
     camion = (
         CamionRetorno.objects.filter(id=camion_id).first()
         if camion_id
         else CamionRetorno.objects.filter(disponible=True).first()
     )
-    toneladas = float(toneladas_param) if toneladas_param else float(lote.toneladas_disponibles)
 
-    resultado = cotizar_operacion_completa(
-        lote=lote,
-        camion=camion,
-        distancia_km=distancia_km,
-        toneladas_solicitadas=toneladas,
-    )
+    try:
+        toneladas_param = request.GET.get("toneladas")
+        toneladas = max(0.5, float(toneladas_param)) if toneladas_param else float(lote.toneladas_disponibles)
+    except (ValueError, TypeError):
+        toneladas = float(lote.toneladas_disponibles)
+
+    try:
+        resultado = cotizar_operacion_completa(
+            lote=lote,
+            camion=camion,
+            distancia_km=distancia_km,
+            toneladas_solicitadas=toneladas,
+            **_parametros_modo_transporte(request.GET),
+        )
+    except (ValueError, TypeError) as e:
+        return JsonResponse({"ok": False, "mensaje": str(e)}, status=400)
     return JsonResponse({"ok": True, "cotizacion": resultado})
 
 
@@ -107,27 +148,51 @@ def api_cotizar_flete(request):
 def api_reservar_con_garantia(request):
     """
     Endpoint JSON para el Paso 4 de la Demo:
-    Confirma la operación, retiene el Pago en Garantía, descuenta el sublote reservado
-    del cupo disponible del lote y genera el Certificado de Trazabilidad Ambiental.
+    Confirma la operación, descuenta el sublote del cupo disponible del lote,
+    retiene el Pago en Garantía y genera el Certificado de Trazabilidad Ambiental
+    anclado en Hedera Testnet y apto créditos nacionales de economía circular.
     """
-    data = json.loads(request.body.decode("utf-8"))
-    lote = get_object_or_404(LoteSubproducto, id=data["lote_id"])
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"ok": False, "mensaje": "Cuerpo de solicitud JSON inválido."}, status=400)
+
+    lote_id = data.get("lote_id")
+    if not lote_id:
+        return JsonResponse({"ok": False, "mensaje": "Falta el ID del lote."}, status=400)
+
+    try:
+        lote = LoteSubproducto.objects.get(id=lote_id)
+    except LoteSubproducto.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "El lote solicitado no existe."}, status=404)
+
     camion = (
         CamionRetorno.objects.filter(id=data.get("camion_id")).first()
         or CamionRetorno.objects.filter(disponible=True).first()
     )
-    distancia_km = int(data.get("distancia_km", 160))
     toneladas_lote_previas = float(lote.toneladas_disponibles)
-    toneladas = float(data.get("toneladas", toneladas_lote_previas))
-    comprador_nombre = data.get("comprador_nombre", "Establecimiento Avícola / Ganadero (Goya)")
-    localidad_destino = data.get("localidad_destino", "Goya, Corrientes")
 
-    cotizacion = cotizar_operacion_completa(
-        lote=lote,
-        camion=camion,
-        distancia_km=distancia_km,
-        toneladas_solicitadas=toneladas,
-    )
+    try:
+        distancia_km = max(20, int(data.get("distancia_km", 160)))
+        toneladas = max(0.5, float(data.get("toneladas", lote.toneladas_disponibles)))
+    except (ValueError, TypeError):
+        distancia_km = 160
+        toneladas = float(lote.toneladas_disponibles)
+
+    comprador_nombre = str(data.get("comprador_nombre", "Establecimiento Avícola / Ganadero (Goya)")).strip()[:150]
+    localidad_destino = str(data.get("localidad_destino", "Goya, Corrientes")).strip()[:150]
+    ventana_carga = str(data.get("ventana_carga", "Turno Confirmado (Sin demora de estadía)")).strip()[:100]
+
+    try:
+        cotizacion = cotizar_operacion_completa(
+            lote=lote,
+            camion=camion,
+            distancia_km=distancia_km,
+            toneladas_solicitadas=toneladas,
+            **_parametros_modo_transporte(data),
+        )
+    except (ValueError, TypeError) as e:
+        return JsonResponse({"ok": False, "mensaje": str(e)}, status=400)
 
     operacion = registrar_operacion_con_garantia(
         lote=lote,
@@ -152,13 +217,24 @@ def api_reservar_con_garantia(request):
                 "id": operacion.id,
                 "hash_certificado": operacion.hash_certificado,
                 "red_blockchain": operacion.red_blockchain,
+                "hashscan_url": getattr(
+                    operacion, "hashscan_url", "https://hashscan.io/testnet/mainnet"
+                ),
                 "estado_garantia": operacion.estado_garantia,
                 "vendedor": lote.empresa_vendedora,
                 "origen": f"{lote.localidad_origen}, {lote.provincia}",
                 "comprador": operacion.comprador_nombre,
                 "destino": operacion.localidad_destino,
+                "ventana_carga": ventana_carga,
                 "subproducto": lote.titulo,
+                "lote_id": lote.id,
                 "toneladas": cotizacion["toneladas"],
+                "stock_restante_lote_tn": getattr(
+                    operacion, "toneladas_restantes_lote", float(lote.toneladas_disponibles)
+                ),
+                "toneladas_restantes_lote": getattr(
+                    operacion, "toneladas_restantes_lote", float(lote.toneladas_disponibles)
+                ),
                 "volumen_m3": cotizacion["volumen_m3"],
                 "transportista": camion.transportista if camion else "Flota Retorno NEA",
                 "flete_tradicional_ars": cotizacion["flete_tradicional_fadeeac_ars"],
@@ -177,37 +253,185 @@ def api_reservar_con_garantia(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def api_publicar_lote(request):
+def api_liberar_garantia(request):
     """
-    Endpoint JSON para que el vendedor publique un nuevo subproducto en vivo durante la demo.
+    Endpoint JSON para confirmar la descarga del camión en destino y liberar el
+    Pago en Garantía (Escrow) al vendedor y al transportista.
     """
-    data = json.loads(request.body.decode("utf-8"))
-    lote = crear_nuevo_lote(data)
+    try:
+        data = json.loads(request.body.decode("utf-8")) if request.body else {}
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        data = {}
+
+    operacion_id = data.get("operacion_id")
+    if operacion_id:
+        try:
+            op = liberar_pago_en_garantia(int(operacion_id))
+        except (ValueError, TypeError):
+            op = None
+    else:
+        op = OperacionTrazabilidad.objects.first()
+        if op:
+            op = liberar_pago_en_garantia(op.id)
+
+    if not op:
+        return JsonResponse({"ok": False, "mensaje": "No se encontró la operación."}, status=404)
+
     return JsonResponse(
         {
             "ok": True,
-            "lote_id": lote.id,
-            "mensaje": f"Lote '{lote.titulo}' publicado exitosamente en {lote.localidad_origen}.",
+            "operacion_id": op.id,
+            "estado_garantia": op.estado_garantia,
+            "mensaje": f"Descarga confirmada en {op.localidad_destino}. Fondos liberados al vendedor y al transportista.",
         }
     )
 
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def api_publicar_lote(request):
+    """
+    Alta de nuevo lote de subproducto.
+    """
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"ok": False, "mensaje": "JSON inválido."}, status=400)
+
+    if not data.get("titulo") or not data.get("empresa_vendedora"):
+        return JsonResponse({"ok": False, "mensaje": "Denominación y Razón Social son obligatorias."}, status=400)
+
+    try:
+        lote = crear_nuevo_lote(data)
+        return JsonResponse(
+            {
+                "ok": True,
+                "lote_id": lote.id,
+                "mensaje": f"Lote '{lote.titulo}' publicado exitosamente en {lote.localidad_origen}.",
+            }
+        )
+    except Exception as e:
+        return JsonResponse({"ok": False, "mensaje": f"Error al crear lote: {str(e)}"}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_editar_lote(request, lote_id: int):
+    """
+    Modificación de un lote existente (ABM Vendedor).
+    """
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"ok": False, "mensaje": "JSON inválido."}, status=400)
+
+    try:
+        lote = editar_lote_existente(int(lote_id), data)
+        return JsonResponse(
+            {
+                "ok": True,
+                "lote_id": lote.id,
+                "mensaje": f"Lote '{lote.titulo}' actualizado correctamente.",
+            }
+        )
+    except LoteSubproducto.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"ok": False, "mensaje": f"Error al editar lote: {str(e)}"}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_eliminar_lote(request, lote_id: int):
+    """
+    Baja de un lote existente (ABM Vendedor).
+    """
+    try:
+        titulo = eliminar_lote_existente(int(lote_id))
+        return JsonResponse(
+            {
+                "ok": True,
+                "mensaje": f"Lote '{titulo}' eliminado de la oferta activa.",
+            }
+        )
+    except LoteSubproducto.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"ok": False, "mensaje": f"Error al eliminar lote: {str(e)}"}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def api_publicar_camion(request):
     """
-    Endpoint JSON para que un transportista o flota registre un nuevo camión con retorno vacío
-    durante la demo desde la vista Logística / Camión.
+    Alta de un nuevo camión con retorno vacío (ABM Logística).
     """
-    data = json.loads(request.body.decode("utf-8"))
-    camion = crear_nuevo_camion_retorno(data)
-    return JsonResponse(
-        {
-            "ok": True,
-            "camion_id": camion.id,
-            "mensaje": (
-                f"Camión de '{camion.transportista}' ({camion.origen_viaje} → {camion.destino_viaje}) "
-                f"registrado con -{camion.descuento_retorno_pct:.0f}% de Flete Calzado."
-            ),
-        }
-    )
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"ok": False, "mensaje": "JSON inválido."}, status=400)
+
+    if not data.get("transportista"):
+        return JsonResponse({"ok": False, "mensaje": "El nombre del transportista es obligatorio."}, status=400)
+
+    try:
+        camion = crear_nuevo_camion_retorno(data)
+        return JsonResponse(
+            {
+                "ok": True,
+                "camion_id": camion.id,
+                "mensaje": (
+                    f"Camión de '{camion.transportista}' ({camion.origen_viaje} → {camion.destino_viaje}) "
+                    f"registrado con -{camion.descuento_retorno_pct:.0f}% de Flete Calzado."
+                ),
+            }
+        )
+    except Exception as e:
+        return JsonResponse({"ok": False, "mensaje": f"Error al registrar camión: {str(e)}"}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_editar_camion(request, camion_id: int):
+    """
+    Modificación de ruta, descuento o estado disponible de un camión (ABM Logística).
+    """
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"ok": False, "mensaje": "JSON inválido."}, status=400)
+
+    try:
+        camion = editar_camion_existente(int(camion_id), data)
+        return JsonResponse(
+            {
+                "ok": True,
+                "camion_id": camion.id,
+                "disponible": camion.disponible,
+                "mensaje": f"Unidad '{camion.transportista}' actualizada correctamente.",
+            }
+        )
+    except CamionRetorno.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"ok": False, "mensaje": f"Error al editar camión: {str(e)}"}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_eliminar_camion(request, camion_id: int):
+    """
+    Baja de un camión de retorno (ABM Logística).
+    """
+    try:
+        nombre = eliminar_camion_existente(int(camion_id))
+        return JsonResponse(
+            {
+                "ok": True,
+                "mensaje": f"Unidad '{nombre}' dada de baja de la bolsa de retornos.",
+            }
+        )
+    except CamionRetorno.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"ok": False, "mensaje": f"Error al eliminar camión: {str(e)}"}, status=400)

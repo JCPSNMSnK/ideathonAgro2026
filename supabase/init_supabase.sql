@@ -23,6 +23,7 @@ CREATE TABLE mercado_lotesubproducto (
     usos_recomendados VARCHAR(255) NOT NULL,
     perfiles_comprador VARCHAR(140) NOT NULL,
     modalidad_flete VARCHAR(60) NOT NULL DEFAULT 'COMPRADOR',
+    porcentaje_flete_vendedor NUMERIC(5,2) NULL,
     creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

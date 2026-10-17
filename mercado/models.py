@@ -18,6 +18,7 @@ class LoteSubproducto(models.Model):
         ("COMPRADOR", "100% a cargo del Comprador"),
         ("VENDEDOR", "100% absorbido por el Vendedor (Urgencia de vaciado)"),
         ("COMPARTIDO_50_50", "50% Vendedor / 50% Comprador (Flete Compartido)"),
+        ("MUTUO_ACUERDO", "Mutuo acuerdo (el Vendedor publica qué porcentaje paga)"),
     ]
 
     titulo = models.CharField(max_length=160)
@@ -40,6 +41,13 @@ class LoteSubproducto(models.Model):
     )
     modalidad_flete = models.CharField(
         max_length=60, choices=MODALIDADES_FLETE, default="COMPRADOR"
+    )
+    porcentaje_flete_vendedor = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Solo para MUTUO_ACUERDO: porcentaje del flete que paga el Vendedor (0 a 100)",
     )
     creado_en = models.DateTimeField(auto_now_add=True)
 

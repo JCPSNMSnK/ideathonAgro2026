@@ -1,4 +1,4 @@
-# SubRuta — Del Subproducto al Mercado con Flete Calzado
+# Moñái — Del Subproducto al Mercado con Flete Calzado
 
 > **Ideathon NEA Tech 2026 (Corrientes)**  
 > **Vertical:** Agro  
@@ -13,7 +13,7 @@
 
 ## 2. Resumen del Producto (en 4 líneas)
 1. **Problema:** En el NEA sobran toneladas de subproductos útiles (aserrín, cascarilla de arroz, descarte cítrico), pero el negocio se cae porque ocupan mucho volumen por su bajo valor y contratar un flete común come hasta el 80% del margen.
-2. **Solución:** **SubRuta** conecta industrias vendedoras y productores compradores recomendando oportunidades según su actividad y calculando el costo exacto por peso/volumen junto con camiones que vuelven vacíos (**Flete Calzado**, hasta 45% más barato).
+2. **Solución:** **Moñái** conecta industrias vendedoras y productores compradores recomendando oportunidades según su actividad y calculando el costo exacto por peso/volumen junto con camiones que vuelven vacíos (**Flete Calzado**, hasta 45% más barato).
 3. **Modelo de Negocio:** Cobramos una comisión baja por operación cerrada (**2,5% sobre el beneficio neto del vendedor + 2,5% sobre la gestión del Flete Calzado**), alcanzando el punto de equilibrio con solo 28 viajes mensuales (**SUPUESTO**).
 4. **Blockchain Invisible:** El productor opera en pesos de forma simple y, por detrás, sellamos en **Hedera/Stellar** el pago en garantía (*escrow*) y el Certificado de Trazabilidad Ambiental que demuestra el destino sustentable del subproducto.
 
@@ -28,12 +28,14 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
 
 ---
 
-## 4. Índice del Repositorio
-- [`/01-problema/problema.md`](./01-problema/problema.md) — Actor, dolor, resolución actual, datos auditados (BCCBA, FADEEAC 2026) y supuestos validados.
-- [`/02-solucion/solucion.md`](./02-solucion/solucion.md) — Idea elegida, ideas descartadas, alerta de sobreingeniería, flujo de la demo en 4 pasos y validación.
-- [`/03-costos-y-ganancias/costos-y-ganancias.md`](./03-costos-y-ganancias/costos-y-ganancias.md) — Estructura de costos, terceros necesarios, flexibilidad del flete y cuenta estimada.
-- [`/04-blockchain/blockchain.md`](./04-blockchain/blockchain.md) — Criterio de uso de Blockchain Invisible, tabla On-Chain vs. Off-Chain y estrategia de implementación.
-- [`/05-producto/producto.md`](./05-producto/producto.md) — Pitch de 1 minuto, 5 preguntas difíciles del jurado, gestión de riesgos y hoja de ruta.
+## 4. Índice del Repositorio (`documentacion/`)
+- [`/documentacion/specs.md`](./documentacion/specs.md) — **Especificaciones Técnicas (SPECS):** Arquitectura, modelos, fórmulas matemáticas ($m^3$, FADEEAC, Flete Calzado), contratos de API REST y configuración Supabase/Vercel.
+- [`/documentacion/memory.md`](./documentacion/memory.md) — **Memoria del Proyecto (MEMORY):** Registro de Decisiones de Arquitectura (ADRs), caso Saladas, checklist de entrega y lecciones aprendidas.
+- [`/documentacion/01-problema/problema.md`](./documentacion/01-problema/problema.md) — Actor, dolor, resolución actual, datos auditados (BCCBA, FADEEAC 2026) y supuestos validados.
+- [`/documentacion/02-solucion/solucion.md`](./documentacion/02-solucion/solucion.md) — Idea elegida, ideas descartadas, alerta de sobreingeniería, flujo de la demo en 4 pasos y validación.
+- [`/documentacion/03-costos-y-ganancias/costos-y-ganancias.md`](./documentacion/03-costos-y-ganancias/costos-y-ganancias.md) — Estructura de costos, terceros necesarios, flexibilidad del flete y cuenta estimada.
+- [`/documentacion/04-blockchain/blockchain.md`](./documentacion/04-blockchain/blockchain.md) — Criterio de uso de Blockchain Invisible, tabla On-Chain vs. Off-Chain y estrategia de implementación.
+- [`/documentacion/05-producto/producto.md`](./documentacion/05-producto/producto.md) — Pitch de 1 minuto, 5 preguntas difíciles del jurado, gestión de riesgos y hoja de ruta.
 
 ---
 
@@ -41,7 +43,7 @@ Un equipo interdisciplinario con foco en diseño de experiencia de usuario (UX/U
 *Copiá y pegá este bloque si vas a pedirle a una IA que programe, diseñe pantallas o arme presentaciones sobre nuestro proyecto:*
 
 ```markdown
-### Contexto del Proyecto: SubRuta (Ideathon NEA Tech 2026)
+### Contexto del Proyecto: Moñái (Ideathon NEA Tech 2026)
 - **Qué es:** Plataforma web/móvil que transforma subproductos agroindustriales en negocios rentables conectando oferta agroindustrial, demanda productiva y camiones de retorno ("Flete Calzado").
 - **Foco geográfico inicial:** Región NEA (Corrientes, Misiones, Chaco, Formosa), con casos testigo en Saladas (Corrientes) para los sectores foresto-industrial (aserrín/chips), arrocero (cascarilla/afrechillo) y citrícola (bagazo/cáscara húmeda), y proyección de escalabilidad a Región Pampeana y Cuyo.
 - **Problema central:** Los subproductos tienen bajo precio por tonelada y alta relación volumen/peso (cubicaje). Un flete tradicional a tarifa plena hace inviable su traslado a más de 100 km. Hoy se comercializan de boca en boca, en grupos cerrados de WhatsApp y en negro, sin garantías de pago ni trazabilidad ambiental.

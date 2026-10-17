@@ -107,7 +107,72 @@ LOCALIDADES_COMPRADOR_NEA: List[Dict] = [
             "Presidencia Roque Sáenz Peña": 310,
         },
     },
+    {
+        "codigo": "ROSARIO",
+        "nombre": "Rosario / Gran Rosario, Santa Fe",
+        "distancias_km": {
+            "Saladas": 580,
+            "Bella Vista": 520,
+            "Gobernador Virasoro": 790,
+            "Presidencia Roque Sáenz Peña": 690,
+            "San Martín": 780,
+        },
+    },
+    {
+        "codigo": "PERGAMINO",
+        "nombre": "Pergamino / Norte de Bs. As.",
+        "distancias_km": {
+            "Saladas": 670,
+            "Bella Vista": 610,
+            "Gobernador Virasoro": 860,
+            "Presidencia Roque Sáenz Peña": 760,
+        },
+    },
+    {
+        "codigo": "CORDOBA",
+        "nombre": "Río Cuarto / Villa María, Córdoba",
+        "distancias_km": {
+            "Saladas": 680,
+            "Bella Vista": 630,
+            "Gobernador Virasoro": 920,
+            "Presidencia Roque Sáenz Peña": 620,
+            "San Martín": 510,
+        },
+    },
+    {
+        "codigo": "MENDOZA",
+        "nombre": "San Martín / Gran Mendoza, Cuyo",
+        "distancias_km": {
+            "Saladas": 1100,
+            "Bella Vista": 1080,
+            "Gobernador Virasoro": 1390,
+            "Presidencia Roque Sáenz Peña": 1020,
+            "San Martín": 35,
+        },
+    },
+    {
+        "codigo": "TUCUMAN",
+        "nombre": "San Miguel de Tucumán / NOA",
+        "distancias_km": {
+            "Saladas": 760,
+            "Bella Vista": 780,
+            "Gobernador Virasoro": 960,
+            "Presidencia Roque Sáenz Peña": 450,
+        },
+    },
+    {
+        "codigo": "ALTO_VALLE",
+        "nombre": "Alto Valle / Río Negro, Patagonia",
+        "distancias_km": {
+            "Saladas": 1420,
+            "Bella Vista": 1390,
+            "Gobernador Virasoro": 1680,
+            "Presidencia Roque Sáenz Peña": 1450,
+        },
+    },
 ]
+
+LOCALIDADES_COMPRADOR_ARGENTINA = LOCALIDADES_COMPRADOR_NEA
 
 DEFAULTS_POR_CATEGORIA: Dict[str, Dict] = {
     "ARROZ": {
@@ -250,85 +315,261 @@ CASOS_DEMO_LANDING: List[Dict] = [
 ]
 
 
-COORDENADAS_NODOS_NEA: Dict[str, Dict] = {
+import math
+
+COORDENADAS_NODOS_ARGENTINA: Dict[str, Dict] = {
+    # Litoral / NEA
     "Saladas": {
         "lat": -28.2539,
         "lng": -58.6258,
         "ruta": "RN 12 / RN 118",
-        "zona": "Polo Arrocero y Forestal",
+        "zona": "Polo Arrocero y Forestal (Corrientes)",
     },
     "Bella Vista": {
         "lat": -28.5089,
         "lng": -59.0453,
         "ruta": "RP 27",
-        "zona": "Cuenca Citrícola e Industrial",
+        "zona": "Cuenca Citrícola e Industrial (Corrientes)",
     },
     "Gobernador Virasoro": {
         "lat": -28.0500,
         "lng": -56.0167,
         "ruta": "RN 14",
-        "zona": "Polo Foresto-Industrial y Biomasa",
+        "zona": "Polo Foresto-Industrial y Biomasa (Corrientes)",
     },
     "Presidencia Roque Sáenz Peña": {
         "lat": -26.7852,
         "lng": -60.4388,
         "ruta": "RN 16",
-        "zona": "Cuenca Algodonera y Desmotadoras",
+        "zona": "Cuenca Algodonera y Desmotadoras (Chaco)",
     },
     "Goya": {
         "lat": -29.1400,
         "lng": -59.2626,
         "ruta": "RN 12 / RP 27",
-        "zona": "Polo Avícola y Ganadero",
+        "zona": "Polo Avícola y Ganadero (Corrientes)",
     },
     "Mercedes": {
         "lat": -29.1842,
         "lng": -58.0753,
         "ruta": "RN 119 / RN 123",
-        "zona": "Polo Ganadero y Arrocero",
+        "zona": "Polo Ganadero y Arrocero (Corrientes)",
     },
     "Corrientes": {
         "lat": -27.4692,
         "lng": -58.8306,
         "ruta": "RN 12 / Puente Gral. Belgrano",
-        "zona": "Nodo Logístico y Portuario",
+        "zona": "Nodo Logístico y Portuario (Corrientes)",
+    },
+    "Resistencia": {
+        "lat": -27.4514,
+        "lng": -58.9867,
+        "ruta": "RN 11 / RN 16",
+        "zona": "Polo Industrial y Portuario (Chaco)",
+    },
+    "San Roque": {
+        "lat": -28.5736,
+        "lng": -58.7092,
+        "ruta": "RN 12",
+        "zona": "Cuenca Arrocera y Ganadera (Corrientes)",
+    },
+    "Santa Rosa": {
+        "lat": -28.2625,
+        "lng": -58.1189,
+        "ruta": "RP 5 / RP 118",
+        "zona": "Polo Foresto-Maderero (Corrientes)",
+    },
+    "Santo Tomé": {
+        "lat": -28.5492,
+        "lng": -56.0408,
+        "ruta": "RN 14",
+        "zona": "Corredor Foresto-Industrial (Corrientes)",
+    },
+    "Monte Caseros": {
+        "lat": -30.2533,
+        "lng": -57.6367,
+        "ruta": "RN 14 / RP 129",
+        "zona": "Cuenca Citrícola del Río Uruguay (Corrientes)",
+    },
+    "Curuzú Cuatiá": {
+        "lat": -29.7917,
+        "lng": -58.0556,
+        "ruta": "RN 119",
+        "zona": "Polo Ganadero y Forrajero (Corrientes)",
+    },
+    "Posadas": {
+        "lat": -27.3621,
+        "lng": -55.8961,
+        "ruta": "RN 12 / RN 105",
+        "zona": "Polo Agroindustrial y Yerbatero (Misiones)",
     },
     "Reconquista": {
         "lat": -29.1500,
         "lng": -59.6500,
         "ruta": "RN 11",
-        "zona": "Norte Santafesino Agroindustrial",
+        "zona": "Norte Santafesino Agroindustrial (Santa Fe)",
+    },
+    "Concordia": {
+        "lat": -31.3930,
+        "lng": -58.0209,
+        "ruta": "RN 14",
+        "zona": "Cuenca Citrícola y Foresto-Industrial (Entre Ríos)",
+    },
+    # Región Pampeana / Centro
+    "Rosario": {
+        "lat": -32.9468,
+        "lng": -60.6393,
+        "ruta": "RN 9 / RN 11 / Hidrovía",
+        "zona": "Polo Portuario y Agroindustrial (Santa Fe)",
+    },
+    "Puerto San Lorenzo": {
+        "lat": -32.7483,
+        "lng": -60.7325,
+        "ruta": "RN 11 / Puerto Gran Rosario",
+        "zona": "Complejo Agroexportador Up-River (Santa Fe)",
+    },
+    "Rafaela": {
+        "lat": -31.2503,
+        "lng": -61.4867,
+        "ruta": "RN 34",
+        "zona": "Cuenca Lechera Central (Santa Fe)",
+    },
+    "Pergamino": {
+        "lat": -33.8994,
+        "lng": -60.5736,
+        "ruta": "RN 8 / RN 188",
+        "zona": "Núcleo Agrícola Pampeano (Buenos Aires)",
+    },
+    "Río Cuarto": {
+        "lat": -33.1307,
+        "lng": -64.3499,
+        "ruta": "RN 8 / RN 36 / RN 158",
+        "zona": "Polo Manisero, Maicero y Bioetanol (Córdoba)",
+    },
+    "Villa María": {
+        "lat": -32.4075,
+        "lng": -63.2403,
+        "ruta": "RN 9 / RN 158",
+        "zona": "Cuenca Láctea y Agroindustria (Córdoba)",
+    },
+    "Córdoba": {
+        "lat": -31.4201,
+        "lng": -64.1888,
+        "ruta": "RN 9 / RN 19 / RN 20",
+        "zona": "Centro Logístico Mediterráneo (Córdoba)",
+    },
+    # Región Cuyo
+    "San Martín": {
+        "lat": -33.0811,
+        "lng": -68.4681,
+        "ruta": "RN 7",
+        "zona": "Oasis Este Vitivinícola y Frutícola (Mendoza)",
+    },
+    "Mendoza": {
+        "lat": -32.8908,
+        "lng": -68.8272,
+        "ruta": "RN 7 / RN 40",
+        "zona": "Polo Agroindustrial y Logístico Cuyo (Mendoza)",
+    },
+    "San Rafael": {
+        "lat": -34.6177,
+        "lng": -68.3301,
+        "ruta": "RN 143 / RN 144",
+        "zona": "Cuenca Frutícola y Vitivinícola Sur (Mendoza)",
+    },
+    "Villa Mercedes": {
+        "lat": -33.6757,
+        "lng": -65.4578,
+        "ruta": "RN 7 / RN 8",
+        "zona": "Polo Agroindustrial y Alfalfa (San Luis)",
+    },
+    # Región NOA
+    "San Miguel de Tucumán": {
+        "lat": -26.8083,
+        "lng": -65.2176,
+        "ruta": "RN 9 / RN 38",
+        "zona": "Complejo Azucarero, Citrícola y Bioetanol (Tucumán)",
+    },
+    "Salta": {
+        "lat": -24.7859,
+        "lng": -65.4117,
+        "ruta": "RN 9 / RN 34",
+        "zona": "Valles Calchaquíes y Grano NOA (Salta)",
+    },
+    # Patagonia / Comahue
+    "General Roca": {
+        "lat": -39.0333,
+        "lng": -67.5833,
+        "ruta": "RN 22",
+        "zona": "Alto Valle Frutícola y Sidrero (Río Negro)",
+    },
+    "Cipolletti": {
+        "lat": -38.9339,
+        "lng": -67.9903,
+        "ruta": "RN 22 / RN 151",
+        "zona": "Alto Valle de Río Negro (Río Negro)",
     },
 }
 
+COORDENADAS_NODOS_NEA = COORDENADAS_NODOS_ARGENTINA
+
+
+def _calcular_km_entre_coordenadas(lat1: float, lng1: float, lat2: float, lng2: float) -> int:
+    """Calcula distancia real estimada por ruta terrestre (Haversine * 1.28 factor de sinuosidad)."""
+    rad = math.pi / 180.0
+    dlat = (lat2 - lat1) * rad
+    dlng = (lng2 - lng1) * rad
+    a = (
+        math.sin(dlat / 2.0) ** 2
+        + math.cos(lat1 * rad) * math.cos(lat2 * rad) * math.sin(dlng / 2.0) ** 2
+    )
+    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(max(0.0, 1.0 - a)))
+    km_lineal = 6371.0 * c
+    return max(20, int(round(km_lineal * 1.28)))
+
 
 def obtener_coordenadas_nodo(localidad_texto: Optional[str]) -> Dict:
-    """Devuelve coordenadas (lat, lng), ruta y zona para una localidad o código del NEA."""
+    """Devuelve coordenadas (lat, lng), ruta y zona para cualquier localidad o código de Argentina."""
     texto = (localidad_texto or "Saladas").strip()
-    if texto in COORDENADAS_NODOS_NEA:
-        return COORDENADAS_NODOS_NEA[texto]
+    if texto in COORDENADAS_NODOS_ARGENTINA:
+        return COORDENADAS_NODOS_ARGENTINA[texto]
 
     texto_lower = texto.lower().replace("_", " ")
-    for nombre_nodo, info in COORDENADAS_NODOS_NEA.items():
+    for nombre_nodo, info in COORDENADAS_NODOS_ARGENTINA.items():
         if nombre_nodo.lower() in texto_lower or texto_lower in nombre_nodo.lower():
             return info
 
+    # Búsqueda por palabras clave regionales
     if "saenz" in texto_lower or "sáenz" in texto_lower or "chaco" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Presidencia Roque Sáenz Peña"]
+        return COORDENADAS_NODOS_ARGENTINA["Presidencia Roque Sáenz Peña"]
     if "virasoro" in texto_lower or "santo tom" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Gobernador Virasoro"]
+        return COORDENADAS_NODOS_ARGENTINA["Gobernador Virasoro"]
     if "bella vista" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Bella Vista"]
+        return COORDENADAS_NODOS_ARGENTINA["Bella Vista"]
     if "goya" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Goya"]
+        return COORDENADAS_NODOS_ARGENTINA["Goya"]
     if "mercedes" in texto_lower or "curuz" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Mercedes"]
-    if "corrientes" in texto_lower or "resistencia" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Corrientes"]
-    if "reconquista" in texto_lower or "santa fe" in texto_lower:
-        return COORDENADAS_NODOS_NEA["Reconquista"]
+        return COORDENADAS_NODOS_ARGENTINA["Mercedes"]
+    if "corrientes" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["Corrientes"]
+    if "resistencia" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["Resistencia"]
+    if "reconquista" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["Reconquista"]
+    if "rosario" in texto_lower or "lorenzo" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["Rosario"]
+    if "pergamino" in texto_lower or "buenos aires" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["Pergamino"]
+    if "cuarto" in texto_lower or "maría" in texto_lower or "maria" in texto_lower or "cba" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["Río Cuarto"]
+    if "mendoza" in texto_lower or "cuyo" in texto_lower or "martín" in texto_lower or "martin" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["San Martín"]
+    if "tucum" in texto_lower or "noa" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["San Miguel de Tucumán"]
+    if "roca" in texto_lower or "cipolletti" in texto_lower or "negro" in texto_lower or "valle" in texto_lower:
+        return COORDENADAS_NODOS_ARGENTINA["General Roca"]
 
-    return COORDENADAS_NODOS_NEA["Saladas"]
+    return COORDENADAS_NODOS_ARGENTINA["Saladas"]
 
 
 def obtener_perfil_por_codigo(codigo: Optional[str]) -> Dict[str, str]:
@@ -349,10 +590,15 @@ def obtener_localidad_por_codigo(codigo: Optional[str]) -> Dict:
     return LOCALIDADES_COMPRADOR_NEA[0]
 
 
+obtener_perfil_detalle = obtener_perfil_por_codigo
+obtener_localidad_detalle = obtener_localidad_por_codigo
+
+
 def calcular_distancia_estimada_km(localidad_origen: str, codigo_destino: str = "GOYA") -> int:
     """
     Devuelve los kilómetros estimados entre el origen del lote y la localidad del comprador.
-    Soporta coincidencia exacta y parcial con los nodos generadores del NEA.
+    Soporta coincidencia en matriz de distancias o cálculo geodésico Haversine con factor vial
+    para cualquier punto del país.
     """
     loc_destino = obtener_localidad_por_codigo(codigo_destino)
     mapa_distancias = loc_destino.get("distancias_km", {})
@@ -366,16 +612,13 @@ def calcular_distancia_estimada_km(localidad_origen: str, codigo_destino: str = 
         if nodo.lower() in origen_lower or origen_lower in nodo.lower():
             return int(km)
 
-    if "saenz" in origen_lower or "sáenz" in origen_lower or "chaco" in origen_lower:
-        return int(mapa_distancias.get("Presidencia Roque Sáenz Peña", 320))
-    if "virasoro" in origen_lower or "santo tom" in origen_lower:
-        return int(mapa_distancias.get("Gobernador Virasoro", 340))
-    if "bella vista" in origen_lower:
-        return int(mapa_distancias.get("Bella Vista", 90))
-    if "saladas" in origen_lower:
-        return int(mapa_distancias.get("Saladas", 120))
-
-    return 160
+    # Cálculo dinámico basado en coordenadas geográficas reales
+    coord_origen = obtener_coordenadas_nodo(origen_str)
+    coord_destino = obtener_coordenadas_nodo(loc_destino["nombre"])
+    return _calcular_km_entre_coordenadas(
+        coord_origen["lat"], coord_origen["lng"],
+        coord_destino["lat"], coord_destino["lng"],
+    )
 
 
 def _construir_explicacion_comprador(lote: LoteSubproducto, codigo_perfil: str) -> str:
@@ -495,6 +738,7 @@ def obtener_lotes_recomendados(
     perfil_comprador: Optional[str] = None,
     localidad_comprador: Optional[str] = "GOYA",
     texto_busqueda: Optional[str] = None,
+    busqueda_q: Optional[str] = None,
 ) -> List[LoteSubproducto]:
     """
     Filtra los lotes por perfil productivo y búsqueda libre, y enriquece cada lote en memoria
@@ -507,8 +751,9 @@ def obtener_lotes_recomendados(
     if codigo_perfil and codigo_perfil != "TODOS":
         qs = qs.filter(perfiles_comprador__icontains=codigo_perfil)
 
-    if texto_busqueda and texto_busqueda.strip():
-        termino = texto_busqueda.strip()
+    termino_raw = texto_busqueda if texto_busqueda is not None else busqueda_q
+    if termino_raw and termino_raw.strip():
+        termino = termino_raw.strip()
         qs = qs.filter(
             Q(titulo__icontains=termino)
             | Q(localidad_origen__icontains=termino)
@@ -542,13 +787,36 @@ def obtener_lotes_recomendados(
     return lotes
 
 
+MODALIDADES_FLETE_VALIDAS = {"COMPRADOR", "VENDEDOR", "COMPARTIDO_50_50", "MUTUO_ACUERDO"}
+
+
+def _resolver_modalidad_flete(modalidad_raw, porcentaje_raw):
+    """
+    Valida la modalidad de pago del flete. En MUTUO_ACUERDO el vendedor debe publicar
+    en su lote qué porcentaje del flete paga (0 a 100); en las demás no se guarda.
+    """
+    modalidad = (str(modalidad_raw or "COMPRADOR")).upper().strip()
+    if modalidad not in MODALIDADES_FLETE_VALIDAS:
+        raise ValueError(f"Modalidad de flete inválida: {modalidad}")
+    if modalidad != "MUTUO_ACUERDO":
+        return modalidad, None
+    if porcentaje_raw in (None, ""):
+        raise ValueError(
+            "En flete a mutuo acuerdo el vendedor debe publicar qué porcentaje del flete paga."
+        )
+    porcentaje = float(porcentaje_raw)
+    if not 0.0 <= porcentaje <= 100.0:
+        raise ValueError("El porcentaje del flete que paga el vendedor debe estar entre 0 y 100.")
+    return modalidad, round(porcentaje, 2)
+
+
 def obtener_datos_mapa_productores(
     lotes: Iterable[LoteSubproducto],
     codigo_localidad_comprador: Optional[str] = "GOYA",
 ) -> str:
     """
     Serializa en JSON las coordenadas del comprador actual y la lista de lotes/productores
-    enriquecidos para renderizar el mapa logístico interactivo del NEA en el frontend.
+    enriquecidos para renderizar el mapa logístico interactivo de Argentina en el frontend.
     """
     loc_comprador = obtener_localidad_por_codigo(codigo_localidad_comprador)
     coord_comprador = obtener_coordenadas_nodo(loc_comprador["nombre"])
@@ -595,7 +863,7 @@ def obtener_datos_mapa_productores(
                 "fecha_entrega_futura": lote.fecha_entrega_futura,
                 "permite_sublotes": bool(lote.permite_sublotes),
                 "sublote_min_tn": int(lote.sublote_min_tn),
-                "opciones_sublote_tn": getattr(lote, "opciones_sublote_tn", [5, 10]),
+                "opciones_sublote_tn": getattr(lote, "opciones_sublote_tn", [2, 5, 10]),
                 "modalidad_flete": lote.modalidad_flete,
             }
         )
@@ -660,6 +928,10 @@ def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
         datos.get("perfiles_comprador", "").strip() or defaults["perfiles_comprador"]
     )
 
+    modalidad_flete, porcentaje_flete_vendedor = _resolver_modalidad_flete(
+        datos.get("modalidad_flete"), datos.get("porcentaje_flete_vendedor")
+    )
+
     return LoteSubproducto.objects.create(
         titulo=datos["titulo"].strip(),
         categoria=categoria,
@@ -673,7 +945,8 @@ def crear_nuevo_lote(datos: dict) -> LoteSubproducto:
         carroceria_requerida=carroceria_requerida,
         usos_recomendados=usos_recomendados,
         perfiles_comprador=perfiles_comprador,
-        modalidad_flete=(datos.get("modalidad_flete") or "COMPRADOR").strip(),
+        modalidad_flete=modalidad_flete,
+        porcentaje_flete_vendedor=porcentaje_flete_vendedor,
     )
 
 
@@ -777,6 +1050,16 @@ def enriquecer_camiones_con_cargas(
     return lista_camiones
 
 
+def obtener_camiones_con_oportunidades(
+    lotes: Optional[Iterable[LoteSubproducto]] = None,
+) -> List[CamionRetorno]:
+    """
+    Devuelve los camiones de retorno disponibles enriquecidos con los lotes compatibles en su ruta.
+    """
+    camiones_qs = CamionRetorno.objects.filter(disponible=True).order_by("-id")
+    return enriquecer_camiones_con_cargas(camiones_qs, lotes)
+
+
 PERFILES_USUARIO_DEMO = [
     {
         "id": "usr-comprador",
@@ -812,3 +1095,81 @@ PERFILES_USUARIO_DEMO = [
         "codigo_localidad": "CORRIENTES",
     },
 ]
+
+
+def editar_lote_existente(lote_id: int, datos: dict) -> LoteSubproducto:
+    """
+    Modifica los datos de un lote de subproducto publicado en Supabase.
+    """
+    lote = LoteSubproducto.objects.get(id=lote_id)
+    if "titulo" in datos and datos["titulo"]:
+        lote.titulo = str(datos["titulo"]).strip()
+    if "categoria" in datos and datos["categoria"]:
+        lote.categoria = str(datos["categoria"]).upper().strip()
+    if "empresa_vendedora" in datos and datos["empresa_vendedora"]:
+        lote.empresa_vendedora = str(datos["empresa_vendedora"]).strip()
+    if "localidad_origen" in datos and datos["localidad_origen"]:
+        lote.localidad_origen = str(datos["localidad_origen"]).strip()
+    if "toneladas_disponibles" in datos and datos["toneladas_disponibles"] is not None:
+        lote.toneladas_disponibles = max(1.0, float(datos["toneladas_disponibles"]))
+    if "densidad_kg_m3" in datos and datos["densidad_kg_m3"] is not None:
+        lote.densidad_kg_m3 = max(50, int(datos["densidad_kg_m3"]))
+    if "precio_tonelada_ars" in datos and datos["precio_tonelada_ars"] is not None:
+        lote.precio_tonelada_ars = max(0.0, float(datos["precio_tonelada_ars"]))
+    if datos.get("modalidad_flete") or "porcentaje_flete_vendedor" in datos:
+        lote.modalidad_flete, lote.porcentaje_flete_vendedor = _resolver_modalidad_flete(
+            datos.get("modalidad_flete") or lote.modalidad_flete,
+            datos.get("porcentaje_flete_vendedor", lote.porcentaje_flete_vendedor),
+        )
+    if "usos_recomendados" in datos and datos["usos_recomendados"]:
+        lote.usos_recomendados = str(datos["usos_recomendados"]).strip()
+    lote.save()
+    return lote
+
+
+def eliminar_lote_existente(lote_id: int) -> str:
+    """
+    Da de baja un lote de subproducto de la base de datos.
+    """
+    lote = LoteSubproducto.objects.get(id=lote_id)
+    titulo = lote.titulo
+    lote.delete()
+    return titulo
+
+
+def editar_camion_existente(camion_id: int, datos: dict) -> CamionRetorno:
+    """
+    Modifica los datos o disponibilidad de un camión con Flete Calzado.
+    """
+    camion = CamionRetorno.objects.get(id=camion_id)
+    if "transportista" in datos and datos["transportista"]:
+        camion.transportista = str(datos["transportista"]).strip()
+    if "origen_viaje" in datos and datos["origen_viaje"]:
+        camion.origen_viaje = str(datos["origen_viaje"]).strip()
+    if "destino_viaje" in datos and datos["destino_viaje"]:
+        camion.destino_viaje = str(datos["destino_viaje"]).strip()
+    if "pasa_por" in datos and datos["pasa_por"]:
+        camion.pasa_por = str(datos["pasa_por"]).strip()
+    if "fecha_disponible" in datos and datos["fecha_disponible"]:
+        camion.fecha_disponible = str(datos["fecha_disponible"]).strip()
+    if "tipo_carroceria" in datos and datos["tipo_carroceria"]:
+        camion.tipo_carroceria = str(datos["tipo_carroceria"]).strip()
+    if "capacidad_max_m3" in datos and datos["capacidad_max_m3"] is not None:
+        camion.capacidad_max_m3 = max(20.0, float(datos["capacidad_max_m3"]))
+    if "descuento_retorno_pct" in datos and datos["descuento_retorno_pct"] is not None:
+        camion.descuento_retorno_pct = max(10.0, min(70.0, float(datos["descuento_retorno_pct"])))
+    if "disponible" in datos and datos["disponible"] is not None:
+        camion.disponible = bool(datos["disponible"])
+    camion.save()
+    return camion
+
+
+def eliminar_camion_existente(camion_id: int) -> str:
+    """
+    Da de baja un camión de retorno de la bolsa logística.
+    """
+    camion = CamionRetorno.objects.get(id=camion_id)
+    nombre = camion.transportista
+    camion.delete()
+    return nombre
+
