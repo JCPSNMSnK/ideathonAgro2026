@@ -29,46 +29,53 @@
 .brand-box {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     cursor: pointer;
     min-width: 0;
     text-decoration: none;
     user-select: none;
 }
 
-.brand-mark {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--color-primario) 0%, #1D5434 100%);
-    border: 1.5px solid var(--color-crema-dorado);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 4px 14px -2px rgba(22, 66, 40, 0.35);
-    position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.brand-logo-img {
+    height: 42px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.2s ease;
 }
 
-.brand-box:hover .brand-mark {
-    transform: scale(1.04);
-    box-shadow: 0 6px 18px -2px rgba(22, 66, 40, 0.45);
+.brand-box:hover .brand-logo-img {
+    transform: scale(1.03);
 }
 
-.brand-text-wrap {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
+/* Alternancia directa y limpia entre logo claro y oscuro */
+.brand-logo-light {
+    display: block;
 }
 
-.brand-title {
-    font-family: var(--fuente-display);
-    font-size: 1.42rem;
-    font-weight: 700;
-    line-height: 1.05;
-    color: var(--texto-principal);
-    letter-spacing: -0.015em;
+.brand-logo-dark {
+    display: none;
+}
+
+[data-theme="dark"] .brand-logo-light {
+    display: none;
+}
+
+[data-theme="dark"] .brand-logo-dark {
+    display: block;
+}
+
+.role-tab-login.is-logged-in {
+    background: var(--color-primario) !important;
+    color: #FFFFFF !important;
+    border-color: var(--color-primario) !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(24, 78, 46, 0.35) !important;
+}
+
+.role-tab-login.is-logged-in svg {
+    stroke: #FFFFFF !important;
 }
 
 /* Selector Central de Rol / Vista y Barra Unificada */

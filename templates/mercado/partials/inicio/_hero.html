@@ -1,32 +1,81 @@
-<!-- 1. HERO SHOWCASE PERSUASIVO -->
+<!-- 1. HERO SHOWCASE PERSUASIVO (MAQUETADO OFICIAL MOÑÁI) -->
 <div class="hero-showcase">
     <div class="hero-eyebrow-pill">
         <span class="eyebrow-dot"></span>
         <span>LOGÍSTICA CIRCULAR &amp; MERCADO FEDERAL DE SUBPRODUCTOS · ARGENTINA</span>
     </div>
 
-    <h1 class="hero-main-title">
-        Transformá el descarte agroindustrial en insumos rentables con <em>Moñai</em>
+    <!-- Título Principal de Control de Stock y Certificados (Mockup Desktop) -->
+    <h1 class="hero-stock-title">
+        Control de Stock de Subproductos<br>y Certificados
     </h1>
+
+    <!-- Tarjeta de Control de Stock Flotante (Mockup Desktop) -->
+    <div class="hero-stock-card">
+        <div class="stock-company-select-wrap">
+            <select id="hero-planta-select" class="stock-company-select" onchange="actualizarMetricasHeroPlanta(this.value)">
+                <option value="san_lorenzo" selected>Molino Arrocero San Lorenzo SRL</option>
+                <option value="rio_parana">Aserradero Río Paraná SRL</option>
+                <option value="jugos_litoral">Jugos del Litoral SA</option>
+                <option value="algodonera_nea">Algodonera del Litoral SA</option>
+            </select>
+            <span class="stock-chevron" aria-hidden="true">⌵</span>
+        </div>
+
+        <div class="stock-metrics-row">
+            <div class="stock-metric-col" onclick="cambiarVistaRol('vista-vendedor')" role="button" tabindex="0" title="Ver lotes de subproductos">
+                <span class="stock-metric-icon">🌱</span>
+                <strong class="stock-metric-num" id="hero-metric-lotes">1</strong>
+                <span class="stock-metric-label">Lote</span>
+            </div>
+
+            <div class="stock-metric-col" onclick="cambiarVistaRol('vista-comprador')" role="button" tabindex="0" title="Ver camiones y cargas en el mercado">
+                <span class="stock-metric-icon">🚚</span>
+                <strong class="stock-metric-num" id="hero-metric-mercado">16</strong>
+                <span class="stock-metric-label">Mercado</span>
+            </div>
+
+            <div class="stock-metric-col" onclick="cambiarVistaRol('vista-vendedor')" role="button" tabindex="0" title="Ver certificados emitidos">
+                <span class="stock-metric-icon">🏵️</span>
+                <strong class="stock-metric-num" id="hero-metric-certificados">2</strong>
+                <span class="stock-metric-label">Certificados</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Título de Propuesta de Valor (Mockup Mobile) -->
+    <h2 class="hero-main-title">
+        Transformá el descarte en insumos rentables con <span class="brand-highlight-underline">Moñai</span>
+    </h2>
 
     <p class="hero-main-subtitle">
         Conectamos agroindustrias, productores y transportistas en toda Argentina. Calculamos el cubicaje real de cada subproducto y lo vinculamos con camiones en retorno vacío o retiro propio, reduciendo el costo logístico hasta un <strong>50%</strong> con fondos en garantía y trazabilidad ambiental certificada.
     </p>
 
-    <!-- 3 Píldoras de Valor Cuantitativas y Certificación de Créditos Circulares -->
+    <!-- 3 Píldoras de Valor Cuantitativas de Image 1 -->
     <div class="hero-value-pills-row">
         <div class="hero-stat-chip">
             <span class="stat-highlight">-45% a -50%</span>
-            <span class="stat-caption">en costo de flete directo</span>
+            <span class="stat-caption">Flete</span>
         </div>
         <div class="hero-stat-chip">
             <span class="stat-highlight">Cero Riesgo</span>
-            <span class="stat-caption">fondos en custodia hasta descargar</span>
+            <span class="stat-caption">Fondo seguro</span>
         </div>
         <div class="hero-stat-chip hero-stat-chip-green">
             <span class="stat-highlight">Créditos Circulares</span>
-            <span class="stat-caption">Sellos aptos para beneficios nacionales</span>
+            <span class="stat-caption">Sellos ambientales</span>
         </div>
+    </div>
+
+    <!-- Botones de Acción Principal de Image 1 -->
+    <div class="hero-actions-row hero-actions-centered">
+        <button type="button" class="btn-primary btn-cta-main" onclick="cambiarVistaRol('vista-comprador')">
+            Explorar Lotes
+        </button>
+        <button type="button" class="btn-secondary btn-cta-secondary" onclick="document.getElementById('simulador-en-vivo-seccion').scrollIntoView({behavior:'smooth', block:'start'})">
+            Probar Simulador
+        </button>
     </div>
 
     <!-- Aviso Estratégico: Sellos Ambientales y Créditos de Economía Circular -->
@@ -39,17 +88,7 @@
         </div>
         <div class="credit-notice-content">
             <strong>Certificación de Economía Circular y Valorización de Residuos</strong>
-            <p>Los sellos ambientales emitidos por Moñái acreditan la trazabilidad verificada y no emisión de metano/quema. Están concebidos para calificar como <strong>certificación oficial ante futuros programas nacionales y provinciales de créditos de economía circular, desgravación impositiva y financiamiento verde</strong>.</p>
+            <p>Los sellos ambientales emitidos por Moñái acreditan la trazabilidad verificada y no emisión de metano/quema. Están concebidos para calificar como <strong>certificación oficial ante programas de créditos de economía circular, desgravación impositiva y financiamiento verde</strong>.</p>
         </div>
-    </div>
-
-    <!-- Botones de Acción Principal -->
-    <div class="hero-actions-row hero-actions-centered">
-        <button type="button" class="btn-primary btn-cta-main" onclick="cambiarVistaRol('vista-comprador')">
-            Explorar Lotes para mi Campo
-        </button>
-        <button type="button" class="btn-secondary btn-cta-secondary" onclick="document.getElementById('simulador-en-vivo-seccion').scrollIntoView({behavior:'smooth', block:'start'})">
-            Probar Simulador Interactivo
-        </button>
     </div>
 </div>

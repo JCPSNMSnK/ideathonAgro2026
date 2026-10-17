@@ -152,3 +152,60 @@ function abrirCasoDemoEnCotizador() {
     cambiarVistaRol("vista-comprador");
     cambiarSubTabComprador("paso2");
 }
+
+/* =============================================================================
+   MÉTRICAS REACTIVAS DE CONTROL DE STOCK HERO (MOCKUP OFICIAL)
+   ============================================================================= */
+const METRICAS_PLANTAS_HERO = {
+    san_lorenzo: {
+        nombre: "Molino Arrocero San Lorenzo SRL",
+        lotes: 1,
+        mercado: 16,
+        certificados: 2,
+    },
+    rio_parana: {
+        nombre: "Aserradero Río Paraná SRL",
+        lotes: 2,
+        mercado: 12,
+        certificados: 4,
+    },
+    jugos_litoral: {
+        nombre: "Jugos del Litoral SA",
+        lotes: 1,
+        mercado: 8,
+        certificados: 3,
+    },
+    algodonera_nea: {
+        nombre: "Algodonera del Litoral SA",
+        lotes: 3,
+        mercado: 14,
+        certificados: 1,
+    },
+};
+
+function actualizarMetricasHeroPlanta(clave) {
+    const data = METRICAS_PLANTAS_HERO[clave] || METRICAS_PLANTAS_HERO["san_lorenzo"];
+    const elLotes = document.getElementById("hero-metric-lotes");
+    const elMercado = document.getElementById("hero-metric-mercado");
+    const elCertificados = document.getElementById("hero-metric-certificados");
+
+    if (elLotes) {
+        elLotes.textContent = data.lotes;
+        elLotes.classList.remove("metric-bump");
+        void elLotes.offsetWidth;
+        elLotes.classList.add("metric-bump");
+    }
+    if (elMercado) {
+        elMercado.textContent = data.mercado;
+        elMercado.classList.remove("metric-bump");
+        void elMercado.offsetWidth;
+        elMercado.classList.add("metric-bump");
+    }
+    if (elCertificados) {
+        elCertificados.textContent = data.certificados;
+        elCertificados.classList.remove("metric-bump");
+        void elCertificados.offsetWidth;
+        elCertificados.classList.add("metric-bump");
+    }
+}
+

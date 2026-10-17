@@ -254,7 +254,10 @@ function aplicarDatosSesionEnUI() {
         logistica: "Logística",
     };
 
+    const btnLogin = document.getElementById("nav-btn-login");
+
     if (!usuarioActivo) {
+        if (btnLogin) btnLogin.classList.remove("is-logged-in");
         if (tabLabel) tabLabel.textContent = "Iniciar Sesión";
         if (sessionRolePill) {
             sessionRolePill.style.display = "none";
@@ -274,9 +277,9 @@ function aplicarDatosSesionEnUI() {
 
     const rolTexto = rolMap[usuarioActivo.rol] || "Usuario";
     const orgNombre = usuarioActivo.organizacion || usuarioActivo.nombre || "Mi Cuenta";
-    const nombreCorto = orgNombre.split(" ").slice(0, 2).join(" ");
+    if (btnLogin) btnLogin.classList.add("is-logged-in");
     if (tabLabel) {
-        tabLabel.textContent = nombreCorto;
+        tabLabel.textContent = orgNombre;
     }
     if (sessionRolePill) {
         sessionRolePill.style.display = "inline-block";

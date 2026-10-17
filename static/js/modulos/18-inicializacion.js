@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Iniciar caso demo en landing
     seleccionarCasoDemoLanding(0);
+    if (typeof actualizarMetricasHeroPlanta === "function") {
+        actualizarMetricasHeroPlanta("san_lorenzo");
+    }
 
     // Calcular primer lote en cotizador
     recalcularCotizacionEnVivo();

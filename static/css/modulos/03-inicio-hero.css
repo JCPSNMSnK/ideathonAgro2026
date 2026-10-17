@@ -47,6 +47,182 @@
     animation: pulseGlow 2s infinite ease-in-out;
 }
 
+.hero-stock-title {
+    font-family: var(--fuente-display);
+    font-size: clamp(2.1rem, 4.8vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--texto-principal);
+    margin: 0 auto 1.6rem;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+}
+
+/* Tarjeta Flotante de Control de Stock y Certificados (Mockup Desktop) */
+.hero-stock-card {
+    background: #EBE5D8;
+    border: 1px solid rgba(24, 78, 46, 0.12);
+    border-radius: 22px;
+    padding: 1.35rem 2rem 1.6rem;
+    max-width: 680px;
+    margin: 0 auto 2.75rem;
+    box-shadow: 0 10px 32px -6px rgba(24, 78, 46, 0.08), 0 3px 10px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-stock-card:hover {
+    box-shadow: 0 14px 38px -6px rgba(24, 78, 46, 0.12), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .hero-stock-card {
+    background: #172129;
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 12px 34px -6px rgba(0, 0, 0, 0.45);
+}
+
+.stock-company-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 440px;
+    width: 100%;
+    margin: 0 auto 1.25rem;
+}
+
+.stock-company-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    background: #FFFFFF;
+    border: 1.5px solid rgba(24, 78, 46, 0.22);
+    border-radius: 9999px;
+    padding: 0.6rem 2.5rem 0.6rem 1.25rem;
+    font-family: var(--fuente-base);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--texto-principal);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stock-company-select:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 3px rgba(24, 78, 46, 0.15);
+}
+
+[data-theme="dark"] .stock-company-select {
+    background: #10161B;
+    border-color: rgba(52, 211, 153, 0.25);
+    color: #F1F5F9;
+}
+
+.stock-chevron {
+    position: absolute;
+    right: 1.15rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--texto-suave);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.stock-metrics-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(1.5rem, 6vw, 3.75rem);
+    padding-top: 0.25rem;
+}
+
+.stock-metric-col {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    cursor: pointer;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radio-sm);
+    transition: transform 0.18s ease, background-color 0.18s ease;
+    user-select: none;
+}
+
+.stock-metric-col:hover {
+    transform: translateY(-2px);
+    background: rgba(24, 78, 46, 0.06);
+}
+
+[data-theme="dark"] .stock-metric-col:hover {
+    background: rgba(52, 211, 153, 0.08);
+}
+
+.stock-metric-icon {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.stock-metric-num {
+    font-family: var(--fuente-mono);
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--texto-principal);
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.stock-metric-label {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: var(--texto-secundario);
+}
+
+@keyframes metricBump {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.22); color: var(--color-exito); }
+    100% { transform: scale(1); }
+}
+
+.metric-bump {
+    animation: metricBump 0.3s ease-out;
+}
+
+/* Marca Moñai destacada */
+.brand-highlight-underline {
+    color: var(--color-primario);
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-color: var(--color-crema-dorado);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
+}
+
+@media (max-width: 580px) {
+    .hero-stock-card {
+        padding: 1.15rem 0.85rem 1.35rem;
+        margin-bottom: 2rem;
+    }
+    .stock-metrics-row {
+        gap: 0.75rem;
+        justify-content: space-around;
+    }
+    .stock-metric-col {
+        padding: 0.25rem 0.35rem;
+        gap: 0.35rem;
+    }
+    .stock-metric-num {
+        font-size: 1.5rem;
+    }
+    .stock-metric-label {
+        font-size: 0.82rem;
+    }
+    .stock-company-select {
+        font-size: 0.85rem;
+        padding-left: 0.85rem;
+    }
+}
+
 .hero-main-title {
     font-family: var(--fuente-display);
     font-size: clamp(2.1rem, 5vw, 3.25rem);

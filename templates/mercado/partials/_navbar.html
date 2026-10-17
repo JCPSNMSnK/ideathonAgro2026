@@ -5,21 +5,8 @@
     <div class="navbar-inner">
         <!-- Marca e Isotipo Oficial Moñái (Protector Guaraní de los Caminos) -->
         <div class="brand-box" onclick="cambiarVistaRol('vista-inicio')" role="button" tabindex="0" aria-label="Ir al inicio de Moñái">
-            <div class="brand-mark" aria-hidden="true">
-                <!-- Isotipo SVG: Serpiente Protectora Guaraní + Curva de Ruta + Espiga de Campo -->
-                <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="currentColor">
-                    <!-- Senda curva de ruta / cuerpo sinuoso de Moñái -->
-                    <path d="M6 24C6 17 12 15 16 12C20 9 22 5 26 6C27.5 6.5 28 8.5 27 10C25 13 20 15 16 18C12 21 10 24 6 24Z" 
-                          stroke="var(--color-crema-dorado)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <!-- Espiga / Hoja de Bioeconomía integrada -->
-                    <path d="M16 12C14 9 15 6 18 5C20 7 19 10 16 12Z" fill="var(--color-exito)" stroke="var(--color-crema-dorado)" stroke-width="1.2"/>
-                    <circle cx="25.5" cy="7.5" r="1.5" fill="var(--color-acento)"/>
-                    <path d="M12 21L14 18" stroke="var(--color-crema-dorado)" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div class="brand-text-wrap">
-                <div class="brand-title">Moñái</div>
-            </div>
+            <img src="/static/img/logo-monai.png" alt="Moñái" class="brand-logo-img brand-logo-light">
+            <img src="/static/img/logo-monai-dark.png" alt="Moñái" class="brand-logo-img brand-logo-dark">
         </div>
 
         <!-- Navegación Central por Tipo de Usuario / Rol + Sesión + Tema -->
@@ -35,7 +22,7 @@
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
-                <span>Inicio y Demo</span>
+                <span>Inicio</span>
             </button>
 
             <button type="button"
@@ -50,23 +37,7 @@
                     <path d="M12 8v4"></path>
                     <path d="M12 16h.01"></path>
                 </svg>
-                <span>Comprador</span>
-            </button>
-
-            <button type="button"
-                    class="role-tab-btn"
-                    id="nav-btn-vendedor"
-                    data-role-target="vista-vendedor"
-                    role="tab"
-                    aria-selected="false"
-                    onclick="cambiarVistaRol('vista-vendedor')">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 21h18"></path>
-                    <path d="M19 21v-4"></path>
-                    <path d="M19 13V7l-6 4-6-4v14"></path>
-                    <path d="M9 21v-8"></path>
-                </svg>
-                <span>Vendedor</span>
+                <span>Mercado</span>
             </button>
 
             <button type="button"
@@ -82,7 +53,23 @@
                     <circle cx="5.5" cy="18.5" r="2.5"></circle>
                     <circle cx="18.5" cy="18.5" r="2.5"></circle>
                 </svg>
-                <span>Logística / Camión</span>
+                <span>Logística</span>
+            </button>
+
+            <button type="button"
+                    class="role-tab-btn"
+                    id="nav-btn-vendedor"
+                    data-role-target="vista-vendedor"
+                    role="tab"
+                    aria-selected="false"
+                    onclick="cambiarVistaRol('vista-vendedor')">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M3 21h18"></path>
+                    <path d="M19 21v-4"></path>
+                    <path d="M19 13V7l-6 4-6-4v14"></path>
+                    <path d="M9 21v-8"></path>
+                </svg>
+                <span>Certificados</span>
             </button>
 
             <!-- Separador sutil dentro de la navbar unificada -->
