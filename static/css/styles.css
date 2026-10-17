@@ -3110,3 +3110,698 @@ h4 {
     border: 2px solid rgba(220, 38, 38, 0.65);
 }
 
+/* =============================================================================
+   16. JERARQUÍA VISUAL 3 NIVELES, SUB-PESTAÑAS, PAGINACIÓN Y PROPIEDAD ESTRICTA
+   ============================================================================= */
+
+/* Nivel 1: Cabecera Ejecutiva del Rol con Switcher de Empresa Activa y KPIs */
+.role-hierarchy-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    padding: 1.45rem 1.65rem;
+}
+
+.role-hierarchy-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+}
+
+.role-hierarchy-title-group {
+    flex: 1 1 480px;
+    min-width: 280px;
+}
+
+.role-hierarchy-title-group h2 {
+    font-family: var(--fuente-display);
+    font-size: clamp(1.38rem, 2.2vw, 1.85rem);
+    font-weight: 800;
+    color: var(--texto-principal);
+    letter-spacing: -0.02em;
+    margin: 0.35rem 0 0.4rem;
+    line-height: 1.2;
+}
+
+.role-hierarchy-title-group p {
+    font-size: 0.90rem;
+    color: var(--texto-secundario);
+    line-height: 1.48;
+    max-width: 68ch;
+}
+
+.role-identity-switcher-card {
+    flex: 0 1 350px;
+    min-width: 270px;
+    background: var(--bg-bloque-suave);
+    border: 1.5px solid var(--color-primario);
+    border-radius: var(--radio-md);
+    padding: 0.78rem 1rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.identity-switcher-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-primario);
+    margin-bottom: 0.38rem;
+}
+
+.identity-dot-live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-exito);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.22);
+    flex-shrink: 0;
+}
+
+.identity-switcher-select {
+    width: 100%;
+    padding: 0.48rem 0.7rem;
+    border-radius: var(--radio-sm);
+    border: 1px solid var(--borde-fuerte);
+    background: var(--bg-tarjeta);
+    color: var(--texto-principal);
+    font-family: var(--fuente-sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.identity-switcher-hint {
+    display: block;
+    font-size: 0.71rem;
+    color: var(--texto-secundario);
+    margin-top: 0.32rem;
+    line-height: 1.3;
+}
+
+/* Nivel 2: Barra de Sub-Pestañas de Flujo por Rol */
+.role-subtabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.48rem;
+    margin-bottom: 1.35rem;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.role-subtab-btn {
+    flex: 1 1 220px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.72rem 1rem;
+    border-radius: var(--radio-sm);
+    border: 1.5px solid transparent;
+    background: transparent;
+    color: var(--texto-secundario);
+    font-family: var(--fuente-sans);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.role-subtab-btn:hover {
+    background: var(--bg-bloque-suave);
+    color: var(--texto-principal);
+}
+
+.role-subtab-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+    box-shadow: 0 4px 12px rgba(22, 66, 40, 0.24);
+}
+
+.subtab-step-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.14rem 0.5rem;
+    border-radius: 9999px;
+    background: rgba(22, 66, 40, 0.12);
+    color: var(--color-primario);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.role-subtab-btn.active .subtab-step-pill {
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+}
+
+.subtab-counter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.12rem 0.52rem;
+    border-radius: 9999px;
+    background: var(--ambar-trigo-fondo);
+    color: var(--ambar-trigo);
+    border: 1px solid rgba(180, 83, 9, 0.35);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.role-subtab-btn.active .subtab-counter-badge {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.role-subtab-panel {
+    display: none;
+    animation: fadeSlideSubTab 0.22s ease-out;
+}
+
+.role-subtab-panel.active {
+    display: block;
+}
+
+@keyframes fadeSlideSubTab {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Nivel 3: Motor de Paginación Reutilizable */
+.subruta-pagination-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    margin: 0.85rem 0;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    box-shadow: var(--sombra-suave);
+}
+
+.pagination-summary {
+    font-size: 0.82rem;
+    color: var(--texto-secundario);
+}
+
+.pagination-summary strong {
+    color: var(--texto-principal);
+    font-weight: 700;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.pagination-pages-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pagination-nav-btn,
+.pagination-page-btn {
+    padding: 0.36rem 0.72rem;
+    border-radius: var(--radio-sm);
+    border: 1px solid var(--borde-color);
+    background: var(--bg-bloque-suave);
+    color: var(--texto-principal);
+    font-family: var(--fuente-sans);
+    font-size: 0.80rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.pagination-page-btn {
+    min-width: 34px;
+    text-align: center;
+}
+
+.pagination-nav-btn:hover:not(:disabled),
+.pagination-page-btn:hover:not(.active) {
+    background: var(--color-primario-suave);
+    color: var(--color-primario);
+    border-color: var(--color-exito-borde);
+}
+
+.pagination-page-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    border-color: var(--color-primario);
+}
+
+.pagination-nav-btn:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+/* Grilla de Catálogo Comprador (Paso 1) y Grilla Cotizador (Paso 2) */
+.lotes-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+    gap: 1.15rem;
+}
+
+.active-lot-context-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1.15rem;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid var(--color-exito-borde);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.paso2-cotizador-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.paso2-col-config,
+.paso2-col-results {
+    min-width: 0;
+}
+
+/* Reglas de Propiedad: Badges de Titularidad, Toggle Míos/Todos y Candados Read-Only */
+.ownership-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    padding: 0.2rem;
+    gap: 0.2rem;
+}
+
+.ownership-filter-btn {
+    padding: 0.38rem 0.78rem;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--texto-secundario);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.ownership-filter-btn.active {
+    background: var(--color-primario);
+    color: var(--texto-sobre-primario);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.badge-own-resource {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.16rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.badge-thirdparty-resource {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.16rem 0.55rem;
+    border-radius: 9999px;
+    background: var(--bg-bloque-suave);
+    color: var(--texto-secundario);
+    border: 1px solid var(--borde-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.readonly-lock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.38rem 0.75rem;
+    border-radius: var(--radio-sm);
+    background: var(--bg-bloque-suave);
+    border: 1px dashed var(--borde-fuerte);
+    color: var(--texto-secundario);
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+/* Tarjetas de Lotes del Vendedor */
+.vendedor-lotes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.vendedor-lote-row-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-sm);
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.vendedor-lote-row-card.is-own-resource {
+    border: 1px solid var(--color-primario);
+    background: var(--bg-tarjeta);
+    box-shadow: var(--sombra-suave);
+}
+
+.vendedor-lote-row-card.is-readonly-resource {
+    opacity: 0.88;
+}
+
+/* Tarjetas de Operaciones, Compras y Certificados con Stepper */
+.vendedor-certificados-layout {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 1.35rem;
+    align-items: start;
+}
+
+.certificados-operations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.cert-op-card {
+    padding: 1.1rem 1.25rem;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+    transition: all 0.16s ease;
+}
+
+.cert-op-card.selected {
+    border-color: var(--color-primario);
+    box-shadow: var(--sombra-destacada);
+}
+
+.cert-op-card.cert-op-active {
+    border-color: rgba(180, 83, 9, 0.42);
+}
+
+.cert-op-card.cert-op-closed {
+    border-color: var(--color-exito-borde);
+}
+
+.cert-op-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--borde-color);
+}
+
+.cert-op-body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+}
+
+.cert-op-main-info {
+    flex: 1 1 360px;
+}
+
+.cert-op-main-info h4 {
+    font-size: 1rem;
+    color: var(--texto-principal);
+}
+
+.cert-op-financials {
+    display: flex;
+    gap: 1rem;
+    background: var(--bg-bloque-suave);
+    padding: 0.55rem 0.85rem;
+    border-radius: var(--radio-sm);
+    border: 1px solid var(--borde-color);
+}
+
+.cert-fin-item {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.76rem;
+    color: var(--texto-secundario);
+}
+
+.cert-fin-item strong {
+    font-size: 0.90rem;
+    color: var(--texto-principal);
+}
+
+.badge-cert-closed {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.16rem 0.58rem;
+    border-radius: 9999px;
+    background: var(--color-exito-bg);
+    color: var(--color-exito);
+    border: 1px solid var(--color-exito-borde);
+    font-size: 0.70rem;
+    font-weight: 800;
+}
+
+.badge-cert-custody {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.16rem 0.58rem;
+    border-radius: 9999px;
+    background: var(--ambar-trigo-fondo);
+    color: var(--ambar-trigo);
+    border: 1px solid rgba(180, 83, 9, 0.35);
+    font-size: 0.70rem;
+    font-weight: 800;
+}
+
+/* Stepper de 3 Pasos de Custodia y Firma */
+.cert-stepper-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 0.55rem 0 0.75rem;
+    padding: 0.6rem;
+    background: var(--bg-bloque-suave);
+    border-radius: var(--radio-sm);
+    font-size: 0.76rem;
+}
+
+.cert-step {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--texto-secundario);
+    font-weight: 600;
+}
+
+.cert-step.done {
+    color: var(--color-exito);
+    font-weight: 700;
+}
+
+.cert-step.pending {
+    color: var(--ambar-trigo);
+    font-weight: 700;
+}
+
+.step-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: var(--bg-tarjeta);
+    border: 1.5px solid currentColor;
+    flex-shrink: 0;
+}
+
+.cert-pending-sign-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: var(--ambar-trigo-fondo);
+    border: 1px solid rgba(180, 83, 9, 0.4);
+    border-radius: var(--radio-sm);
+    font-size: 0.82rem;
+}
+
+.cert-pending-sign-banner p {
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+    margin-top: 0.18rem;
+}
+
+.cert-signed-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.95rem;
+    background: var(--color-exito-bg);
+    border: 1px solid var(--color-exito-borde);
+    border-radius: var(--radio-sm);
+    font-size: 0.80rem;
+    color: var(--color-exito);
+}
+
+.cert-audit-readonly-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.95rem;
+    background: var(--bg-bloque-suave);
+    border: 1px solid var(--borde-fuerte);
+    border-radius: var(--radio-sm);
+    flex: 1 1 320px;
+}
+
+.cert-audit-icon {
+    font-size: 1.15rem;
+    line-height: 1.2;
+}
+
+.empty-state-card {
+    padding: 1.75rem;
+    text-align: center;
+    background: var(--bg-bloque-suave);
+    border: 1px dashed var(--borde-fuerte);
+    border-radius: var(--radio-md);
+    color: var(--texto-secundario);
+}
+
+.empty-state-card h4 {
+    color: var(--texto-principal);
+    margin-bottom: 0.35rem;
+}
+
+@media (max-width: 980px) {
+    .paso2-cotizador-grid,
+    .vendedor-certificados-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .lotes-catalog-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cert-stepper-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =============================================================================
+   17. PULIDO ARTESANAL (APPLE DESIGN + IMPECCABLE CRAFT FLOOR)
+   ============================================================================= */
+
+/* Superficies del navegador temáticas (Selección, Focus Ring, Tabular Nums) */
+::selection {
+    background: rgba(22, 66, 40, 0.18);
+    color: var(--texto-principal);
+}
+
+[data-theme="dark"] ::selection {
+    background: rgba(74, 222, 128, 0.24);
+    color: #f8fafc;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-primario);
+    outline-offset: 2px;
+}
+
+.font-mono,
+.mono,
+.metric-item strong,
+.cert-fin-item strong,
+.role-kpi-chip span,
+.subtab-counter-pill {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Respuesta táctil inmediata en el frame de contacto (:active) — Apple Design */
+.btn-primary:active,
+.btn-secondary:active,
+.chip-btn:active,
+.role-tab-btn:active,
+.role-subtab-btn:active,
+.ownership-toggle-btn:active,
+.pagination-nav-btn:not(:disabled):active,
+.pagination-page-btn:active,
+.sublote-pill-btn:active,
+.sublote-calc-pill:active,
+.demo-preset-btn:active {
+    transform: scale(0.98);
+    transition: transform 80ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Accesibilidad: Respeto estricto a prefers-reduced-motion y prefers-reduced-transparency */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    .navbar,
+    .modal-backdrop {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+}

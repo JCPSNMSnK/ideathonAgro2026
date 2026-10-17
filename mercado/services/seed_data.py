@@ -352,10 +352,52 @@ CAMIONES_DATASET_COMPLETO = [
 ]
 
 
+def _asegurar_operacion_activa_demo():
+    """
+    Garantiza que exista al menos una operación en estado PAGO_EN_GARANTIA_ACTIVO
+    entre los perfiles principales de la demo (Granja Avícola San Isidro SRL,
+    Molino Arrocero San Lorenzo y Transportes Don Horacio) para demostrar la firma
+    y cierre de certificado por parte del comprador.
+    """
+    hash_demo_activa = "0x4d92b711e503a89c14027f88d34c9012a6731b8e"
+    if OperacionTrazabilidad.objects.filter(hash_certificado=hash_demo_activa).exists():
+        return
+
+    lote_molino = (
+        LoteSubproducto.objects.filter(empresa_vendedora__icontains="San Lorenzo").first()
+        or LoteSubproducto.objects.first()
+    )
+    camion_horacio = (
+        CamionRetorno.objects.filter(transportista__icontains="Don Horacio").first()
+        or CamionRetorno.objects.first()
+    )
+    if not lote_molino:
+        return
+
+    OperacionTrazabilidad.objects.get_or_create(
+        hash_certificado=hash_demo_activa,
+        defaults={
+            "lote": lote_molino,
+            "camion": camion_horacio,
+            "comprador_nombre": "Granja Avícola San Isidro SRL",
+            "localidad_destino": "Goya, Corrientes",
+            "distancia_km": 135,
+            "volumen_m3_calculado": 60.6,
+            "subtotal_subproducto_ars": 220000.0,
+            "flete_tradicional_fadeeac_ars": 942000.0,
+            "flete_calzado_ars": 471000.0,
+            "ahorro_logistico_ars": 471000.0,
+            "comision_plataforma_ars": 17275.0,
+            "estado_garantia": "PAGO_EN_GARANTIA_ACTIVO",
+            "red_blockchain": "Hedera Testnet (HCS Topic 0.0.4829104)",
+        },
+    )
+
+
 def asegurar_datos_iniciales_nea(forzar_recarga: bool = False):
     """
     Si la base tiene menos de 15 lotes (o si se pide forzar_recarga=True),
-    sincroniza el Dataset Curado Completo de 15 lotes + 8 camiones + 4 certificados
+    sincroniza el Dataset Curado Completo de 15 lotes + 8 camiones + 5 certificados
     y crea índices de velocidad en PostgreSQL/SQLite.
     """
     if not forzar_recarga and LoteSubproducto.objects.count() >= 15:
@@ -367,6 +409,7 @@ def asegurar_datos_iniciales_nea(forzar_recarga: bool = False):
             LoteSubproducto.objects.filter(categoria="MADERA", localidad_origen__icontains="Virasoro").update(
                 humedad_estado="Lote Futuro (Entrega 15 días) · Sublotes desde 5 tn"
             )
+        _asegurar_operacion_activa_demo()
         return
 
     # 1. Sincronizar Lotes (actualiza o crea por título)
@@ -387,13 +430,13 @@ def asegurar_datos_iniciales_nea(forzar_recarga: bool = False):
         )
         camiones_creados.append(obj)
 
-    # 3. Precargar 4 Certificados de Trazabilidad Históricos si aún no hay suficientes
+    # 3. Precargar Certificados de Trazabilidad Históricos si aún no hay suficientes
     if OperacionTrazabilidad.objects.count() < 4 and lotes_creados and camiones_creados:
         historicos = [
             {
                 "lote": lotes_creados[0],
                 "camion": camiones_creados[0],
-                "comprador_nombre": "Avícola San Isidro SRL",
+                "comprador_nombre": "Granja Avícola San Isidro SRL",
                 "localidad_destino": "Goya, Corrientes",
                 "distancia_km": 155,
                 "volumen_m3_calculado": 84.8,
@@ -460,6 +503,8 @@ def asegurar_datos_iniciales_nea(forzar_recarga: bool = False):
                 hash_certificado=h["hash_certificado"],
                 defaults=h,
             )
+
+    _asegurar_operacion_activa_demo()
 
     # 4. Crear índices de rendimiento en la base de datos (PostgreSQL / SQLite)
     with connection.cursor() as cursor:

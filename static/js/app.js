@@ -66,8 +66,8 @@ function renderizarPerfilesABM() {
             </div>
             <div style="display:flex; gap:0.35rem;">
                 <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem;" onclick="seleccionarPerfilGuardadoABM(${idx})">Usar</button>
-                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem;" onclick="editarPerfilGuardadoABM(${idx})">✏️</button>
-                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem; color:var(--color-peligro);" onclick="eliminarPerfilGuardadoABM(${idx})">🗑️</button>
+                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem;" onclick="editarPerfilGuardadoABM(${idx})">Editar</button>
+                <button type="button" class="chip-btn" style="padding:0.2rem 0.5rem; font-size:0.76rem; color:var(--color-peligro);" onclick="eliminarPerfilGuardadoABM(${idx})">Borrar</button>
             </div>
         </div>
     `
@@ -250,7 +250,6 @@ function aplicarDatosSesionEnUI() {
     const sessionRolePill = document.getElementById("session-role-pill");
     const btnLogout = document.getElementById("btn-logout");
 
-    // Contenedores privados y de acceso restringido para no logueados
     const vendedorGated = document.getElementById("vendedor-gated-view");
     const vendedorPrivate = document.getElementById("vendedor-private-view");
     const logisticaGated = document.getElementById("logistica-gated-view");
@@ -270,17 +269,19 @@ function aplicarDatosSesionEnUI() {
         }
         if (btnLogout) btnLogout.style.display = "none";
 
-        // Gating para usuarios no identificados: mostrar tarjetas de bienvenida/bloqueo
         if (vendedorGated) vendedorGated.style.display = "block";
         if (vendedorPrivate) vendedorPrivate.style.display = "none";
         if (logisticaGated) logisticaGated.style.display = "block";
         if (logisticaPrivate) logisticaPrivate.style.display = "none";
+        if (typeof sincronizarPropiedadYListasPorRol === "function") {
+            sincronizarPropiedadYListasPorRol();
+        }
         return;
     }
 
-    // Usuario con sesión iniciada en la navbar unificada
     const rolTexto = rolMap[usuarioActivo.rol] || "Usuario";
-    const nombreCorto = (usuarioActivo.nombre || "Mi Cuenta").split(" ")[0];
+    const orgNombre = usuarioActivo.organizacion || usuarioActivo.nombre || "Mi Cuenta";
+    const nombreCorto = orgNombre.split(" ").slice(0, 2).join(" ");
     if (tabLabel) {
         tabLabel.textContent = `${nombreCorto} (${rolTexto})`;
     }
@@ -292,13 +293,11 @@ function aplicarDatosSesionEnUI() {
         btnLogout.style.display = "inline-flex";
     }
 
-    // Desbloquear paneles privados
     if (vendedorGated) vendedorGated.style.display = "none";
     if (vendedorPrivate) vendedorPrivate.style.display = "block";
     if (logisticaGated) logisticaGated.style.display = "none";
     if (logisticaPrivate) logisticaPrivate.style.display = "block";
 
-    // Prefill de campos según el usuario activo
     const inputComprador = document.getElementById("calc-comprador");
     const inputDestino = document.getElementById("calc-destino");
     const inputEmpresa = document.getElementById("pub-empresa");
@@ -306,13 +305,17 @@ function aplicarDatosSesionEnUI() {
     const inputTransportista = document.getElementById("cam-transportista");
 
     if (usuarioActivo.rol === "comprador") {
-        if (inputComprador) inputComprador.value = usuarioActivo.organizacion || usuarioActivo.nombre;
+        if (inputComprador) inputComprador.value = orgNombre;
         if (inputDestino) inputDestino.value = usuarioActivo.localidad;
     } else if (usuarioActivo.rol === "vendedor") {
-        if (inputEmpresa) inputEmpresa.value = usuarioActivo.organizacion || usuarioActivo.nombre;
-        if (inputLocalidad) inputLocalidad.value = usuarioActivo.localidad;
+        if (inputEmpresa) inputEmpresa.value = orgNombre;
+        if (inputLocalidad) inputLocalidad.value = (usuarioActivo.localidad || "Saladas").split(",")[0].trim();
     } else if (usuarioActivo.rol === "logistica") {
-        if (inputTransportista) inputTransportista.value = usuarioActivo.organizacion || usuarioActivo.nombre;
+        if (inputTransportista) inputTransportista.value = orgNombre;
+    }
+
+    if (typeof sincronizarPropiedadYListasPorRol === "function") {
+        sincronizarPropiedadYListasPorRol();
     }
 }
 
@@ -468,10 +471,7 @@ function abrirCasoDemoEnCotizador() {
         seleccionarLote(loteId, casoDemoActivo.toneladas, casoDemoActivo.distanciaKm);
     }
     cambiarVistaRol("vista-comprador");
-    setTimeout(() => {
-        const panel = document.getElementById("panel-cotizador-comprador");
-        if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
+    cambiarSubTabComprador("paso2");
 }
 
 /* =============================================================================
@@ -552,15 +552,18 @@ function seleccionarLote(loteId, toneladasDefault, distanciaSugerida) {
     if (inputTn && toneladasDefault) inputTn.value = toneladasDefault;
     if (inputKm && distanciaSugerida) inputKm.value = distanciaSugerida;
 
+    const badgePaso2 = document.getElementById("badge-lote-activo-paso2");
+    if (badgePaso2 && selectLote) {
+        const opt = selectLote.options[selectLote.selectedIndex];
+        if (opt) badgePaso2.textContent = opt.text.split("—")[0].trim();
+    }
+
     recalcularCotizacionEnVivo();
 }
 
 function seleccionarLoteYEnfocarCotizador(loteId, toneladasDefault, distanciaSugerida) {
     seleccionarLote(loteId, toneladasDefault, distanciaSugerida);
-    const panel = document.getElementById("panel-cotizador-comprador");
-    if (panel) {
-        panel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    cambiarSubTabComprador("paso2");
 }
 
 function calzarCamionConLote(loteId, camionId, toneladasDefault) {
@@ -570,10 +573,7 @@ function calzarCamionConLote(loteId, camionId, toneladasDefault) {
     }
     seleccionarLote(loteId, toneladasDefault, 160);
     cambiarVistaRol("vista-comprador");
-    setTimeout(() => {
-        const panel = document.getElementById("panel-cotizador-comprador");
-        if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
+    cambiarSubTabComprador("paso2");
 }
 
 function alCambiarSelectorLote(selectEl) {
@@ -595,12 +595,23 @@ function actualizarLocalidadComprador(selectEl) {
     }
 }
 
+let textoBusquedaCatalogoComprador = "";
+let condicionFiltroCatalogoComprador = "TODOS";
+
 function filtrarTarjetasEnCliente(texto) {
-    const q = (texto || "").trim().toLowerCase();
-    document.querySelectorAll("#contenedor-tarjetas-lotes .lote-card").forEach((card) => {
-        const contenido = (card.getAttribute("data-busqueda") || "").toLowerCase();
-        card.style.display = !q || contenido.includes(q) ? "" : "none";
-    });
+    textoBusquedaCatalogoComprador = (texto || "").trim().toLowerCase();
+    estadoPaginacion.compradorLotes.page = 1;
+    aplicarFiltroYPaginacionCatalogoComprador();
+}
+
+function filtrarPorCondicionLote(condicion, btnEl) {
+    condicionFiltroCatalogoComprador = condicion || "TODOS";
+    if (btnEl && btnEl.parentElement) {
+        btnEl.parentElement.querySelectorAll(".chip-btn").forEach((b) => b.classList.remove("active"));
+        btnEl.classList.add("active");
+    }
+    estadoPaginacion.compradorLotes.page = 1;
+    aplicarFiltroYPaginacionCatalogoComprador();
 }
 
 /* =============================================================================
@@ -652,6 +663,7 @@ async function recalcularCotizacionEnVivo() {
         setTxt("res-origen", `${c.empresa_vendedora || c.vendedor || "Agroindustria"} (${c.origen || c.localidad_origen || "Planta"})`);
         setTxt("res-volumen-m3", `${c.volumen_m3} m³`);
         setTxt("res-limitante", (c.factor_limitante || "VOLUMEN FÍSICO").toUpperCase());
+        setTxt("badge-lote-activo-paso2", `${c.lote_titulo} (${toneladas} tn)`);
         
         const pctVol = c.ocupacion_volumen_pct ?? c.porcentaje_volumen_camion ?? 0;
         const pctPeso = c.ocupacion_peso_pct ?? c.porcentaje_peso_camion ?? 0;
@@ -700,7 +712,7 @@ async function recalcularCotizacionEnVivo() {
    ============================================================================= */
 function comprarSubloteDirecto(loteId, toneladas, distanciaKm) {
     seleccionarLote(loteId, toneladas, distanciaKm);
-    
+
     // Marcar tag visual de sublote
     const subloteTag = document.getElementById("calc-sublote-tag");
     if (subloteTag) subloteTag.style.display = "inline-block";
@@ -708,10 +720,8 @@ function comprarSubloteDirecto(loteId, toneladas, distanciaKm) {
     // Actualizar botones de sublotes en cotizador
     fijarToneladasCotizador(toneladas);
 
-    const panel = document.getElementById("panel-cotizador-comprador");
-    if (panel) {
-        panel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    // Llevar directamente al Paso 2 (Cotizador en Tranquera y Reserva)
+    cambiarSubTabComprador("paso2");
 }
 
 function fijarToneladasCotizador(toneladas) {
@@ -932,7 +942,7 @@ function renderizarMapaProductores(forzarZoomRegion = false) {
             html: `
                 <div class="l-marker-pin l-marker-buyer" title="Tu Establecimiento: ${comp.nombre}">
                     <span class="l-marker-pulse"></span>
-                    <span class="l-marker-core">🏡</span>
+                    <span class="l-marker-core">●</span>
                     <span class="l-marker-label">${(comp.nombre || "Tu Campo").split(",")[0]}</span>
                 </div>
             `,
@@ -942,7 +952,7 @@ function renderizarMapaProductores(forzarZoomRegion = false) {
 
         const markerComp = L.marker([comp.lat, comp.lng], { icon: iconoComprador, zIndexOffset: 900 });
         markerComp.bindTooltip(
-            `<strong>🏡 Tu Establecimiento Receptor</strong><br>${comp.nombre}<br><small>Centroide Oficial IGN: ${comp.lat}, ${comp.lng}</small>`,
+            `<strong>Tu Establecimiento Receptor</strong><br>${comp.nombre}<br><small>Centroide Oficial IGN: ${comp.lat}, ${comp.lng}</small>`,
             { direction: "top", offset: [0, -14] }
         );
         leafletMarkersLayer.addLayer(markerComp);
@@ -973,14 +983,14 @@ function renderizarMapaProductores(forzarZoomRegion = false) {
                 : prod.es_lote_futuro
                 ? "l-marker-future"
                 : "l-marker-producer";
-            const emoji = prod.es_urgente ? "⚡" : prod.es_lote_futuro ? "🌱" : "🏭";
+            const simboloPin = prod.es_urgente ? "!" : prod.es_lote_futuro ? "◆" : "■";
 
             const iconoProd = L.divIcon({
                 className: "leaflet-custom-div-icon",
                 html: `
                     <div class="l-marker-pin ${tipoClase}">
                         ${prod.es_urgente ? '<span class="l-marker-pulse-red"></span>' : ""}
-                        <span class="l-marker-core">${emoji}</span>
+                        <span class="l-marker-core">${simboloPin}</span>
                         <span class="l-marker-label">${prod.localidad} · ${prod.toneladas} tn</span>
                     </div>
                 `,
@@ -1046,7 +1056,7 @@ async function trazarRutaVialOSRM(prod, comp, abrirFicha = true) {
             prod.resumen_rutas = r.resumen_rutas || prod.ruta;
 
             if (summaryEl) {
-                summaryEl.innerHTML = `🛣️ <strong>${prod.localidad} → ${comp.nombre}:</strong> ${r.distancia_km} km viales reales (${r.duracion_formateada}) vía <strong>${r.resumen_rutas}</strong>`;
+                summaryEl.innerHTML = `<strong>Ruta Vial ${prod.localidad} → ${comp.nombre}:</strong> ${r.distancia_km} km reales (${r.duracion_formateada}) vía <strong>${r.resumen_rutas}</strong>`;
             }
 
             if (leafletMapInstance && leafletRouteLayer && Array.isArray(r.coordenadas_ruta) && r.coordenadas_ruta.length > 1) {
@@ -1095,10 +1105,10 @@ function mostrarCardEnMapa(prod) {
     if (prod.es_urgente) {
         etiquetaBadge = `<span class="badge-urgente-pulse"><span class="pulse-dot"></span> ${prod.etiqueta_urgencia || "VENTA INMEDIATA 48 HS"}</span>`;
     } else if (prod.es_lote_futuro) {
-        etiquetaBadge = `<span class="badge-lote-futuro">📅 Lote Futuro (${prod.fecha_entrega_futura || "Zafra"})</span>`;
+        etiquetaBadge = `<span class="badge-lote-futuro">Lote Futuro (${prod.fecha_entrega_futura || "Zafra"})</span>`;
     }
 
-    const duracionTexto = prod.duracion_formateada ? ` · ⏱️ ${prod.duracion_formateada}` : "";
+    const duracionTexto = prod.duracion_formateada ? ` · ${prod.duracion_formateada}` : "";
 
     content.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem; margin-bottom:0.4rem;">
@@ -1107,7 +1117,7 @@ function mostrarCardEnMapa(prod) {
         </div>
         <h4 style="font-size:1.05rem; font-family:var(--fuente-display); margin-bottom:0.25rem; color:var(--texto-principal);">${prod.titulo}</h4>
         <div style="font-size:0.80rem; color:var(--texto-secundario); margin-bottom:0.6rem;">
-            📍 <strong>${prod.empresa}</strong> · ${prod.localidad}, ${prod.provincia} (${prod.resumen_rutas || prod.ruta || "RN"})
+            <strong>${prod.empresa}</strong> · ${prod.localidad}, ${prod.provincia} (${prod.resumen_rutas || prod.ruta || "RN"})
         </div>
         <div class="map-card-metrics">
             <div><span>Disponible:</span><strong>${prod.toneladas} tn (${prod.volumen_m3} m³)</strong></div>
@@ -1121,7 +1131,7 @@ function mostrarCardEnMapa(prod) {
             </button>
             <button type="button" class="chip-btn" style="padding:0.45rem 0.7rem; font-size:0.80rem;"
                     onclick="comprarSubloteDesdeMapa('${prod.id}', '1', '${prod.distancia_km}')">
-                🛻 Retiro 1 tn
+                Retiro 1 tn
             </button>
             <button type="button" class="chip-btn" style="padding:0.45rem 0.7rem; font-size:0.80rem;"
                     onclick="comprarSubloteDesdeMapa('${prod.id}', '${prod.toneladas}', '${prod.distancia_km}')">
@@ -1244,7 +1254,7 @@ function fijarDestinoCompradorDesdeMapa() {
 }
 
 /* =============================================================================
-   6.3. CONTROL DE FORMULARIO DE PUBLICACIÓN DEL VENDEDOR (FUTURO & URGENCIA)
+   6.3. CONTROL DE FORMULARIO DE PUBLICACIÓN DEL VENDEDOR (FUTURO, URGENCIA, MUTUO)
    ============================================================================= */
 function alternarCamposLoteFuturo(tipo) {
     const container = document.getElementById("pub-campos-lote-futuro");
@@ -1257,11 +1267,865 @@ function alCambiarUrgenciaVendedor(urgencia) {
     const selectModalidad = document.getElementById("pub-modalidad");
     if (selectModalidad && urgencia.startsWith("URGENTE")) {
         selectModalidad.value = "VENDEDOR";
+        alternarCampoMutuoAcuerdo("VENDEDOR");
+    }
+}
+
+function alternarCampoMutuoAcuerdo(modalidad) {
+    const group = document.getElementById("pub-porcentaje-vendedor-group");
+    if (group) {
+        group.style.display = modalidad === "MUTUO_ACUERDO" ? "block" : "none";
+    }
+}
+
+function actualizarLabelMutuoAcuerdo(val) {
+    const vPct = parseInt(val || 50, 10);
+    const cPct = Math.max(0, 100 - vPct);
+    const label = document.getElementById("pub-porcentaje-vendedor-label");
+    if (label) {
+        label.textContent = `${vPct}% Vendedor / ${cPct}% Comprador`;
     }
 }
 
 /* =============================================================================
-   7. RESERVA CON PAGO EN GARANTÍA (ESCROW) Y VOUCHER DEL COMPRADOR (CARRIL 4)
+   6.4. ARQUITECTURA DE SUB-PESTAÑAS JERÁRQUICAS POR ROL (COMPRADOR, VENDEDOR, LOGÍSTICA)
+   ============================================================================= */
+function cambiarSubTabComprador(subtab) {
+    const tabs = ["paso1", "paso2", "compras"];
+    tabs.forEach((t) => {
+        const panel = document.getElementById(`subtab-comprador-${t}`);
+        const btn = document.getElementById(`btn-subtab-comp-${t}`);
+        if (panel) panel.classList.toggle("active", t === subtab);
+        if (btn) btn.classList.toggle("active", t === subtab);
+    });
+    if (subtab === "paso1" && modoMercadoActual === "mapa" && leafletMapInstance) {
+        setTimeout(() => leafletMapInstance.invalidateSize(), 80);
+    }
+    if (subtab === "compras") {
+        renderizarComprasComprador();
+    }
+    const header = document.querySelector("#vista-comprador .role-subtabs-nav");
+    if (header && subtab !== "paso1") {
+        header.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+}
+
+function cambiarSubTabVendedor(subtab) {
+    const tabs = ["lotes", "publicar", "certificados"];
+    tabs.forEach((t) => {
+        const panel = document.getElementById(`subtab-vendedor-${t}`);
+        const btn = document.getElementById(`btn-subtab-vend-${t}`);
+        if (panel) panel.classList.toggle("active", t === subtab);
+        if (btn) btn.classList.toggle("active", t === subtab);
+    });
+    if (subtab === "certificados") {
+        renderizarCertificadosVendedor();
+    }
+    const header = document.querySelector("#vista-vendedor .role-subtabs-nav");
+    if (header) {
+        header.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+}
+
+function cambiarSubTabLogistica(subtab) {
+    const tabs = ["flota", "publicar", "viajes"];
+    tabs.forEach((t) => {
+        const panel = document.getElementById(`subtab-logistica-${t}`);
+        const btn = document.getElementById(`btn-subtab-log-${t}`);
+        if (panel) panel.classList.toggle("active", t === subtab);
+        if (btn) btn.classList.toggle("active", t === subtab);
+    });
+    if (subtab === "viajes") {
+        renderizarViajesLogistica();
+    }
+    const header = document.querySelector("#vista-logistica .role-subtabs-nav");
+    if (header) {
+        header.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+}
+
+function irANuevoLoteVendedor() {
+    cancelarEdicionLote();
+    cambiarSubTabVendedor("publicar");
+}
+
+function irANuevoCamionLogistica() {
+    cancelarEdicionCamion();
+    cambiarSubTabLogistica("publicar");
+}
+
+function irAMisComprasComprador() {
+    cerrarModalReserva();
+    cambiarVistaRol("vista-comprador");
+    cambiarSubTabComprador("compras");
+}
+
+/* =============================================================================
+   6.5. REGLAS DE NEGOCIO DE PROPIEDAD ESTRICTA Y MOTOR DE PAGINACIÓN REUTILIZABLE
+   ============================================================================= */
+let operacionesCertificados = [];
+
+const estadoPaginacion = {
+    compradorLotes: { page: 1, perPage: 4 },
+    compradorCompras: { page: 1, perPage: 3, filtro: "MIAS" },
+    vendedorLotes: { page: 1, perPage: 4, filtro: "MIOS" },
+    vendedorCerts: { page: 1, perPage: 3, filtro: "MIOS" },
+    logisticaFlota: { page: 1, perPage: 3, filtro: "MIOS" },
+    logisticaViajes: { page: 1, perPage: 3, filtro: "MIOS" },
+};
+
+function normalizarIdentidadActor(texto) {
+    if (!texto) return "";
+    return String(texto)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/\b(srl|sa|s\.a\.|s\.r\.l\.|coop\.|ltda)\b/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function esRecursoPropio(propietarioRecurso, identidadActor) {
+    const p = normalizarIdentidadActor(propietarioRecurso);
+    const a = normalizarIdentidadActor(identidadActor);
+    if (!p || !a) return false;
+    return p === a || p.includes(a) || a.includes(p);
+}
+
+function obtenerIdentidadRol(rol) {
+    if (rol === "comprador") {
+        const sw = document.getElementById("switcher-actor-comprador");
+        if (usuarioActivo && usuarioActivo.rol === "comprador" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
+            return usuarioActivo.organizacion || usuarioActivo.nombre;
+        }
+        return sw ? sw.value : "Granja Avícola San Isidro SRL";
+    }
+    if (rol === "vendedor") {
+        const sw = document.getElementById("switcher-actor-vendedor");
+        if (usuarioActivo && usuarioActivo.rol === "vendedor" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
+            return usuarioActivo.organizacion || usuarioActivo.nombre;
+        }
+        return sw ? sw.value : "Molino Arrocero San Lorenzo";
+    }
+    if (rol === "logistica") {
+        const sw = document.getElementById("switcher-actor-logistica");
+        if (usuarioActivo && usuarioActivo.rol === "logistica" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
+            return usuarioActivo.organizacion || usuarioActivo.nombre;
+        }
+        return sw ? sw.value : "Transportes Don Horacio";
+    }
+    return "";
+}
+
+function cambiarActorDemoRol(rol, organizacionNombre) {
+    if (!organizacionNombre) return;
+    if (usuarioActivo && usuarioActivo.rol === rol) {
+        usuarioActivo.organizacion = organizacionNombre;
+        try {
+            localStorage.setItem("monai_sesion_activa", JSON.stringify(usuarioActivo));
+        } catch (e) {}
+    }
+
+    if (rol === "comprador") {
+        const inputComp = document.getElementById("calc-comprador");
+        if (inputComp) inputComp.value = organizacionNombre;
+    } else if (rol === "vendedor") {
+        const inputEmp = document.getElementById("pub-empresa");
+        const labelPlanta = document.getElementById("label-planta-activa-vendedor");
+        if (inputEmp) inputEmp.value = organizacionNombre;
+        if (labelPlanta) labelPlanta.textContent = organizacionNombre;
+    } else if (rol === "logistica") {
+        const inputTrans = document.getElementById("cam-transportista");
+        const labelEmp = document.getElementById("label-empresa-activa-logistica");
+        if (inputTrans) inputTrans.value = organizacionNombre;
+        if (labelEmp) labelEmp.textContent = organizacionNombre;
+    }
+
+    sincronizarPropiedadYListasPorRol();
+}
+
+function cargarCertificadosIniciales() {
+    try {
+        const el = document.getElementById("datos-certificados-iniciales");
+        if (el && el.textContent) {
+            const parsed = JSON.parse(el.textContent.trim());
+            if (Array.isArray(parsed)) {
+                operacionesCertificados = parsed;
+                if (operacionesCertificados.length > 0 && !ultimoCertificadoEmitido) {
+                    ultimoCertificadoEmitido = operacionesCertificados[0];
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("No se pudieron cargar los certificados iniciales:", e);
+    }
+}
+
+function renderizarControlesPaginacion(containersIds, totalItems, currentPage, perPage, onPageChangeFnName) {
+    const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
+    const safePage = Math.min(Math.max(1, currentPage), totalPages);
+    const startIdx = totalItems === 0 ? 0 : (safePage - 1) * perPage + 1;
+    const endIdx = Math.min(totalItems, safePage * perPage);
+
+    let pagesHtml = "";
+    for (let p = 1; p <= totalPages; p++) {
+        pagesHtml += `
+            <button type="button" class="pagination-page-btn ${p === safePage ? "active" : ""}"
+                    onclick="${onPageChangeFnName}(${p})"
+                    aria-label="Página ${p}">
+                ${p}
+            </button>
+        `;
+    }
+
+    const html = `
+        <div class="pagination-summary">
+            Mostrando <strong>${startIdx}–${endIdx}</strong> de <strong>${totalItems}</strong> registros
+        </div>
+        <div class="pagination-controls">
+            <button type="button" class="pagination-nav-btn"
+                    ${safePage <= 1 ? "disabled" : ""}
+                    onclick="${onPageChangeFnName}(${safePage - 1})">
+                ← Anterior
+            </button>
+            <div class="pagination-pages-group">
+                ${pagesHtml}
+            </div>
+            <button type="button" class="pagination-nav-btn"
+                    ${safePage >= totalPages ? "disabled" : ""}
+                    onclick="${onPageChangeFnName}(${safePage + 1})">
+                Siguiente →
+            </button>
+        </div>
+    `;
+
+    containersIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (totalItems <= perPage && totalPages <= 1) {
+            el.innerHTML = `
+                <div class="pagination-summary">
+                    Mostrando <strong>${totalItems}</strong> de <strong>${totalItems}</strong> registros activos
+                </div>
+            `;
+        } else {
+            el.innerHTML = html;
+        }
+    });
+}
+
+/* --- 6.5.1. Paginación del Catálogo Comprador (Paso 1) --- */
+function irAPaginaCatalogoComprador(nuevaPagina) {
+    estadoPaginacion.compradorLotes.page = nuevaPagina;
+    aplicarFiltroYPaginacionCatalogoComprador();
+    const grid = document.getElementById("contenedor-tarjetas-lotes");
+    if (grid) grid.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function aplicarFiltroYPaginacionCatalogoComprador() {
+    const cards = Array.from(document.querySelectorAll("#contenedor-tarjetas-lotes .lote-card"));
+    if (cards.length === 0) return;
+
+    const filtradas = cards.filter((card) => {
+        const texto = (card.getAttribute("data-busqueda") || "").toLowerCase();
+        const coincideTexto = !textoBusquedaCatalogoComprador || texto.includes(textoBusquedaCatalogoComprador);
+        let coincideCondicion = true;
+        if (condicionFiltroCatalogoComprador === "URGENTE") {
+            coincideCondicion = card.getAttribute("data-es-urgente") === "1";
+        } else if (condicionFiltroCatalogoComprador === "FUTURO") {
+            coincideCondicion = card.getAttribute("data-es-futuro") === "1";
+        }
+        return coincideTexto && coincideCondicion;
+    });
+
+    const total = filtradas.length;
+    const perPage = estadoPaginacion.compradorLotes.perPage;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    if (estadoPaginacion.compradorLotes.page > totalPages) {
+        estadoPaginacion.compradorLotes.page = totalPages;
+    }
+    const page = estadoPaginacion.compradorLotes.page;
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+
+    cards.forEach((c) => (c.style.display = "none"));
+    filtradas.slice(start, end).forEach((c) => (c.style.display = ""));
+
+    renderizarControlesPaginacion(
+        ["paginador-comprador-top", "paginador-comprador-bottom"],
+        total,
+        page,
+        perPage,
+        "irAPaginaCatalogoComprador"
+    );
+}
+
+/* --- 6.5.2. Propiedad y Paginación de Lotes en Planta (Vendedor Tab 1) --- */
+function cambiarFiltroLotesVendedor(modo) {
+    estadoPaginacion.vendedorLotes.filtro = modo;
+    estadoPaginacion.vendedorLotes.page = 1;
+    document.getElementById("btn-filtro-vend-mios")?.classList.toggle("active", modo === "MIOS");
+    document.getElementById("btn-filtro-vend-todos")?.classList.toggle("active", modo === "TODOS");
+    aplicarPropiedadYPaginacionLotesVendedor();
+}
+
+function irAPaginaLotesVendedor(nuevaPagina) {
+    estadoPaginacion.vendedorLotes.page = nuevaPagina;
+    aplicarPropiedadYPaginacionLotesVendedor();
+}
+
+function aplicarPropiedadYPaginacionLotesVendedor() {
+    const plantaActiva = obtenerIdentidadRol("vendedor");
+    const labelPlanta = document.getElementById("label-planta-activa-vendedor");
+    if (labelPlanta) labelPlanta.textContent = plantaActiva;
+
+    const switcher = document.getElementById("switcher-actor-vendedor");
+    if (switcher) {
+        Array.from(switcher.options).forEach((opt) => {
+            if (esRecursoPropio(opt.value, plantaActiva)) switcher.value = opt.value;
+        });
+    }
+
+    const cards = Array.from(document.querySelectorAll("#lista-lotes-vendedor-abm .vendedor-lote-row-card"));
+    let misLotesCount = 0;
+
+    cards.forEach((card) => {
+        const empresaLote = card.getAttribute("data-empresa-vendedora") || "";
+        const esMio = esRecursoPropio(empresaLote, plantaActiva);
+        if (esMio) misLotesCount++;
+
+        card.classList.toggle("is-own-resource", esMio);
+        card.classList.toggle("is-readonly-resource", !esMio);
+
+        const badgeSlot = card.querySelector(".ownership-badge-slot");
+        const actionsGroup = card.querySelector(".owner-actions-group");
+        const readonlySlot = card.querySelector(".readonly-notice-slot");
+
+        if (badgeSlot) {
+            badgeSlot.innerHTML = esMio
+                ? `<span class="badge-own-resource">✓ Tu Planta</span>`
+                : `<span class="badge-thirdparty-resource">Otra Planta</span>`;
+        }
+        if (actionsGroup) actionsGroup.style.display = esMio ? "flex" : "none";
+        if (readonlySlot) readonlySlot.style.display = esMio ? "none" : "block";
+    });
+
+    const kpiMisLotes = document.getElementById("kpi-vend-mis-lotes");
+    if (kpiMisLotes) kpiMisLotes.textContent = `${misLotesCount} ${misLotesCount === 1 ? "lote" : "lotes"}`;
+
+    const modo = estadoPaginacion.vendedorLotes.filtro;
+    const visibles = cards.filter((card) => {
+        if (modo === "TODOS") return true;
+        return card.classList.contains("is-own-resource");
+    });
+
+    const total = visibles.length;
+    const perPage = estadoPaginacion.vendedorLotes.perPage;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    if (estadoPaginacion.vendedorLotes.page > totalPages) {
+        estadoPaginacion.vendedorLotes.page = totalPages;
+    }
+    const page = estadoPaginacion.vendedorLotes.page;
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+
+    cards.forEach((c) => (c.style.display = "none"));
+    visibles.slice(start, end).forEach((c) => (c.style.display = ""));
+
+    renderizarControlesPaginacion(
+        ["paginador-vendedor-lotes-top", "paginador-vendedor-lotes-bottom"],
+        total,
+        page,
+        perPage,
+        "irAPaginaLotesVendedor"
+    );
+}
+
+/* --- 6.5.3. Propiedad y Paginación de Flota en Retorno (Logística Tab 1) --- */
+function cambiarFiltroFlotaLogistica(modo) {
+    estadoPaginacion.logisticaFlota.filtro = modo;
+    estadoPaginacion.logisticaFlota.page = 1;
+    document.getElementById("btn-filtro-log-mios")?.classList.toggle("active", modo === "MIOS");
+    document.getElementById("btn-filtro-log-todos")?.classList.toggle("active", modo === "TODOS");
+    aplicarPropiedadYPaginacionFlotaLogistica();
+}
+
+function irAPaginaFlotaLogistica(nuevaPagina) {
+    estadoPaginacion.logisticaFlota.page = nuevaPagina;
+    aplicarPropiedadYPaginacionFlotaLogistica();
+}
+
+function aplicarPropiedadYPaginacionFlotaLogistica() {
+    const empresaActiva = obtenerIdentidadRol("logistica");
+    const labelEmp = document.getElementById("label-empresa-activa-logistica");
+    if (labelEmp) labelEmp.textContent = empresaActiva;
+
+    const switcher = document.getElementById("switcher-actor-logistica");
+    if (switcher) {
+        Array.from(switcher.options).forEach((opt) => {
+            if (esRecursoPropio(opt.value, empresaActiva)) switcher.value = opt.value;
+        });
+    }
+
+    const cards = Array.from(document.querySelectorAll("#contenedor-camiones-logistica .truck-route-card"));
+    let miFlotaCount = 0;
+
+    cards.forEach((card) => {
+        const transportistaCard = card.getAttribute("data-transportista") || "";
+        const esMio = esRecursoPropio(transportistaCard, empresaActiva);
+        if (esMio) miFlotaCount++;
+
+        card.classList.toggle("is-own-resource", esMio);
+        card.classList.toggle("is-readonly-resource", !esMio);
+
+        const badgeSlot = card.querySelector(".ownership-badge-slot");
+        const actionsGroup = card.querySelector(".owner-actions-group");
+        const readonlySlot = card.querySelector(".readonly-notice-slot");
+
+        if (badgeSlot) {
+            badgeSlot.innerHTML = esMio
+                ? `<span class="badge-own-resource">✓ Tu Flota</span>`
+                : `<span class="badge-thirdparty-resource">Otra Transportista</span>`;
+        }
+        if (actionsGroup) actionsGroup.style.display = esMio ? "flex" : "none";
+        if (readonlySlot) readonlySlot.style.display = esMio ? "none" : "block";
+    });
+
+    const kpiMiFlota = document.getElementById("kpi-log-mi-flota");
+    if (kpiMiFlota) kpiMiFlota.textContent = `${miFlotaCount} ${miFlotaCount === 1 ? "unidad" : "unidades"}`;
+
+    const modo = estadoPaginacion.logisticaFlota.filtro;
+    const visibles = cards.filter((card) => {
+        if (modo === "TODOS") return true;
+        return card.classList.contains("is-own-resource");
+    });
+
+    const total = visibles.length;
+    const perPage = estadoPaginacion.logisticaFlota.perPage;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    if (estadoPaginacion.logisticaFlota.page > totalPages) {
+        estadoPaginacion.logisticaFlota.page = totalPages;
+    }
+    const page = estadoPaginacion.logisticaFlota.page;
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+
+    cards.forEach((c) => (c.style.display = "none"));
+    visibles.slice(start, end).forEach((c) => (c.style.display = ""));
+
+    renderizarControlesPaginacion(
+        ["paginador-logistica-flota-top", "paginador-logistica-flota-bottom"],
+        total,
+        page,
+        perPage,
+        "irAPaginaFlotaLogistica"
+    );
+}
+
+/* --- 6.5.4. Pestaña 3 Comprador: Mis Compras y Certificados (Con Firma y Cierre de Escrow) --- */
+function cambiarFiltroComprasComprador(modo) {
+    estadoPaginacion.compradorCompras.filtro = modo;
+    estadoPaginacion.compradorCompras.page = 1;
+    document.getElementById("btn-filtro-compras-mias")?.classList.toggle("active", modo === "MIAS");
+    document.getElementById("btn-filtro-compras-todas")?.classList.toggle("active", modo === "TODAS");
+    renderizarComprasComprador();
+}
+
+function irAPaginaComprasComprador(nuevaPagina) {
+    estadoPaginacion.compradorCompras.page = nuevaPagina;
+    renderizarComprasComprador();
+}
+
+function renderizarComprasComprador() {
+    const compradorActivo = obtenerIdentidadRol("comprador");
+    const switcher = document.getElementById("switcher-actor-comprador");
+    if (switcher) {
+        Array.from(switcher.options).forEach((opt) => {
+            if (esRecursoPropio(opt.value, compradorActivo)) switcher.value = opt.value;
+        });
+    }
+
+    const misOperaciones = operacionesCertificados.filter((op) =>
+        esRecursoPropio(op.comprador, compradorActivo)
+    );
+    const pendientesMias = misOperaciones.filter((op) => !op.esta_cerrado).length;
+
+    const kpiMisCompras = document.getElementById("kpi-comp-mis-compras");
+    if (kpiMisCompras) {
+        kpiMisCompras.textContent = `${misOperaciones.length} (${pendientesMias} por firmar)`;
+    }
+    const badgePend = document.getElementById("badge-compras-pendientes");
+    if (badgePend) {
+        badgePend.textContent = pendientesMias > 0 ? `${pendientesMias} por firmar` : `${misOperaciones.length}`;
+    }
+
+    const modo = estadoPaginacion.compradorCompras.filtro;
+    const listaFiltrada =
+        modo === "TODAS" ? operacionesCertificados : misOperaciones;
+
+    const total = listaFiltrada.length;
+    const perPage = estadoPaginacion.compradorCompras.perPage;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    if (estadoPaginacion.compradorCompras.page > totalPages) {
+        estadoPaginacion.compradorCompras.page = totalPages;
+    }
+    const page = estadoPaginacion.compradorCompras.page;
+    const start = (page - 1) * perPage;
+    const itemsPagina = listaFiltrada.slice(start, start + perPage);
+
+    const container = document.getElementById("lista-compras-comprador");
+    if (!container) return;
+
+    if (itemsPagina.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state-card">
+                <h4>No tenés compras registradas bajo "${compradorActivo}" en este filtro</h4>
+                <p>Podés explorar lotes en el Paso 1, cotizar en el Paso 2 y reservar con Pago en Garantía (Escrow), o cambiar a "Todas las Operaciones (Auditoría)".</p>
+                <button type="button" class="btn-primary" style="margin-top:0.65rem;" onclick="cambiarSubTabComprador('paso1')">
+                    Ir al Catálogo de Subproductos →
+                </button>
+            </div>
+        `;
+    } else {
+        container.innerHTML = itemsPagina
+            .map((op) => {
+                const esMia = esRecursoPropio(op.comprador, compradorActivo);
+                const cerrado = Boolean(op.esta_cerrado);
+                const codigoOp = `#MN-2026-${String(op.id).padStart(4, "0")}`;
+
+                let accionFirmaHtml = "";
+                if (cerrado) {
+                    accionFirmaHtml = `
+                        <div class="cert-signed-banner">
+                            <span>✓ <strong>Certificado Firmado y Cerrado en Tranquera</strong> · Fondos Escrow liberados al vendedor y transportista.</span>
+                            <button type="button" class="btn-secondary-outline" style="padding:0.4rem 0.85rem; font-size:0.78rem;"
+                                    onclick="verCertificadoA4DesdeComprador(${op.id})">
+                                Ver / Imprimir Certificado A4
+                            </button>
+                        </div>
+                    `;
+                } else if (esMia) {
+                    accionFirmaHtml = `
+                        <div class="cert-pending-sign-banner">
+                            <div>
+                                <strong>Recepción Pendiente de Tu Firma Digital (${op.comprador})</strong>
+                                <p>Cuando el camión descargue las <strong>${op.toneladas} tn</strong> en tu establecimiento (${op.destino}), firmá la conformidad para cerrar el Certificado Ambiental y liberar el Escrow.</p>
+                            </div>
+                            <button type="button" class="btn-primary" style="background:var(--verde-bosque); white-space:nowrap;"
+                                    onclick="firmarYCerrarCertificadoComprador(${op.id})">
+                                Firmar Conformidad en Tranquera y Cerrar Certificado →
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    accionFirmaHtml = `
+                        <div class="readonly-lock-pill" style="margin-top:0.65rem;">
+                            Solo el comprador titular (<strong>${op.comprador}</strong>) está autorizado a firmar la recepción y liberar los fondos en custodia.
+                        </div>
+                    `;
+                }
+
+                return `
+                    <article class="cert-op-card ${cerrado ? "cert-op-closed" : "cert-op-active"} ${esMia ? "is-own-resource" : "is-readonly-resource"}">
+                        <div class="cert-op-header">
+                            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem;">
+                                <span class="mono" style="font-weight:700; font-size:0.85rem; color:var(--verde-bosque);">${codigoOp}</span>
+                                <span class="${cerrado ? "badge-cert-closed" : "badge-cert-custody"}">
+                                    ${cerrado ? "✓ CERTIFICADO CERRADO · ESCROW LIBERADO" : "● EN CUSTODIA (ESCROW ACTIVO) · PENDIENTE FIRMA"}
+                                </span>
+                                ${esMia ? '<span class="badge-own-resource">✓ Tu Compra</span>' : '<span class="badge-thirdparty-resource">Otro Comprador</span>'}
+                            </div>
+                            <span class="mono" style="font-size:0.78rem; color:var(--texto-atenuado);">${op.fecha_emision || "Oct 2026"}</span>
+                        </div>
+
+                        <div class="cert-op-body">
+                            <div class="cert-op-main-info">
+                                <h4>${op.subproducto} — <strong>${op.toneladas} tn</strong> (${op.volumen_m3} m³)</h4>
+                                <p style="font-size:0.84rem; color:var(--texto-secundario); margin-top:0.2rem;">
+                                    Origen: <strong>${op.vendedor}</strong> (${op.origen}) → Destino: <strong>${op.comprador}</strong> (${op.destino})
+                                </p>
+                                <p style="font-size:0.80rem; color:var(--texto-secundario); margin-top:0.15rem;">
+                                    Logística: <strong>${op.transportista}</strong> · Hash Hedera: <code class="mono">${(op.hash_certificado || "").slice(0, 22)}...</code>
+                                </p>
+                            </div>
+                            <div class="cert-op-financials">
+                                <div class="cert-fin-item">
+                                    <span>Ahorro Logístico</span>
+                                    <strong style="color:var(--verde-hoja);">${formatoARS(op.ahorro_logistico_ars)} ARS</strong>
+                                </div>
+                                <div class="cert-fin-item">
+                                    <span>Total en Garantía</span>
+                                    <strong class="mono">${formatoARS(op.total_comprador_ars)} ARS</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stepper de Trazabilidad en 3 Pasos -->
+                        <div class="cert-stepper-row">
+                            <div class="cert-step done">
+                                <span class="step-dot">1</span>
+                                <span>Fondos en Garantía (Escrow)</span>
+                            </div>
+                            <div class="cert-step done">
+                                <span class="step-dot">2</span>
+                                <span>Flete en Ruta (${op.origen} → ${op.destino})</span>
+                            </div>
+                            <div class="cert-step ${cerrado ? "done" : "pending"}">
+                                <span class="step-dot">${cerrado ? "✓" : "3"}</span>
+                                <span>${cerrado ? "Firmado en Tranquera y Certificado Cerrado" : "Firma del Comprador en Tranquera"}</span>
+                            </div>
+                        </div>
+
+                        ${accionFirmaHtml}
+                    </article>
+                `;
+            })
+            .join("");
+    }
+
+    renderizarControlesPaginacion(
+        ["paginador-comprador-compras-top", "paginador-comprador-compras-bottom"],
+        total,
+        page,
+        perPage,
+        "irAPaginaComprasComprador"
+    );
+}
+
+/* --- 6.5.5. Pestaña 3 Vendedor: Mis Certificados Ambientales (Solo Lectura de Escrow) --- */
+function cambiarFiltroCertificadosVendedor(modo) {
+    estadoPaginacion.vendedorCerts.filtro = modo;
+    estadoPaginacion.vendedorCerts.page = 1;
+    document.getElementById("btn-filtro-cert-vend-mios")?.classList.toggle("active", modo === "MIOS");
+    document.getElementById("btn-filtro-cert-vend-todos")?.classList.toggle("active", modo === "TODOS");
+    renderizarCertificadosVendedor();
+}
+
+function irAPaginaCertificadosVendedor(nuevaPagina) {
+    estadoPaginacion.vendedorCerts.page = nuevaPagina;
+    renderizarCertificadosVendedor();
+}
+
+function renderizarCertificadosVendedor() {
+    const vendedorActivo = obtenerIdentidadRol("vendedor");
+    const misCerts = operacionesCertificados.filter((op) =>
+        esRecursoPropio(op.vendedor, vendedorActivo)
+    );
+
+    const kpiCerts = document.getElementById("kpi-vend-mis-certs");
+    if (kpiCerts) {
+        kpiCerts.textContent = `${misCerts.length} ${misCerts.length === 1 ? "emitido" : "emitidos"}`;
+    }
+
+    const modo = estadoPaginacion.vendedorCerts.filtro;
+    const listaFiltrada = modo === "TODOS" ? operacionesCertificados : misCerts;
+
+    const total = listaFiltrada.length;
+    const perPage = estadoPaginacion.vendedorCerts.perPage;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    if (estadoPaginacion.vendedorCerts.page > totalPages) {
+        estadoPaginacion.vendedorCerts.page = totalPages;
+    }
+    const page = estadoPaginacion.vendedorCerts.page;
+    const start = (page - 1) * perPage;
+    const itemsPagina = listaFiltrada.slice(start, start + perPage);
+
+    const container = document.getElementById("lista-certificados-vendedor");
+    if (!container) return;
+
+    if (itemsPagina.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state-card">
+                <h4>Sin certificados emitidos para "${vendedorActivo}" en este filtro</h4>
+                <p>Cambiá a "Todos los del Mercado" o seleccioná otra planta agroindustrial arriba para auditar sus certificados.</p>
+            </div>
+        `;
+    } else {
+        container.innerHTML = itemsPagina
+            .map((op) => {
+                const cerrado = Boolean(op.esta_cerrado);
+                const esMio = esRecursoPropio(op.vendedor, vendedorActivo);
+                const activoId = ultimoCertificadoEmitido ? ultimoCertificadoEmitido.id : null;
+                const esSeleccionado = activoId === op.id;
+
+                return `
+                    <article class="cert-op-card cert-op-compact ${esSeleccionado ? "selected" : ""}"
+                             onclick="seleccionarCertificadoVendedor(${op.id})"
+                             style="cursor:pointer;">
+                        <div class="cert-op-header">
+                            <span class="mono" style="font-weight:700; color:var(--verde-bosque);">#MN-2026-${String(op.id).padStart(4, "0")}</span>
+                            <span class="${cerrado ? "badge-cert-closed" : "badge-cert-custody"}">
+                                ${cerrado ? "✓ CERRADO POR COMPRADOR" : "● EN CUSTODIA (ESPERANDO FIRMA COMPRADOR)"}
+                            </span>
+                        </div>
+                        <h4 style="font-size:0.95rem; margin:0.35rem 0 0.2rem;">${op.subproducto} (${op.toneladas} tn)</h4>
+                        <p style="font-size:0.80rem; color:var(--texto-secundario);">
+                            Planta: <strong>${op.vendedor}</strong> → Comprador: <strong>${op.comprador}</strong> (${op.destino})
+                        </p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem; font-size:0.78rem;">
+                            <span class="mono">Total: <strong>${formatoARS(op.total_comprador_ars)} ARS</strong></span>
+                            <span style="color:var(--verde-bosque); font-weight:700;">
+                                ${esMio ? "✓ Tu Planta · Ver A4 →" : "Otra Planta · Ver A4 →"}
+                            </span>
+                        </div>
+                    </article>
+                `;
+            })
+            .join("");
+
+        // Sincronizar el visor A4 con el primer certificado de la lista si el actual no está
+        if (itemsPagina.length > 0 && (!ultimoCertificadoEmitido || !itemsPagina.some((i) => i.id === ultimoCertificadoEmitido.id))) {
+            seleccionarCertificadoVendedor(itemsPagina[0].id);
+        } else if (ultimoCertificadoEmitido) {
+            actualizarCertificadoEnPortalVendedor(ultimoCertificadoEmitido);
+        }
+    }
+
+    renderizarControlesPaginacion(
+        ["paginador-vendedor-cert-top", "paginador-vendedor-cert-bottom"],
+        total,
+        page,
+        perPage,
+        "irAPaginaCertificadosVendedor"
+    );
+}
+
+function seleccionarCertificadoVendedor(opId) {
+    const op = operacionesCertificados.find((item) => item.id === opId);
+    if (!op) return;
+    ultimoCertificadoEmitido = op;
+    actualizarCertificadoEnPortalVendedor(op);
+    document.querySelectorAll("#lista-certificados-vendedor .cert-op-card").forEach((el) => {
+        el.classList.toggle("selected", el.textContent.includes(String(op.id).padStart(4, "0")));
+    });
+}
+
+function verCertificadoA4DesdeComprador(opId) {
+    const op = operacionesCertificados.find((item) => item.id === opId);
+    if (op) {
+        ultimoCertificadoEmitido = op;
+        actualizarCertificadoEnPortalVendedor(op);
+    }
+    cambiarVistaRol("vista-vendedor");
+    cambiarSubTabVendedor("certificados");
+    setTimeout(() => {
+        const card = document.getElementById("tarjeta-certificado-activo");
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 120);
+}
+
+/* --- 6.5.6. Pestaña 3 Logística: Viajes Calzados y Liquidaciones --- */
+function cambiarFiltroViajesLogistica(modo) {
+    estadoPaginacion.logisticaViajes.filtro = modo;
+    estadoPaginacion.logisticaViajes.page = 1;
+    document.getElementById("btn-filtro-viajes-mios")?.classList.toggle("active", modo === "MIOS");
+    document.getElementById("btn-filtro-viajes-todos")?.classList.toggle("active", modo === "TODOS");
+    renderizarViajesLogistica();
+}
+
+function irAPaginaViajesLogistica(nuevaPagina) {
+    estadoPaginacion.logisticaViajes.page = nuevaPagina;
+    renderizarViajesLogistica();
+}
+
+function renderizarViajesLogistica() {
+    const transportistaActivo = obtenerIdentidadRol("logistica");
+    const misViajes = operacionesCertificados.filter((op) =>
+        esRecursoPropio(op.transportista, transportistaActivo)
+    );
+
+    const kpiViajes = document.getElementById("kpi-log-mis-viajes");
+    if (kpiViajes) {
+        kpiViajes.textContent = `${misViajes.length} ${misViajes.length === 1 ? "operación" : "operaciones"}`;
+    }
+
+    const modo = estadoPaginacion.logisticaViajes.filtro;
+    const listaFiltrada = modo === "TODOS" ? operacionesCertificados : misViajes;
+
+    const total = listaFiltrada.length;
+    const perPage = estadoPaginacion.logisticaViajes.perPage;
+    const totalPages = Math.max(1, Math.ceil(total / perPage));
+    if (estadoPaginacion.logisticaViajes.page > totalPages) {
+        estadoPaginacion.logisticaViajes.page = totalPages;
+    }
+    const page = estadoPaginacion.logisticaViajes.page;
+    const start = (page - 1) * perPage;
+    const itemsPagina = listaFiltrada.slice(start, start + perPage);
+
+    const container = document.getElementById("lista-viajes-logistica");
+    if (!container) return;
+
+    if (itemsPagina.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state-card">
+                <h4>No hay viajes calzados registrados para "${transportistaActivo}" en este filtro</h4>
+                <p>Cambiá a "Todos los Viajes" o seleccioná otra empresa transportista en el selector superior.</p>
+            </div>
+        `;
+    } else {
+        container.innerHTML = itemsPagina
+            .map((op) => {
+                const cerrado = Boolean(op.esta_cerrado);
+                const esMio = esRecursoPropio(op.transportista, transportistaActivo);
+                return `
+                    <article class="cert-op-card ${cerrado ? "cert-op-closed" : "cert-op-active"}">
+                        <div class="cert-op-header">
+                            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                                <span class="mono" style="font-weight:700; color:var(--verde-bosque);">#MN-VIAJE-${String(op.id).padStart(4, "0")}</span>
+                                <span class="${cerrado ? "badge-cert-closed" : "badge-cert-custody"}">
+                                    ${cerrado ? "✓ FLETE LIQUIDADO Y LIBERADO" : "● FLETE EN CUSTODIA (EN TRÁNSITO)"}
+                                </span>
+                                ${esMio ? '<span class="badge-own-resource">✓ Tu Unidad</span>' : '<span class="badge-thirdparty-resource">Otro Transportista</span>'}
+                            </div>
+                            <span class="mono" style="font-size:0.78rem; color:var(--texto-atenuado);">${op.fecha_emision || "Oct 2026"}</span>
+                        </div>
+                        <div class="cert-op-body">
+                            <div class="cert-op-main-info">
+                                <h4>${op.transportista} — Carga: ${op.subproducto} (${op.toneladas} tn / ${op.volumen_m3} m³)</h4>
+                                <p style="font-size:0.84rem; color:var(--texto-secundario); margin-top:0.2rem;">
+                                    Retiro en Planta: <strong>${op.vendedor} (${op.origen})</strong> → Descarga en Tranquera: <strong>${op.comprador} (${op.destino})</strong>
+                                </p>
+                            </div>
+                            <div class="cert-op-financials">
+                                <div class="cert-fin-item">
+                                    <span>Estado Liquidación</span>
+                                    <strong style="color:${cerrado ? "var(--verde-bosque)" : "var(--ambar-trigo)"};">
+                                        ${cerrado ? "Transferido a CBU ✓" : "Retenido en Escrow"}
+                                    </strong>
+                                </div>
+                                <div class="cert-fin-item">
+                                    <span>Operación Total</span>
+                                    <strong class="mono">${formatoARS(op.total_comprador_ars)} ARS</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            })
+            .join("");
+    }
+
+    renderizarControlesPaginacion(
+        ["paginador-logistica-viajes-top", "paginador-logistica-viajes-bottom"],
+        total,
+        page,
+        perPage,
+        "irAPaginaViajesLogistica"
+    );
+}
+
+function sincronizarPropiedadYListasPorRol() {
+    aplicarFiltroYPaginacionCatalogoComprador();
+    aplicarPropiedadYPaginacionLotesVendedor();
+    aplicarPropiedadYPaginacionFlotaLogistica();
+    renderizarComprasComprador();
+    renderizarCertificadosVendedor();
+    renderizarViajesLogistica();
+}
+
+/* =============================================================================
+   7. RESERVA CON PAGO EN GARANTÍA (ESCROW) Y FIRMA EXCLUSIVA DEL COMPRADOR (CARRIL 4)
    ============================================================================= */
 let ultimoCertificadoEmitido = null;
 
@@ -1294,12 +2158,12 @@ function aplicarPresetComprador(valor) {
         if (partes[4] && selectVeh) {
             selectVeh.value = partes[4];
         }
+        cambiarActorDemoRol("comprador", partes[0]);
         recalcularCotizacionEnVivo();
     }
 }
 
 async function confirmarReservaConGarantia() {
-    // Si el usuario no inició sesión, interceptar, guardar intención y abrir modal de acceso
     if (!usuarioActivo) {
         reservaPendiente = true;
         const notice = document.getElementById("login-modal-notice");
@@ -1307,7 +2171,7 @@ async function confirmarReservaConGarantia() {
             notice.style.display = "block";
             notice.innerHTML = `
                 <div class="login-notice-banner">
-                    <strong>🔒 Identificate para resguardar tu reserva</strong>
+                    <strong>Identificate para resguardar tu reserva</strong>
                     <p>Para emitir el comprobante de pago en custodia (Escrow) y el remito oficial a tu nombre, elegí tu establecimiento o ingresá tus datos.</p>
                 </div>
             `;
@@ -1322,7 +2186,10 @@ async function confirmarReservaConGarantia() {
     const toneladas = document.getElementById("calc-toneladas")?.value || 14;
     const modoTransporte = document.getElementById("calc-modo-transporte")?.value || "VUELTA";
     const tipoVehiculoPropio = document.getElementById("calc-tipo-vehiculo-propio")?.value || "CAMION_CHASIS";
-    const compradorNombre = document.getElementById("calc-comprador")?.value || (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "Granja Avícola San Isidro SRL");
+    const compradorNombre =
+        document.getElementById("calc-comprador")?.value ||
+        obtenerIdentidadRol("comprador") ||
+        "Granja Avícola San Isidro SRL";
     const destino = document.getElementById("calc-destino")?.value || (usuarioActivo ? usuarioActivo.localidad : "Goya, Corrientes");
     const ventanaCarga = document.getElementById("calc-ventana-carga")?.value || "";
     const destinoConVentana = ventanaCarga ? `${destino} · Turno: ${ventanaCarga}` : destino;
@@ -1351,6 +2218,8 @@ async function confirmarReservaConGarantia() {
         const data = await res.json();
         if (data.ok) {
             ultimoCertificadoEmitido = data.certificado;
+            operacionesCertificados.unshift(data.certificado);
+            sincronizarPropiedadYListasPorRol();
             actualizarCertificadoEnPortalVendedor(data.certificado);
             mostrarModalVoucherReserva(data.certificado, modoTransporte);
         } else {
@@ -1366,43 +2235,75 @@ async function confirmarReservaConGarantia() {
     }
 }
 
-async function confirmarDescargaYLiberarEscrow() {
-    const opId = ultimoCertificadoEmitido ? ultimoCertificadoEmitido.id : null;
+async function firmarYCerrarCertificadoComprador(operacionId) {
+    const opId = operacionId || (ultimoCertificadoEmitido ? ultimoCertificadoEmitido.id : null);
+    const compradorActivo = obtenerIdentidadRol("comprador");
+
     try {
         const res = await fetch("/api/liberar-garantia/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ operacion_id: opId }),
+            body: JSON.stringify({
+                operacion_id: opId,
+                actor_rol: "comprador",
+                actor_organizacion: compradorActivo,
+                actor_nombre: usuarioActivo ? usuarioActivo.nombre : compradorActivo,
+            }),
         });
         const data = await res.json();
-        if (data.ok) {
-            const setTxt = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = val;
-            };
-            setTxt("voucher-estado-badge", "PAGO LIBERADO AL VENDEDOR Y FLETERO · DESCARGA CONFIRMADA");
-            setTxt("voucher-banner-title", "✅ ¡Descarga en Campo Confirmada y Fondos Liberados!");
-            setTxt(
-                "voucher-banner-desc",
-                "El pago retenido en garantía (Escrow ARS) fue transferido al establecimiento vendedor y al transportista de retorno. Remito Circular cerrado."
-            );
-            setTxt("cert-estado-badge", "PAGO LIBERADO (ESCROW CERRADO) · REMITO CIRCULAR AUDITABLE");
-
-            const vTotal = document.getElementById("voucher-total");
-            if (vTotal) vTotal.textContent = vTotal.textContent.replace("(Custodia activa)", "(Pago Liberado ✓)");
-            const cTotal = document.getElementById("cert-total");
-            if (cTotal) cTotal.textContent = `${cTotal.textContent.split("(")[0].trim()} (Pago Liberado ✓)`;
-
-            const btnVoucher = document.getElementById("btn-voucher-liberar");
-            if (btnVoucher) {
-                btnVoucher.disabled = true;
-                btnVoucher.textContent = "✓ Pago Liberado";
-            }
-            alert(data.mensaje);
+        if (!res.ok || !data.ok) {
+            alert(data.mensaje || "Regla de Negocio: Solo el comprador titular puede firmar la recepción y liberar el Escrow.");
+            return;
         }
+
+        if (data.certificado) {
+            const idx = operacionesCertificados.findIndex((item) => item.id === data.certificado.id);
+            if (idx >= 0) {
+                operacionesCertificados[idx] = data.certificado;
+            } else {
+                operacionesCertificados.unshift(data.certificado);
+            }
+            ultimoCertificadoEmitido = data.certificado;
+            actualizarCertificadoEnPortalVendedor(data.certificado);
+        } else if (opId) {
+            const opLocal = operacionesCertificados.find((item) => item.id === opId);
+            if (opLocal) {
+                opLocal.esta_cerrado = true;
+                opLocal.estado = "DESCARGA_CONFIRMADA_PAGO_LIBERADO";
+                actualizarCertificadoEnPortalVendedor(opLocal);
+            }
+        }
+
+        const setTxt = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        };
+        setTxt("voucher-estado-badge", "PAGO LIBERADO AL VENDEDOR Y FLETERO · DESCARGA CONFIRMADA");
+        setTxt("voucher-banner-title", "✓ ¡Descarga en Campo Confirmada y Fondos Liberados!");
+        setTxt(
+            "voucher-banner-desc",
+            "El pago retenido en garantía (Escrow ARS) fue transferido al establecimiento vendedor y al transportista de retorno. Remito Circular cerrado."
+        );
+
+        const vTotal = document.getElementById("voucher-total");
+        if (vTotal) vTotal.textContent = vTotal.textContent.replace("(Custodia activa)", "(Pago Liberado ✓)");
+
+        const btnVoucher = document.getElementById("btn-voucher-liberar");
+        if (btnVoucher) {
+            btnVoucher.disabled = true;
+            btnVoucher.textContent = "✓ Recepción Firmada y Pago Liberado";
+        }
+
+        sincronizarPropiedadYListasPorRol();
+        alert(data.mensaje);
     } catch (err) {
-        alert("No se pudo liberar la garantía en este momento.");
+        alert("No se pudo firmar y liberar la garantía en este momento.");
     }
+}
+
+async function confirmarDescargaYLiberarEscrow() {
+    const opId = ultimoCertificadoEmitido ? ultimoCertificadoEmitido.id : null;
+    await firmarYCerrarCertificadoComprador(opId);
 }
 
 function mostrarModalVoucherReserva(cert, modoTransporteUsado) {
@@ -1427,17 +2328,17 @@ function mostrarModalVoucherReserva(cert, modoTransporteUsado) {
     const btnVoucher = document.getElementById("btn-voucher-liberar");
     if (btnVoucher) {
         btnVoucher.disabled = false;
-        btnVoucher.textContent = "✅ Confirmar Descarga y Liberar Pago";
+        btnVoucher.textContent = "Firmar Recepción en Tranquera y Liberar Pago";
     }
 
     setTxt("voucher-id", `#MN-RES-${String(cert.id).padStart(4, "0")}`);
     setTxt("voucher-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
     setTxt("voucher-vendedor", `${cert.vendedor} (${cert.origen})`);
-    
+
     if (esVehiculoPropio) {
         const selVeh = document.getElementById("calc-tipo-vehiculo-propio");
         const nomVeh = selVeh ? selVeh.options[selVeh.selectedIndex]?.text.split("(")[0].trim() : "Particular";
-        setTxt("voucher-camion", `🛻 Retiro Particular (${nomVeh}) · $0 Flete Tercerizado`);
+        setTxt("voucher-camion", `Retiro Particular (${nomVeh}) · $0 Flete Tercerizado`);
     } else {
         setTxt("voucher-camion", cert.transportista);
     }
@@ -1471,6 +2372,7 @@ function imprimirVoucherReserva() {
 function irACertificadoVendedor() {
     cerrarModalReserva();
     cambiarVistaRol("vista-vendedor");
+    cambiarSubTabVendedor("certificados");
     setTimeout(() => {
         const card = document.getElementById("tarjeta-certificado-activo");
         if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1478,10 +2380,13 @@ function irACertificadoVendedor() {
 }
 
 function actualizarCertificadoEnPortalVendedor(cert) {
+    if (!cert) return;
     const setTxt = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
     };
+
+    const cerrado = Boolean(cert.esta_cerrado) || cert.estado === "DESCARGA_CONFIRMADA_PAGO_LIBERADO";
 
     setTxt("cert-id", `#MN-2026-${String(cert.id).padStart(4, "0")}`);
     setTxt("cert-vendedor", `${cert.vendedor} (${cert.origen})`);
@@ -1489,11 +2394,35 @@ function actualizarCertificadoEnPortalVendedor(cert) {
     setTxt("cert-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
     setTxt("cert-transportista", cert.transportista);
     setTxt("cert-ahorro", `${formatoARS(cert.ahorro_logistico_ars)} ARS`);
-    setTxt("cert-total", `${formatoARS(cert.total_comprador_ars)} ARS (Custodia activa)`);
+    setTxt(
+        "cert-total",
+        `${formatoARS(cert.total_comprador_ars)} ARS (${cerrado ? "Pago Liberado ✓" : "Custodia activa"})`
+    );
+    setTxt(
+        "cert-estado-badge",
+        cerrado
+            ? "PAGO LIBERADO (ESCROW CERRADO) · FIRMADO POR COMPRADOR"
+            : "OPERACIÓN EN CUSTODIA (ESCROW ACTIVO) · PENDIENTE FIRMA COMPRADOR"
+    );
     setTxt("cert-hash", cert.hash_certificado);
-    setTxt("cert-red", cert.red_blockchain);
+    setTxt("cert-red", cert.red_blockchain || "Hedera Testnet (HCS)");
     const cLink = document.getElementById("cert-hashscan-link");
     if (cLink && cert.hashscan_url) cLink.href = cert.hashscan_url;
+
+    const auditIcon = document.getElementById("cert-vendedor-audit-icon");
+    const auditTitle = document.getElementById("cert-vendedor-audit-title");
+    const auditDesc = document.getElementById("cert-vendedor-audit-desc");
+    if (auditIcon && auditTitle && auditDesc) {
+        if (cerrado) {
+            auditIcon.textContent = "✓";
+            auditTitle.textContent = "Certificado Firmado en Tranquera y Cerrado por el Comprador";
+            auditDesc.innerHTML = `El comprador <strong>${cert.comprador}</strong> confirmó la descarga conforme y liberó los fondos de garantía. Certificado definitivo apto para auditoría ambiental.`;
+        } else {
+            auditIcon.textContent = "●";
+            auditTitle.textContent = "Esperando Firma de Recepción del Comprador en Tranquera";
+            auditDesc.innerHTML = `Por regla de negocio y seguridad del Escrow, únicamente el establecimiento comprador (<strong>${cert.comprador}</strong>) puede firmar la recepción y liberar los fondos.`;
+        }
+    }
 }
 
 function imprimirCertificadoOficial() {
@@ -1501,7 +2430,7 @@ function imprimirCertificadoOficial() {
 }
 
 /* =============================================================================
-   8. ABM DE EXCEDENTES (VENDEDOR) Y ABM DE CAMIONES DE RETORNO (LOGÍSTICA)
+   8. ABM DE EXCEDENTES (VENDEDOR) Y ABM DE CAMIONES DE RETORNO (LOGÍSTICA) CON PROPIEDAD
    ============================================================================= */
 function sugerirValoresPorSector(sector) {
     const inputDensidad = document.getElementById("pub-densidad");
@@ -1541,6 +2470,12 @@ function actualizarPreviewCubicajePublicacion() {
 }
 
 function cargarLoteEnFormularioEdicion(id, titulo, categoria, empresa, localidad, toneladas, densidad, precio, modalidad, usos) {
+    const plantaActiva = obtenerIdentidadRol("vendedor");
+    if (!esRecursoPropio(empresa, plantaActiva)) {
+        alert(`Regla de Negocio: Tu planta activa es "${plantaActiva}". No podés modificar lotes pertenecientes a "${empresa}".`);
+        return;
+    }
+
     document.getElementById("pub-lote-edit-id").value = id;
     document.getElementById("pub-titulo").value = titulo;
     document.getElementById("pub-categoria").value = categoria;
@@ -1551,24 +2486,26 @@ function cargarLoteEnFormularioEdicion(id, titulo, categoria, empresa, localidad
     document.getElementById("pub-precio").value = parseFloat(String(precio).replace(",", ".")) || 20000;
     document.getElementById("pub-modalidad").value = modalidad;
     document.getElementById("pub-usos").value = usos;
+    alternarCampoMutuoAcuerdo(modalidad);
 
     const badge = document.getElementById("pub-form-badge");
     const title = document.getElementById("pub-form-title");
     const btnSubmit = document.getElementById("pub-btn-submit");
     const btnCancel = document.getElementById("pub-btn-cancel-edit");
 
-    if (badge) badge.textContent = `MODIFICACIÓN DE LOTE #${id} EN SUPABASE`;
+    if (badge) badge.textContent = `MODIFICACIÓN DE LOTE PROPIO #${id}`;
     if (title) title.textContent = `Editando: ${titulo}`;
     if (btnSubmit) btnSubmit.textContent = "Guardar Cambios del Lote en Planta";
     if (btnCancel) btnCancel.style.display = "inline-flex";
 
     actualizarPreviewCubicajePublicacion();
-    document.getElementById("pub-titulo")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    cambiarSubTabVendedor("publicar");
 }
 
 function cancelarEdicionLote() {
     document.getElementById("pub-lote-edit-id").value = "";
     document.getElementById("pub-titulo").value = "";
+    document.getElementById("pub-empresa").value = obtenerIdentidadRol("vendedor");
 
     const badge = document.getElementById("pub-form-badge");
     const title = document.getElementById("pub-form-title");
@@ -1582,16 +2519,23 @@ function cancelarEdicionLote() {
 }
 
 async function eliminarLoteABM(loteId, titulo) {
-    if (!confirm(`¿Confirmás dar de baja el lote "${titulo}" del catálogo activo?`)) return;
+    const plantaActiva = obtenerIdentidadRol("vendedor");
+    if (!confirm(`¿Confirmás dar de baja tu lote "${titulo}" del catálogo activo?`)) return;
     try {
         const res = await fetch(`/api/lote/${loteId}/eliminar/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                actor_rol: "vendedor",
+                actor_organizacion: plantaActiva,
+            }),
         });
         const data = await res.json();
-        if (data.ok) {
+        if (res.ok && data.ok) {
             alert(data.mensaje);
             window.location.href = "/?rol=vendedor";
+        } else {
+            alert(data.mensaje || "No tenés permisos para dar de baja este lote.");
         }
     } catch (err) {
         alert("Error al dar de baja el lote.");
@@ -1605,28 +2549,34 @@ async function enviarNuevoLote(event) {
     const urgencia = document.getElementById("pub-urgencia-toggle")?.value || "NORMAL";
     const fechaFutura = document.getElementById("pub-fecha-futura")?.value || "";
     const subloteMin = document.getElementById("pub-sublote-min")?.value || "5";
+    const porcentajeMutuo = document.getElementById("pub-porcentaje-vendedor")?.value || "50";
     const locRaw = (document.getElementById("pub-localidad")?.value || "Saladas").trim();
     const partesLoc = locRaw.split(",").map((s) => s.trim()).filter(Boolean);
     const localidadLimpia = partesLoc[0] || "Saladas";
     const provinciaSeleccionada =
         document.getElementById("pub-provincia")?.value || partesLoc[1] || "Corrientes";
 
+    const plantaActiva = obtenerIdentidadRol("vendedor");
+
     const payload = {
         titulo: document.getElementById("pub-titulo").value,
         categoria: document.getElementById("pub-categoria").value,
-        empresa_vendedora: document.getElementById("pub-empresa").value,
+        empresa_vendedora: document.getElementById("pub-empresa").value || plantaActiva,
         localidad_origen: localidadLimpia,
         provincia: provinciaSeleccionada,
         toneladas_disponibles: document.getElementById("pub-toneladas").value,
         densidad_kg_m3: document.getElementById("pub-densidad").value,
         precio_tonelada_ars: document.getElementById("pub-precio").value,
         modalidad_flete: document.getElementById("pub-modalidad").value,
+        porcentaje_flete_vendedor: porcentajeMutuo,
         usos_recomendados: document.getElementById("pub-usos").value,
         tipo_publicacion: tipoLote,
         es_urgente: urgencia.startsWith("URGENTE"),
         permite_sublotes: true,
         sublote_min_tn: subloteMin,
         fecha_disponibilidad: fechaFutura,
+        actor_rol: "vendedor",
+        actor_organizacion: plantaActiva,
     };
 
     const url = editId ? `/api/lote/${editId}/editar/` : "/api/publicar/";
@@ -1638,9 +2588,11 @@ async function enviarNuevoLote(event) {
             body: JSON.stringify(payload),
         });
         const data = await res.json();
-        if (data.ok) {
+        if (res.ok && data.ok) {
             alert(data.mensaje || "Operación realizada exitosamente.");
-            window.location.href = editId ? "/?rol=vendedor" : "/?rol=comprador";
+            window.location.href = "/?rol=vendedor";
+        } else {
+            alert(data.mensaje || "No se pudo guardar el lote.");
         }
     } catch (err) {
         alert("Error al guardar el lote. Verificá los campos.");
@@ -1648,6 +2600,12 @@ async function enviarNuevoLote(event) {
 }
 
 function cargarCamionEnFormularioEdicion(id, transportista, origen, destino, pasaPor, carroceria, fecha, capM3, descuento) {
+    const empresaActiva = obtenerIdentidadRol("logistica");
+    if (!esRecursoPropio(transportista, empresaActiva)) {
+        alert(`Regla de Negocio: Tu empresa activa es "${empresaActiva}". No podés editar camiones pertenecientes a "${transportista}".`);
+        return;
+    }
+
     document.getElementById("cam-edit-id").value = id;
     document.getElementById("cam-transportista").value = transportista;
     document.getElementById("cam-origen").value = origen;
@@ -1663,16 +2621,17 @@ function cargarCamionEnFormularioEdicion(id, transportista, origen, destino, pas
     const btnSubmit = document.getElementById("cam-btn-submit");
     const btnCancel = document.getElementById("cam-btn-cancel-edit");
 
-    if (badge) badge.textContent = `MODIFICACIÓN DE CAMIÓN #${id}`;
+    if (badge) badge.textContent = `MODIFICACIÓN DE UNIDAD PROPIA #${id}`;
     if (title) title.textContent = `Editando: ${transportista}`;
     if (btnSubmit) btnSubmit.textContent = "Guardar Cambios del Camión";
     if (btnCancel) btnCancel.style.display = "inline-flex";
 
-    document.getElementById("cam-transportista")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    cambiarSubTabLogistica("publicar");
 }
 
 function cancelarEdicionCamion() {
     document.getElementById("cam-edit-id").value = "";
+    document.getElementById("cam-transportista").value = obtenerIdentidadRol("logistica");
     const badge = document.getElementById("cam-form-badge");
     const title = document.getElementById("cam-form-title");
     const btnSubmit = document.getElementById("cam-btn-submit");
@@ -1685,16 +2644,23 @@ function cancelarEdicionCamion() {
 }
 
 async function eliminarCamionABM(camionId, transportista) {
-    if (!confirm(`¿Confirmás dar de baja el camión de "${transportista}" de la bolsa de retornos?`)) return;
+    const empresaActiva = obtenerIdentidadRol("logistica");
+    if (!confirm(`¿Confirmás dar de baja tu unidad de "${transportista}" de la bolsa de retornos?`)) return;
     try {
         const res = await fetch(`/api/camion/${camionId}/eliminar/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                actor_rol: "logistica",
+                actor_organizacion: empresaActiva,
+            }),
         });
         const data = await res.json();
-        if (data.ok) {
+        if (res.ok && data.ok) {
             alert(data.mensaje);
             window.location.href = "/?rol=logistica";
+        } else {
+            alert(data.mensaje || "No tenés permisos para eliminar un camión de otra empresa.");
         }
     } catch (err) {
         alert("Error al dar de baja el camión.");
@@ -1704,8 +2670,10 @@ async function eliminarCamionABM(camionId, transportista) {
 async function enviarNuevoCamion(event) {
     event.preventDefault();
     const editId = document.getElementById("cam-edit-id")?.value;
+    const empresaActiva = obtenerIdentidadRol("logistica");
+
     const payload = {
-        transportista: document.getElementById("cam-transportista").value,
+        transportista: document.getElementById("cam-transportista").value || empresaActiva,
         origen_viaje: document.getElementById("cam-origen").value,
         destino_viaje: document.getElementById("cam-destino").value,
         pasa_por: document.getElementById("cam-pasa-por").value,
@@ -1714,6 +2682,8 @@ async function enviarNuevoCamion(event) {
         capacidad_max_m3: document.getElementById("cam-cap-m3").value,
         descuento_retorno_pct: document.getElementById("cam-descuento").value,
         capacidad_max_tn: 30,
+        actor_rol: "logistica",
+        actor_organizacion: empresaActiva,
     };
 
     const url = editId ? `/api/camion/${editId}/editar/` : "/api/publicar-camion/";
@@ -1725,9 +2695,11 @@ async function enviarNuevoCamion(event) {
             body: JSON.stringify(payload),
         });
         const data = await res.json();
-        if (data.ok) {
+        if (res.ok && data.ok) {
             alert(data.mensaje || "Camión actualizado exitosamente.");
             window.location.href = "/?rol=logistica";
+        } else {
+            alert(data.mensaje || "No se pudo actualizar el camión.");
         }
     } catch (err) {
         alert("Error al guardar el camión. Verificá los campos.");
@@ -1738,6 +2710,9 @@ async function enviarNuevoCamion(event) {
    9. INICIALIZACIÓN AL CARGAR EL DOCUMENTO
    ============================================================================= */
 document.addEventListener("DOMContentLoaded", () => {
+    // Cargar certificados iniciales emitidos desde el backend
+    cargarCertificadosIniciales();
+
     // Restaurar sesión de usuario
     restaurarSesionGuardada();
 
@@ -1754,6 +2729,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // Cargar datos del mapa interactivo
     cargarDatosMapa();
 
+    // Sincronizar reglas de propiedad, paginación y listas de certificados por rol
+    sincronizarPropiedadYListasPorRol();
+    if (ultimoCertificadoEmitido) {
+        actualizarCertificadoEnPortalVendedor(ultimoCertificadoEmitido);
+    }
+
+    // Si viene ?rol= en la URL, abrir la vista correspondiente
+    const params = new URLSearchParams(window.location.search);
+    const rolParam = (params.get("rol") || "").toLowerCase();
+    if (rolParam === "comprador") cambiarVistaRol("vista-comprador");
+    if (rolParam === "vendedor") cambiarVistaRol("vista-vendedor");
+    if (rolParam === "logistica") cambiarVistaRol("vista-logistica");
+
     // Escuchar atajo de teclado para cerrar modales con ESC
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
@@ -1763,3 +2751,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+

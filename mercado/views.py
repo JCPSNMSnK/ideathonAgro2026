@@ -59,6 +59,89 @@ from mercado.services.trazabilidad_blockchain import (
     registrar_operacion_con_garantia,
     liberar_pago_en_garantia,
 )
+import re
+import unicodedata
+
+
+def _normalizar_identidad_actor(texto: str) -> str:
+    """
+    Normaliza nombres de empresas/actores eliminando tildes, paréntesis aclaratorios
+    y sufijos societarios comunes (SRL, SA, etc.) para validar reglas de Ownership.
+    """
+    if not texto:
+        return ""
+    s = unicodedata.normalize("NFKD", str(texto)).encode("ascii", "ignore").decode("ascii").lower()
+    s = re.sub(r"\([^)]*\)", " ", s)
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    palabras_ignorar = {"srl", "sa", "sas", "sh", "s", "r", "l", "a", "de", "del", "la", "el", "los", "las", "granja", "establecimiento", "transportes", "transporte"}
+    tokens = [t for t in s.split() if t and t not in palabras_ignorar]
+    return " ".join(tokens)
+
+
+def _es_recurso_propio(propietario_recurso: str, actor_organizacion: str = "", actor_nombre: str = "") -> bool:
+    """
+    Verifica si el recurso (lote, camión u operación) pertenece al actor autenticado.
+    """
+    prop_norm = _normalizar_identidad_actor(propietario_recurso)
+    if not prop_norm:
+        return False
+
+    for candidato in (actor_organizacion, actor_nombre):
+        cand_norm = _normalizar_identidad_actor(candidato)
+        if not cand_norm:
+            continue
+        if cand_norm == prop_norm or cand_norm in prop_norm or prop_norm in cand_norm:
+            return True
+    return False
+
+
+def _serializar_operacion_certificado(op: OperacionTrazabilidad) -> dict:
+    """
+    Serializa un registro OperacionTrazabilidad para las vistas de certificados
+    de Comprador (Mis Compras y Certificados), Vendedor (Mis Certificados Ambientales)
+    y Logística (Mis Viajes Calzados).
+    """
+    lote = op.lote
+    camion = op.camion
+    densidad = float(getattr(lote, "densidad_kg_m3", 200) or 200)
+    vol_m3 = float(op.volumen_m3_calculado or 0.0)
+    toneladas_calc = round((vol_m3 * densidad) / 1000.0, 1) if vol_m3 > 0 else float(getattr(lote, "toneladas_disponibles", 14.0))
+    toneladas_calc = max(1.0, toneladas_calc)
+
+    subtotal = float(op.subtotal_subproducto_ars or 0.0)
+    flete_calzado = float(op.flete_calzado_ars or 0.0)
+    comision = float(op.comision_plataforma_ars or 0.0)
+    total_comprador = round(subtotal + flete_calzado + (comision * 0.5), 0)
+    co2_evitado_kg = int(round(toneladas_calc * 145))
+
+    return {
+        "id": op.id,
+        "codigo": f"#MN-2026-{op.id:04d}",
+        "hash_certificado": op.hash_certificado,
+        "red_blockchain": op.red_blockchain,
+        "hashscan_url": "https://hashscan.io/testnet/mainnet",
+        "estado_garantia": op.estado_garantia,
+        "vendedor": lote.empresa_vendedora if lote else "Molino Arrocero San Lorenzo",
+        "origen": f"{lote.localidad_origen}, {lote.provincia}" if lote else "Saladas, Corrientes",
+        "comprador": op.comprador_nombre,
+        "destino": op.localidad_destino,
+        "subproducto": lote.titulo if lote else "Subproducto Agroindustrial",
+        "categoria": lote.categoria if lote else "ARROZ",
+        "lote_id": lote.id if lote else None,
+        "toneladas": toneladas_calc,
+        "volumen_m3": round(vol_m3, 1),
+        "transportista": camion.transportista if camion else "Retiro / Flota Regional",
+        "distancia_km": op.distancia_km,
+        "subtotal_subproducto_ars": subtotal,
+        "flete_tradicional_ars": float(op.flete_tradicional_fadeeac_ars or 0.0),
+        "flete_calzado_ars": flete_calzado,
+        "ahorro_logistico_ars": float(op.ahorro_logistico_ars or 0.0),
+        "comision_plataforma_ars": comision,
+        "total_comprador_ars": total_comprador,
+        "co2_evitado_kg": co2_evitado_kg,
+        "credito_ambiental_elegible": True,
+        "fecha": op.creado_en.strftime("%d/%m/%Y %H:%M hs") if op.creado_en else "16/10/2026 18:30 hs",
+    }
 
 
 def home_demo(request):
@@ -83,7 +166,11 @@ def home_demo(request):
     camiones = obtener_camiones_con_oportunidades(lotes=lotes)
     todos_los_camiones = CamionRetorno.objects.all().order_by("-id")
     todos_los_lotes = LoteSubproducto.objects.all().order_by("-creado_en")
-    certificados_recientes = OperacionTrazabilidad.objects.select_related("lote", "camion")[:8]
+    certificados_recientes = list(OperacionTrazabilidad.objects.select_related("lote", "camion")[:24])
+    certificados_json = json.dumps(
+        [_serializar_operacion_certificado(op) for op in certificados_recientes],
+        ensure_ascii=False,
+    )
     nodos_mapa_nea_json = obtener_datos_mapa_productores(
         lotes, localidad_actual_obj["codigo"], camiones=camiones
     )
@@ -106,6 +193,7 @@ def home_demo(request):
         "camiones": camiones,
         "todos_los_camiones": todos_los_camiones,
         "certificados_recientes": certificados_recientes,
+        "certificados_json": certificados_json,
         "nodos_mapa_nea_json": nodos_mapa_nea_json,
         "casos_demo_landing_json": casos_demo_landing_json,
         "provincias_oficiales": provincias_oficiales,
@@ -268,34 +356,68 @@ def api_reservar_con_garantia(request):
 @require_http_methods(["POST"])
 def api_liberar_garantia(request):
     """
-    Endpoint JSON para confirmar la descarga del camión en destino y liberar el
-    Pago en Garantía (Escrow) al vendedor y al transportista.
+    Endpoint JSON para confirmar la descarga del camión en destino, firmar el
+    Certificado Ambiental y liberar el Pago en Garantía (Escrow) al vendedor y al transportista.
+    REGLA DE NEGOCIO: Solo el Comprador titular de la compra puede firmar la recepción
+    y cerrar el certificado. Un vendedor o transportista jamás puede auto-liberarse el Escrow.
     """
     try:
         data = json.loads(request.body.decode("utf-8")) if request.body else {}
     except (json.JSONDecodeError, UnicodeDecodeError):
         data = {}
 
+    actor_rol = str(data.get("actor_rol") or "").lower().strip()
+    actor_organizacion = str(data.get("actor_organizacion") or "").strip()
+    actor_nombre = str(data.get("actor_nombre") or "").strip()
+
+    if actor_rol and actor_rol != "comprador":
+        return JsonResponse(
+            {
+                "ok": False,
+                "mensaje": (
+                    "Acción bloqueada por regla de negocio: Solo el establecimiento Comprador "
+                    "puede firmar la recepción en tranquera, cerrar el certificado y liberar el pago en garantía (Escrow)."
+                ),
+            },
+            status=403,
+        )
+
     operacion_id = data.get("operacion_id")
     if operacion_id:
-        try:
-            op = liberar_pago_en_garantia(int(operacion_id))
-        except (ValueError, TypeError):
-            op = None
+        op_target = OperacionTrazabilidad.objects.select_related("lote", "camion").filter(id=int(operacion_id)).first()
     else:
-        op = OperacionTrazabilidad.objects.first()
-        if op:
-            op = liberar_pago_en_garantia(op.id)
+        op_target = OperacionTrazabilidad.objects.select_related("lote", "camion").first()
 
-    if not op:
+    if not op_target:
         return JsonResponse({"ok": False, "mensaje": "No se encontró la operación."}, status=404)
+
+    if (actor_organizacion or actor_nombre) and not _es_recurso_propio(
+        op_target.comprador_nombre, actor_organizacion, actor_nombre
+    ):
+        return JsonResponse(
+            {
+                "ok": False,
+                "mensaje": (
+                    f"Permiso denegado: Esta operación pertenece a '{op_target.comprador_nombre}'. "
+                    "Solo el comprador titular puede firmar la recepción y cerrar su certificado."
+                ),
+            },
+            status=403,
+        )
+
+    op = liberar_pago_en_garantia(op_target.id)
+    cert_serializado = _serializar_operacion_certificado(op)
 
     return JsonResponse(
         {
             "ok": True,
             "operacion_id": op.id,
             "estado_garantia": op.estado_garantia,
-            "mensaje": f"Descarga confirmada en {op.localidad_destino}. Fondos liberados al vendedor y al transportista.",
+            "certificado": cert_serializado,
+            "mensaje": (
+                f"Recepción firmada en {op.localidad_destino} por {op.comprador_nombre}. "
+                "Certificado Ambiental cerrado y fondos liberados al vendedor y al transportista."
+            ),
         }
     )
 
@@ -332,11 +454,39 @@ def api_publicar_lote(request):
 def api_editar_lote(request, lote_id: int):
     """
     Modificación de un lote existente (ABM Vendedor).
+    REGLA DE NEGOCIO: Un vendedor solo puede editar lotes de su propia planta/empresa.
     """
     try:
         data = json.loads(request.body.decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({"ok": False, "mensaje": "JSON inválido."}, status=400)
+
+    try:
+        lote_actual = LoteSubproducto.objects.get(id=int(lote_id))
+    except LoteSubproducto.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
+
+    actor_rol = str(data.get("actor_rol") or "").lower().strip()
+    actor_org = str(data.get("actor_organizacion") or "").strip()
+    actor_nom = str(data.get("actor_nombre") or "").strip()
+
+    if actor_rol and actor_rol != "vendedor":
+        return JsonResponse(
+            {"ok": False, "mensaje": "Permiso denegado: Solo una cuenta de rol Vendedor puede editar lotes."},
+            status=403,
+        )
+
+    if (actor_org or actor_nom) and not _es_recurso_propio(lote_actual.empresa_vendedora, actor_org, actor_nom):
+        return JsonResponse(
+            {
+                "ok": False,
+                "mensaje": (
+                    f"Permiso denegado: El lote pertenece a '{lote_actual.empresa_vendedora}'. "
+                    "Cada agroindustria vendedora solo puede modificar sus propios lotes."
+                ),
+            },
+            status=403,
+        )
 
     try:
         lote = editar_lote_existente(int(lote_id), data)
@@ -347,8 +497,6 @@ def api_editar_lote(request, lote_id: int):
                 "mensaje": f"Lote '{lote.titulo}' actualizado correctamente.",
             }
         )
-    except LoteSubproducto.DoesNotExist:
-        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "mensaje": f"Error al editar lote: {str(e)}"}, status=400)
 
@@ -358,7 +506,40 @@ def api_editar_lote(request, lote_id: int):
 def api_eliminar_lote(request, lote_id: int):
     """
     Baja de un lote existente (ABM Vendedor).
+    REGLA DE NEGOCIO: Un vendedor solo puede dar de baja lotes de su propia planta/empresa.
     """
+    try:
+        data = json.loads(request.body.decode("utf-8")) if request.body else {}
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        data = {}
+
+    try:
+        lote_actual = LoteSubproducto.objects.get(id=int(lote_id))
+    except LoteSubproducto.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
+
+    actor_rol = str(data.get("actor_rol") or "").lower().strip()
+    actor_org = str(data.get("actor_organizacion") or "").strip()
+    actor_nom = str(data.get("actor_nombre") or "").strip()
+
+    if actor_rol and actor_rol != "vendedor":
+        return JsonResponse(
+            {"ok": False, "mensaje": "Permiso denegado: Solo una cuenta de rol Vendedor puede dar de baja lotes."},
+            status=403,
+        )
+
+    if (actor_org or actor_nom) and not _es_recurso_propio(lote_actual.empresa_vendedora, actor_org, actor_nom):
+        return JsonResponse(
+            {
+                "ok": False,
+                "mensaje": (
+                    f"Permiso denegado: El lote pertenece a '{lote_actual.empresa_vendedora}'. "
+                    "No podés eliminar publicaciones de otra empresa."
+                ),
+            },
+            status=403,
+        )
+
     try:
         titulo = eliminar_lote_existente(int(lote_id))
         return JsonResponse(
@@ -367,8 +548,6 @@ def api_eliminar_lote(request, lote_id: int):
                 "mensaje": f"Lote '{titulo}' eliminado de la oferta activa.",
             }
         )
-    except LoteSubproducto.DoesNotExist:
-        return JsonResponse({"ok": False, "mensaje": "Lote no encontrado."}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "mensaje": f"Error al eliminar lote: {str(e)}"}, status=400)
 
@@ -408,11 +587,39 @@ def api_publicar_camion(request):
 def api_editar_camion(request, camion_id: int):
     """
     Modificación de ruta, descuento o estado disponible de un camión (ABM Logística).
+    REGLA DE NEGOCIO: Una empresa de logística solo puede editar camiones de su propia flota.
     """
     try:
         data = json.loads(request.body.decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({"ok": False, "mensaje": "JSON inválido."}, status=400)
+
+    try:
+        camion_actual = CamionRetorno.objects.get(id=int(camion_id))
+    except CamionRetorno.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
+
+    actor_rol = str(data.get("actor_rol") or "").lower().strip()
+    actor_org = str(data.get("actor_organizacion") or "").strip()
+    actor_nom = str(data.get("actor_nombre") or "").strip()
+
+    if actor_rol and actor_rol != "logistica":
+        return JsonResponse(
+            {"ok": False, "mensaje": "Permiso denegado: Solo una empresa de Logística puede modificar camiones."},
+            status=403,
+        )
+
+    if (actor_org or actor_nom) and not _es_recurso_propio(camion_actual.transportista, actor_org, actor_nom):
+        return JsonResponse(
+            {
+                "ok": False,
+                "mensaje": (
+                    f"Permiso denegado: Esta unidad pertenece a '{camion_actual.transportista}'. "
+                    "Una empresa de logística no puede modificar camiones de otra empresa."
+                ),
+            },
+            status=403,
+        )
 
     try:
         camion = editar_camion_existente(int(camion_id), data)
@@ -424,8 +631,6 @@ def api_editar_camion(request, camion_id: int):
                 "mensaje": f"Unidad '{camion.transportista}' actualizada correctamente.",
             }
         )
-    except CamionRetorno.DoesNotExist:
-        return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "mensaje": f"Error al editar camión: {str(e)}"}, status=400)
 
@@ -435,7 +640,40 @@ def api_editar_camion(request, camion_id: int):
 def api_eliminar_camion(request, camion_id: int):
     """
     Baja de un camión de retorno (ABM Logística).
+    REGLA DE NEGOCIO: Una empresa de logística solo puede dar de baja camiones de su propia flota.
     """
+    try:
+        data = json.loads(request.body.decode("utf-8")) if request.body else {}
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        data = {}
+
+    try:
+        camion_actual = CamionRetorno.objects.get(id=int(camion_id))
+    except CamionRetorno.DoesNotExist:
+        return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
+
+    actor_rol = str(data.get("actor_rol") or "").lower().strip()
+    actor_org = str(data.get("actor_organizacion") or "").strip()
+    actor_nom = str(data.get("actor_nombre") or "").strip()
+
+    if actor_rol and actor_rol != "logistica":
+        return JsonResponse(
+            {"ok": False, "mensaje": "Permiso denegado: Solo una empresa de Logística puede dar de baja camiones."},
+            status=403,
+        )
+
+    if (actor_org or actor_nom) and not _es_recurso_propio(camion_actual.transportista, actor_org, actor_nom):
+        return JsonResponse(
+            {
+                "ok": False,
+                "mensaje": (
+                    f"Permiso denegado: Esta unidad pertenece a '{camion_actual.transportista}'. "
+                    "Una empresa de logística no puede eliminar camiones de otra empresa."
+                ),
+            },
+            status=403,
+        )
+
     try:
         nombre = eliminar_camion_existente(int(camion_id))
         return JsonResponse(
@@ -444,8 +682,6 @@ def api_eliminar_camion(request, camion_id: int):
                 "mensaje": f"Unidad '{nombre}' dada de baja de la bolsa de retornos.",
             }
         )
-    except CamionRetorno.DoesNotExist:
-        return JsonResponse({"ok": False, "mensaje": "Camión no encontrado."}, status=404)
     except Exception as e:
         return JsonResponse({"ok": False, "mensaje": f"Error al eliminar camión: {str(e)}"}, status=400)
 

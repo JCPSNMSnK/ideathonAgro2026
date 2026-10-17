@@ -612,8 +612,8 @@ def calcular_distancia_estimada_km(localidad_origen: str, codigo_destino: str = 
 
 def _construir_explicacion_comprador(lote: LoteSubproducto, codigo_perfil: str) -> str:
     """
-    Genera una explicación clara y concisa de por qué sirve el lote según la actividad
-    del comprador y cómo aprovechar su cubicaje (m3).
+    Genera una explicación clara y concisa de cómo aprovechar el cubicaje (m3) del lote
+    y su ventaja logística según la actividad del comprador, sin repetir usos_recomendados.
     """
     volumen_m3 = lote.volumen_total_m3
     densidad = lote.densidad_kg_m3
@@ -621,32 +621,31 @@ def _construir_explicacion_comprador(lote: LoteSubproducto, codigo_perfil: str) 
 
     if densidad <= 220:
         detalle_cubicaje = (
-            f"Ocupa {volumen_m3} m³ ({densidad} kg/m³): carga liviana que llena rápido la caja en volumen "
-            f"y aprovecha al máximo bateas de 85 a 95 m³ sin exceder el peso máximo."
+            f"Cubicaje logístico: ocupa {volumen_m3} m³ ({densidad} kg/m³), carga liviana que aprovecha "
+            f"al máximo bateas de 85 a 95 m³ sin exceder el peso máximo."
         )
     elif densidad >= 550:
         detalle_cubicaje = (
-            f"Ocupa solo {volumen_m3} m³ ({densidad} kg/m³): carga pesada y compacta que satura por tonelaje "
-            f"({toneladas:.0f} tn) ocupando menos de la mitad del volumen del semirremolque."
+            f"Cubicaje logístico: ocupa solo {volumen_m3} m³ ({densidad} kg/m³), carga compacta que completa "
+            f"tonelaje ({toneladas:.0f} tn) con menos de la mitad del volumen del semirremolque."
         )
     else:
         detalle_cubicaje = (
-            f"Ocupa {volumen_m3} m³ ({densidad} kg/m³): relación equilibrada entre peso y volumen "
+            f"Cubicaje logístico: ocupa {volumen_m3} m³ ({densidad} kg/m³), relación equilibrada entre peso y volumen "
             f"para completar equipo estándar en un solo viaje."
         )
 
     if codigo_perfil == "AVICOLA":
-        uso_directo = "Ideal para renovar cama de galpón avícola con baja humedad y excelente aislación térmica."
-    elif codigo_perfil == "GANADERO":
-        uso_directo = "Excelente aporte de fibra y energía para abaratar la ración diaria en recría, tambo o feedlot."
-    elif codigo_perfil == "BIOMASA":
-        uso_directo = "Alto poder calorífico por tonelada para alimentar calderas industriales, secaderos o biochar."
-    elif codigo_perfil == "VIVERO":
-        uso_directo = "Óptima porosidad y retención de humedad para formular sustratos forestales y compostaje."
-    else:
-        uso_directo = f"Recomendado para {lote.usos_recomendados.lower()}."
+        return f"Ventaja avícola: baja humedad y aislación térmica para galpón. {detalle_cubicaje}"
+    if codigo_perfil == "GANADERO":
+        return f"Ventaja nutricional: fibra y energía para abaratar la ración en recría o feedlot. {detalle_cubicaje}"
+    if codigo_perfil == "BIOMASA":
+        return f"Ventaja térmica: poder calorífico constante para calderas y secaderos. {detalle_cubicaje}"
+    if codigo_perfil == "VIVERO":
+        return f"Ventaja agronómica: porosidad y retención de humedad para sustratos. {detalle_cubicaje}"
 
-    return f"{uso_directo} {detalle_cubicaje}"
+    return detalle_cubicaje
+
 
 
 def _enriquecer_metadatos_lote(lote: LoteSubproducto) -> None:
