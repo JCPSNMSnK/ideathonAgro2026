@@ -849,19 +849,23 @@ function inicializarInstanciaLeaflet() {
     if (!mapContainer || typeof L === "undefined") return null;
     if (leafletMapInstance) return leafletMapInstance;
 
-    const capaCartoVoyager = L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://ign.gob.ar">IGN Argentina</a>',
-            subdomains: "abcd",
-            maxZoom: 18,
-        }
-    );
+    if (!datosMapaNEA) cargarDatosMapa();
+    const tileCfg = (datosMapaNEA && datosMapaNEA.tile_config) || {};
+    const cartoUrl =
+        tileCfg.carto_voyager_url ||
+        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+
+    const capaCartoVoyager = L.tileLayer(cartoUrl, {
+        attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> &copy; <a href="https://www.ign.gob.ar/">IGN</a>',
+        subdomains: "abcd",
+        maxZoom: 18,
+    });
 
     const capaOpenStreetMap = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-            attribution: '&copy; OpenStreetMap contributors · Rutas DNV Argentina',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors · Rutas DNV Argentina',
             maxZoom: 18,
         }
     );
@@ -874,19 +878,21 @@ function inicializarInstanciaLeaflet() {
         }
     );
 
+    const capaInicial = tileCfg.has_carto_key ? capaCartoVoyager : capaOpenStreetMap;
+
     leafletMapInstance = L.map(mapContainer, {
         center: [-30.5, -60.2],
         zoom: 5,
-        layers: [capaCartoVoyager],
+        layers: [capaInicial],
         scrollWheelZoom: true,
     });
 
     L.control
         .layers(
             {
-                "Mapa Claro Vial (OSM / Carto)": capaCartoVoyager,
+                "CARTO Voyager (Vial Claro)": capaCartoVoyager,
+                "OpenStreetMap Vial Nacional": capaOpenStreetMap,
                 "Argenmap Oficial (IGN Argentina)": capaArgenmapIGN,
-                "OpenStreetMap Clásico": capaOpenStreetMap,
             },
             null,
             { position: "topright" }

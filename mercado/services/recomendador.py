@@ -13,6 +13,7 @@ Objetivo:
   gestión de camiones con retorno vacío para el rol Logística / Camión.
 """
 import json
+import os
 import re
 from typing import Dict, Iterable, List, Optional
 from django.db.models import Q
@@ -891,7 +892,20 @@ def obtener_datos_mapa_productores(
             }
         )
 
+    carto_api_key = os.getenv("CARTO_API_KEY", "").strip()
+    if carto_api_key and carto_api_key != "tu_api_key_de_carto_aqui":
+        carto_tile_url = f"https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}{{r}}.png?key={carto_api_key}"
+        default_layer = "carto"
+    else:
+        carto_tile_url = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        default_layer = "osm"
+
     payload = {
+        "tile_config": {
+            "carto_voyager_url": carto_tile_url,
+            "default_layer": default_layer,
+            "has_carto_key": bool(carto_api_key and carto_api_key != "tu_api_key_de_carto_aqui"),
+        },
         "comprador": {
             "codigo": loc_comprador["codigo"],
             "nombre": loc_comprador["nombre"],
