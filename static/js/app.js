@@ -577,11 +577,24 @@ function filtrarTarjetasEnCliente(texto) {
 /* =============================================================================
    6. COTIZADOR PESO/VOLUMEN Y FLETE CALZADO (CARRIL 3 - /api/cotizar/)
    ============================================================================= */
+function alCambiarModoTransporte(modo) {
+    const contenedorVehiculo = document.getElementById("contenedor-vehiculo-propio");
+    const contenedorCamion = document.getElementById("contenedor-camion-retorno");
+    const esPropio = modo === "VEHICULO_PROPIO";
+
+    if (contenedorVehiculo) contenedorVehiculo.style.display = esPropio ? "block" : "none";
+    if (contenedorCamion) contenedorCamion.style.display = esPropio ? "none" : "block";
+
+    recalcularCotizacionEnVivo();
+}
+
 async function recalcularCotizacionEnVivo() {
     const loteId = document.getElementById("calc-lote-id")?.value;
     const camionId = document.getElementById("calc-camion-id")?.value;
     const distanciaKm = document.getElementById("calc-distancia-km")?.value || 160;
     const toneladas = document.getElementById("calc-toneladas")?.value || 14;
+    const modoTransporte = document.getElementById("calc-modo-transporte")?.value || "VUELTA";
+    const tipoVehiculoPropio = document.getElementById("calc-tipo-vehiculo-propio")?.value || "CAMION_CHASIS";
 
     if (!loteId) return;
 
@@ -590,6 +603,8 @@ async function recalcularCotizacionEnVivo() {
         camion_id: camionId,
         distancia_km: distanciaKm,
         toneladas: toneladas,
+        modo_transporte: modoTransporte,
+        tipo_vehiculo_propio: tipoVehiculoPropio,
     });
 
     try {
@@ -605,7 +620,7 @@ async function recalcularCotizacionEnVivo() {
         };
 
         setTxt("res-lote-titulo", c.lote_titulo);
-        setTxt("res-origen", `${c.empresa_vendedora || c.vendedor || "Agroindustria"} (${c.origen || c.localidad_origen || "NEA"})`);
+        setTxt("res-origen", `${c.empresa_vendedora || c.vendedor || "Agroindustria"} (${c.origen || c.localidad_origen || "Planta"})`);
         setTxt("res-volumen-m3", `${c.volumen_m3} m³`);
         setTxt("res-limitante", (c.factor_limitante || "VOLUMEN FÍSICO").toUpperCase());
         
@@ -621,10 +636,26 @@ async function recalcularCotizacionEnVivo() {
 
         setTxt("res-flete-tradicional", formatoARS(c.flete_tradicional_fadeeac_ars));
         setTxt("res-incidencia-pct", `${c.incidencia_flete_tradicional_pct || c.incidencia_flete_pct || 75}% del total`);
-        setTxt("res-flete-calzado", formatoARS(c.flete_calzado_ars));
-        const descPct = c.descuento_retorno_pct ?? c.descuento_aplicado_pct ?? 45;
-        setTxt("res-descuento-pct", `-${descPct}% por Retorno`);
-        setTxt("res-ahorro", `${formatoARS(c.ahorro_logistico_ars)} ARS`);
+
+        const esVehiculoPropio = (c.modo_transporte || modoTransporte) === "VEHICULO_PROPIO";
+        if (esVehiculoPropio) {
+            setTxt("res-flete-calzado", "$0 ARS (Flete Particular)");
+            setTxt("res-descuento-pct", "100% en flete tercerizado");
+            setTxt("res-ahorro", `${formatoARS(c.flete_tradicional_fadeeac_ars)} ARS`);
+            const goodBoxTitle = document.querySelector(".comp-good .comp-badge-header");
+            if (goodBoxTitle) goodBoxTitle.textContent = "Retiro con Vehículo Propio";
+            const goodBoxDesc = document.querySelector(".comp-good .comp-desc");
+            if (goodBoxDesc) goodBoxDesc.innerHTML = `<strong>$0 en fleteros</strong> · Retiro directo en planta`;
+        } else {
+            setTxt("res-flete-calzado", formatoARS(c.flete_calzado_ars || c.costo_transporte_ars));
+            const descPct = c.descuento_retorno_pct ?? c.descuento_aplicado_pct ?? 45;
+            setTxt("res-descuento-pct", `-${descPct}% por Retorno`);
+            setTxt("res-ahorro", `${formatoARS(c.ahorro_logistico_ars)} ARS`);
+            const goodBoxTitle = document.querySelector(".comp-good .comp-badge-header");
+            if (goodBoxTitle) goodBoxTitle.textContent = "Con Flete Calzado Moñái";
+            const goodBoxDesc = document.querySelector(".comp-good .comp-desc");
+            if (goodBoxDesc) goodBoxDesc.innerHTML = `<strong id="res-descuento-pct">-${descPct}% por retorno</strong> · <strong>¡Insumo rentable en tu campo!</strong>`;
+        }
 
         setTxt("res-subtotal-prod", formatoARS(c.subtotal_subproducto_ars));
         setTxt("res-modalidad", c.modalidad_flete_texto || c.modalidad_flete || "100% Comprador");
@@ -646,7 +677,7 @@ function comprarSubloteDirecto(loteId, toneladas, distanciaKm) {
     if (subloteTag) subloteTag.style.display = "inline-block";
 
     // Actualizar botones de sublotes en cotizador
-    actualizarBotonesSubloteCotizador(toneladas);
+    fijarToneladasCotizador(toneladas);
 
     const panel = document.getElementById("panel-cotizador-comprador");
     if (panel) {
@@ -669,6 +700,19 @@ function fijarToneladasCotizador(toneladas) {
         inputTn.value = toneladas;
         const subloteTag = document.getElementById("calc-sublote-tag");
         if (subloteTag) subloteTag.style.display = "inline-block";
+
+        // Si son cargas menores para productores o pymes (<= 2.5 tn), sugerir automáticamente Vehículo Propio
+        if (parseFloat(toneladas) <= 2.5) {
+            const selectModo = document.getElementById("calc-modo-transporte");
+            const selectVeh = document.getElementById("calc-tipo-vehiculo-propio");
+            if (selectModo) {
+                selectModo.value = "VEHICULO_PROPIO";
+                alCambiarModoTransporte("VEHICULO_PROPIO");
+            }
+            if (selectVeh) {
+                selectVeh.value = parseFloat(toneladas) <= 1.0 ? "CAMIONETA" : "CAMIONETA_CON_ACOPLADO";
+            }
+        }
     }
 
     actualizarBotonesSubloteCotizador(toneladas);
@@ -678,18 +722,21 @@ function fijarToneladasCotizador(toneladas) {
 function actualizarBotonesSubloteCotizador(toneladasSeleccionadas) {
     document.querySelectorAll(".sublote-calc-pill").forEach(btn => {
         btn.classList.remove("active");
+        const txt = btn.textContent.trim();
+        if (toneladasSeleccionadas === "total" && btn.id === "btn-sublote-total") {
+            btn.classList.add("active");
+        } else if (txt.startsWith(`${toneladasSeleccionadas} `) || txt === `${toneladasSeleccionadas} tn`) {
+            btn.classList.add("active");
+        }
     });
-    if (toneladasSeleccionadas === "total") {
-        const btnTotal = document.getElementById("btn-sublote-total");
-        if (btnTotal) btnTotal.classList.add("active");
-    }
 }
 
 /* =============================================================================
-   6.2. MAPA INTERACTIVO DE PRODUCTORES DEL NEA
+   6.2. MAPA FEDERAL DE PRODUCTORES (ARGENTINA · CANVAS VECTORIAL SVG)
    ============================================================================= */
 let datosMapaNEA = null;
 let modoMercadoActual = "catalogo";
+let regionMapaFiltro = "TODAS";
 
 function cargarDatosMapa() {
     try {
@@ -698,8 +745,15 @@ function cargarDatosMapa() {
             datosMapaNEA = JSON.parse(scriptEl.textContent.trim());
         }
     } catch (e) {
-        console.warn("No se pudieron parsear los datos del mapa NEA:", e);
+        console.warn("No se pudieron parsear los datos del mapa federal:", e);
     }
+}
+
+function filtrarMapaPorRegion(region, btnEl) {
+    regionMapaFiltro = region;
+    document.querySelectorAll(".map-region-pill").forEach(btn => btn.classList.remove("active"));
+    if (btnEl) btnEl.classList.add("active");
+    renderizarMapaProductores();
 }
 
 function cambiarModoMercado(modo) {
@@ -721,22 +775,49 @@ function cambiarModoMercado(modo) {
     }
 }
 
-function proyectarCoordASVG(lat, lng) {
-    // Delimitación geográfica aproximada del Corredor NEA:
-    // Latitud: de -26.0 (norte Sáenz Peña/Formosa) a -30.0 (sur Corrientes/Santa Fe)
-    // Longitud: de -61.0 (oeste Chaco) a -55.5 (este Virasoro/Río Uruguay)
-    const latMin = -30.0;
-    const latMax = -26.0;
-    const lngMin = -61.2;
-    const lngMax = -55.2;
+function calcularBoundingBoxProductores(productores, comp) {
+    const lats = [comp.lat];
+    const lngs = [comp.lng];
+    productores.forEach(p => {
+        if (p.lat && p.lng) {
+            lats.push(p.lat);
+            lngs.push(p.lng);
+        }
+    });
+
+    const latMin = Math.min(...lats);
+    const latMax = Math.max(...lats);
+    const lngMin = Math.min(...lngs);
+    const lngMax = Math.max(...lngs);
+
+    const dLat = Math.max(1.2, (latMax - latMin) * 0.16);
+    const dLng = Math.max(1.6, (lngMax - lngMin) * 0.16);
+
+    return {
+        latMin: latMin - dLat,
+        latMax: latMax + dLat,
+        lngMin: lngMin - dLng,
+        lngMax: lngMax + dLng,
+    };
+}
+
+function proyectarCoordASVG(lat, lng, bounds) {
+    const b = bounds || {
+        latMin: -39.8,
+        latMax: -24.5,
+        lngMin: -69.8,
+        lngMax: -55.0,
+    };
 
     const width = 880;
     const height = 500;
-    const padding = 55;
+    const padding = 50;
 
-    const x = padding + ((lng - lngMin) / (lngMax - lngMin)) * (width - 2 * padding);
-    // En SVG el eje Y crece hacia abajo: latitud más negativa queda más abajo
-    const y = padding + ((latMax - lat) / (latMax - latMin)) * (height - 2 * padding);
+    const spanLng = (b.lngMax - b.lngMin) || 1;
+    const spanLat = (b.latMax - b.latMin) || 1;
+
+    const x = padding + ((lng - b.lngMin) / spanLng) * (width - 2 * padding);
+    const y = padding + ((b.latMax - lat) / spanLat) * (height - 2 * padding);
 
     return { x: Math.round(x), y: Math.round(y) };
 }
@@ -757,33 +838,73 @@ function renderizarMapaProductores() {
     nodesLayer.innerHTML = "";
 
     const comp = datosMapaNEA.comprador || { lat: -29.14, lng: -59.2626, nombre: "Goya, Corrientes" };
-    const pComp = proyectarCoordASVG(comp.lat, comp.lng);
 
-    // 1. Dibujar Corredores Viales del NEA (RN 12, RN 14, RN 118, RN 16)
+    // Filtrar productores según región seleccionada
+    let prodsVisibles = datosMapaNEA.productores || [];
+    if (regionMapaFiltro !== "TODAS") {
+        prodsVisibles = prodsVisibles.filter(p => {
+            const zona = (p.zona || "").toUpperCase();
+            const prov = (p.provincia || "").toUpperCase();
+            const loc = (p.localidad || "").toUpperCase();
+            if (regionMapaFiltro === "NEA") {
+                return prov.includes("CORRIENTES") || prov.includes("CHACO") || prov.includes("MISIONES") || loc.includes("SALADAS") || loc.includes("VIRASORO") || loc.includes("GOYA");
+            } else if (regionMapaFiltro === "PAMPEANA") {
+                return prov.includes("SANTA FE") || prov.includes("CÓRDOBA") || prov.includes("CORDOBA") || prov.includes("BUENOS AIRES") || loc.includes("ROSARIO") || loc.includes("RECONQUISTA") || loc.includes("PERGAMINO") || loc.includes("CUARTO");
+            } else if (regionMapaFiltro === "CUYO") {
+                return prov.includes("MENDOZA") || prov.includes("SAN LUIS") || prov.includes("SAN JUAN") || loc.includes("MARTÍN") || loc.includes("MERCEDES");
+            } else if (regionMapaFiltro === "NOA") {
+                return prov.includes("TUCUMÁN") || prov.includes("TUCUMAN") || prov.includes("SALTA") || prov.includes("JUJUY");
+            } else if (regionMapaFiltro === "PATAGONIA") {
+                return prov.includes("RÍO NEGRO") || prov.includes("RIO NEGRO") || prov.includes("NEUQUÉN") || loc.includes("ROCA") || loc.includes("CIPOLLETTI");
+            }
+            return true;
+        });
+    }
+
+    const bounds = calcularBoundingBoxProductores(prodsVisibles, comp);
+    const pComp = proyectarCoordASVG(comp.lat, comp.lng, bounds);
+
+    // 1. Dibujar Corredores Viales Troncales de Argentina
     const rutasTroncales = [
         // RN 12: Corrientes -> Empedrado -> Saladas -> Bella Vista -> Goya
         [
-            proyectarCoordASVG(-27.4692, -58.8306),
-            proyectarCoordASVG(-27.9542, -58.8042),
-            proyectarCoordASVG(-28.2539, -58.6258),
-            proyectarCoordASVG(-28.5089, -59.0453),
-            proyectarCoordASVG(-29.1400, -59.2626),
+            proyectarCoordASVG(-27.4692, -58.8306, bounds),
+            proyectarCoordASVG(-27.9542, -58.8042, bounds),
+            proyectarCoordASVG(-28.2539, -58.6258, bounds),
+            proyectarCoordASVG(-28.5089, -59.0453, bounds),
+            proyectarCoordASVG(-29.1400, -59.2626, bounds),
         ],
-        // RN 118 / RN 123: Saladas -> San Miguel -> Virasoro / Mercedes
+        // RN 14: Posadas -> Virasoro -> Santo Tomé -> Paso de los Libres -> Concordia
         [
-            proyectarCoordASVG(-28.2539, -58.6258),
-            proyectarCoordASVG(-28.0500, -56.0167),
-        ],
-        // RN 119: Mercedes -> Curuzú -> enlace Goya
-        [
-            proyectarCoordASVG(-29.1842, -58.0753),
-            proyectarCoordASVG(-29.1400, -59.2626),
+            proyectarCoordASVG(-27.3621, -55.8961, bounds),
+            proyectarCoordASVG(-28.0500, -56.0167, bounds),
+            proyectarCoordASVG(-28.5492, -56.0408, bounds),
+            proyectarCoordASVG(-31.3930, -58.0209, bounds),
         ],
         // RN 16: Sáenz Peña -> Resistencia -> Corrientes
         [
-            proyectarCoordASVG(-26.7852, -60.4388),
-            proyectarCoordASVG(-27.4514, -58.9867),
-            proyectarCoordASVG(-27.4692, -58.8306),
+            proyectarCoordASVG(-26.7852, -60.4388, bounds),
+            proyectarCoordASVG(-27.4514, -58.9867, bounds),
+            proyectarCoordASVG(-27.4692, -58.8306, bounds),
+        ],
+        // RN 11: Resistencia -> Reconquista -> Santa Fe -> Rosario
+        [
+            proyectarCoordASVG(-27.4514, -58.9867, bounds),
+            proyectarCoordASVG(-29.1500, -59.6500, bounds),
+            proyectarCoordASVG(-31.6333, -60.7000, bounds),
+            proyectarCoordASVG(-32.9468, -60.6393, bounds),
+        ],
+        // RN 9 / RN 8: Rosario -> Pergamino -> Córdoba / Río Cuarto
+        [
+            proyectarCoordASVG(-32.9468, -60.6393, bounds),
+            proyectarCoordASVG(-33.8994, -60.5736, bounds),
+            proyectarCoordASVG(-33.1307, -64.3499, bounds),
+        ],
+        // RN 7: San Luis -> San Martín / Mendoza
+        [
+            proyectarCoordASVG(-33.1307, -64.3499, bounds),
+            proyectarCoordASVG(-33.6757, -65.4578, bounds),
+            proyectarCoordASVG(-33.0811, -68.4681, bounds),
         ],
     ];
 
@@ -799,8 +920,8 @@ function renderizarMapaProductores() {
     });
 
     // 2. Líneas de Flujo desde cada Productor hacia el Comprador
-    (datosMapaNEA.productores || []).forEach(prod => {
-        const pProd = proyectarCoordASVG(prod.lat, prod.lng);
+    prodsVisibles.forEach(prod => {
+        const pProd = proyectarCoordASVG(prod.lat, prod.lng, bounds);
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         const cx = (pProd.x + pComp.x) / 2;
         const cy = Math.min(pProd.y, pComp.y) - 25;
@@ -816,13 +937,13 @@ function renderizarMapaProductores() {
     gComp.innerHTML = `
         <circle r="18" class="buyer-pulse-halo" />
         <circle r="9" class="buyer-center-dot" />
-        <text y="24" class="map-node-label">${comp.nombre || "Tu Campo"}</text>
+        <text y="24" class="map-node-label">${comp.nombre || "Tu Establecimiento"}</text>
     `;
     nodesLayer.appendChild(gComp);
 
     // 4. Nodos de Productores con badges de urgencia / futuro
-    (datosMapaNEA.productores || []).forEach(prod => {
-        const pt = proyectarCoordASVG(prod.lat, prod.lng);
+    prodsVisibles.forEach(prod => {
+        const pt = proyectarCoordASVG(prod.lat, prod.lng, bounds);
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         const nodeClass = prod.es_urgente ? "map-node-urgent" : (prod.es_lote_futuro ? "map-node-future" : "map-node-producer");
         g.setAttribute("class", `map-producer-node ${nodeClass}`);
@@ -930,6 +1051,8 @@ function aplicarPresetComprador(valor) {
     const inputComprador = document.getElementById("calc-comprador");
     const inputDestino = document.getElementById("calc-destino");
     const inputKm = document.getElementById("calc-distancia-km");
+    const selectModo = document.getElementById("calc-modo-transporte");
+    const selectVeh = document.getElementById("calc-tipo-vehiculo-propio");
 
     if (!valor || valor === "CUSTOM") {
         if (inputComprador) {
@@ -945,8 +1068,15 @@ function aplicarPresetComprador(valor) {
         if (inputDestino) inputDestino.value = partes[1];
         if (partes[2] && inputKm) {
             inputKm.value = partes[2];
-            recalcularCotizacionEnVivo();
         }
+        if (partes[3] && selectModo) {
+            selectModo.value = partes[3];
+            alCambiarModoTransporte(partes[3]);
+        }
+        if (partes[4] && selectVeh) {
+            selectVeh.value = partes[4];
+        }
+        recalcularCotizacionEnVivo();
     }
 }
 
@@ -972,6 +1102,8 @@ async function confirmarReservaConGarantia() {
     const camionId = document.getElementById("calc-camion-id")?.value;
     const distanciaKm = document.getElementById("calc-distancia-km")?.value || 160;
     const toneladas = document.getElementById("calc-toneladas")?.value || 14;
+    const modoTransporte = document.getElementById("calc-modo-transporte")?.value || "VUELTA";
+    const tipoVehiculoPropio = document.getElementById("calc-tipo-vehiculo-propio")?.value || "CAMION_CHASIS";
     const compradorNombre = document.getElementById("calc-comprador")?.value || (usuarioActivo ? (usuarioActivo.organizacion || usuarioActivo.nombre) : "Granja Avícola San Isidro SRL");
     const destino = document.getElementById("calc-destino")?.value || (usuarioActivo ? usuarioActivo.localidad : "Goya, Corrientes");
     const ventanaCarga = document.getElementById("calc-ventana-carga")?.value || "";
@@ -994,13 +1126,15 @@ async function confirmarReservaConGarantia() {
                 toneladas: toneladas,
                 comprador_nombre: compradorNombre,
                 localidad_destino: destinoConVentana,
+                modo_transporte: modoTransporte,
+                tipo_vehiculo_propio: tipoVehiculoPropio,
             }),
         });
         const data = await res.json();
         if (data.ok) {
             ultimoCertificadoEmitido = data.certificado;
             actualizarCertificadoEnPortalVendedor(data.certificado);
-            mostrarModalVoucherReserva(data.certificado);
+            mostrarModalVoucherReserva(data.certificado, modoTransporte);
         } else {
             alert(data.mensaje || "No se pudo procesar la reserva.");
         }
@@ -1053,17 +1187,23 @@ async function confirmarDescargaYLiberarEscrow() {
     }
 }
 
-function mostrarModalVoucherReserva(cert) {
+function mostrarModalVoucherReserva(cert, modoTransporteUsado) {
     const setTxt = (id, val) => {
         const el = document.getElementById(id);
         if (el) el.textContent = val;
     };
 
+    const modo = modoTransporteUsado || document.getElementById("calc-modo-transporte")?.value || "VUELTA";
+    const esVehiculoPropio = modo === "VEHICULO_PROPIO";
+
     setTxt("voucher-estado-badge", "OPERACIÓN EN CUSTODIA (ESCROW ARS) · CONFIRMADA");
-    setTxt("voucher-banner-title", "¡Flete Calzado y Lote Reservados Exitosamente!");
+    setTxt(
+        "voucher-banner-title",
+        esVehiculoPropio ? "¡Lote Reservado para Retiro con Vehículo Propio!" : "¡Flete Calzado y Lote Reservados Exitosamente!"
+    );
     setTxt(
         "voucher-banner-desc",
-        `Tus fondos quedaron resguardados en garantía. Stock restante en planta actualizado a ${cert.stock_restante_lote_tn ?? "0"} tn.`
+        `Tus fondos quedaron resguardados en garantía oficial. Stock restante en planta actualizado a ${cert.stock_restante_lote_tn ?? "0"} tn.`
     );
 
     const btnVoucher = document.getElementById("btn-voucher-liberar");
@@ -1075,7 +1215,15 @@ function mostrarModalVoucherReserva(cert) {
     setTxt("voucher-id", `#MN-RES-${String(cert.id).padStart(4, "0")}`);
     setTxt("voucher-subproducto", `${cert.subproducto} — ${cert.toneladas} tn (${cert.volumen_m3} m³)`);
     setTxt("voucher-vendedor", `${cert.vendedor} (${cert.origen})`);
-    setTxt("voucher-camion", cert.transportista);
+    
+    if (esVehiculoPropio) {
+        const selVeh = document.getElementById("calc-tipo-vehiculo-propio");
+        const nomVeh = selVeh ? selVeh.options[selVeh.selectedIndex]?.text.split("(")[0].trim() : "Particular";
+        setTxt("voucher-camion", `🛻 Retiro Particular (${nomVeh}) · $0 Flete Tercerizado`);
+    } else {
+        setTxt("voucher-camion", cert.transportista);
+    }
+
     setTxt("voucher-ahorro", `${formatoARS(cert.ahorro_logistico_ars)} ARS`);
     setTxt("voucher-total", `${formatoARS(cert.total_comprador_ars)} ARS (Custodia activa)`);
     setTxt("voucher-hash", cert.hash_certificado);

@@ -557,7 +557,7 @@
                             <line x1="8" y1="2" x2="8" y2="18"></line>
                             <line x1="16" y1="6" x2="16" y2="22"></line>
                         </svg>
-                        <span>Mapa Interactivo de Productores (NEA)</span>
+                        <span>Mapa Federal de Productores (Argentina)</span>
                         <span class="map-badge-live">En vivo</span>
                     </button>
                 </div>
@@ -566,22 +566,33 @@
                 </div>
             </div>
 
-            <!-- CONTENEDOR DEL MAPA INTERACTIVO DE PRODUCTORES DEL NEA -->
+            <!-- CONTENEDOR DEL MAPA INTERACTIVO DE PRODUCTORES DE ARGENTINA -->
             <div id="seccion-mapa-productores" class="producers-map-container" style="display: none;">
                 <div class="map-container-header">
                     <div>
-                        <div class="map-header-tag">CORREDORES DE RETORNO RN 12 · RN 14 · RN 118</div>
-                        <h3 class="map-header-title">Mapa Regional de Agroindustrias y Lotes Disponibles</h3>
+                        <div class="map-header-tag">CORREDORES NACIONALES · RN 12 · RN 14 · RN 9 · RN 7 · RN 22</div>
+                        <h3 class="map-header-title">Mapa Federal de Agroindustrias y Lotes Disponibles</h3>
                         <p class="map-header-desc">
-                            Hacé clic en cualquier nodo productor para ver los subproductos disponibles, su nivel de urgencia o disponibilidad futura y cargarlo directamente al cotizador en tranquera.
+                            Visualizá excedentes agroindustriales de todo el país. Hacé clic en cualquier productor para ver su stock, calcular el flete o coordinar retiro particular con tu propio vehículo.
                         </p>
                     </div>
                     <div class="map-legend-pills">
-                        <span class="legend-pill"><span class="legend-dot dot-buyer"></span> Tu Campo</span>
-                        <span class="legend-pill"><span class="legend-dot dot-urgent"></span> Venta Urgente</span>
-                        <span class="legend-pill"><span class="legend-dot dot-future"></span> Lote Futuro</span>
-                        <span class="legend-pill"><span class="legend-dot dot-producer"></span> Disponible</span>
+                        <span class="legend-pill"><span class="legend-dot dot-buyer"></span> Tu Establecimiento</span>
+                        <span class="legend-pill"><span class="legend-dot dot-urgent"></span> Venta Urgente (48h)</span>
+                        <span class="legend-pill"><span class="legend-dot dot-future"></span> Lote Futuro (Zafra)</span>
+                        <span class="legend-pill"><span class="legend-dot dot-producer"></span> Disponible en Planta</span>
                     </div>
+                </div>
+
+                <!-- Barra de Filtros Regionales de Argentina -->
+                <div class="map-region-filter-bar">
+                    <span class="map-region-label">Región:</span>
+                    <button type="button" class="map-region-pill active" onclick="filtrarMapaPorRegion('TODAS', this)">🇦🇷 Toda Argentina</button>
+                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NEA', this)">🌿 Litoral / NEA</button>
+                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PAMPEANA', this)">🌾 Pampeana / Centro</button>
+                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('CUYO', this)">🍇 Cuyo</button>
+                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('NOA', this)">☀️ NOA</button>
+                    <button type="button" class="map-region-pill" onclick="filtrarMapaPorRegion('PATAGONIA', this)">🍎 Patagonia / Alto Valle</button>
                 </div>
 
                 <!-- SVG Interactivo del Corredor NEA con proyección de nodos y rutas -->
@@ -640,6 +651,9 @@
                                     📅 Lote Futuro ({{ lote.fecha_entrega_futura|default:"Zafra Próxima" }})
                                 </span>
                                 {% endif %}
+                                <span class="badge-retiro-propio" title="Apto para retiro directo en planta con camioneta o acoplado particular">
+                                    🛻 Apto Retiro Particular
+                                </span>
                             </div>
 
                             <span class="badge-flete-savings font-mono">
@@ -799,18 +813,53 @@
                         </div>
                     </div>
 
-                    <!-- Fraccionamiento rápido de sublotes en cotizador -->
+                    <!-- Fraccionamiento rápido de sublotes en cotizador (Pequeños y Medianos Productores) -->
                     <div class="cotizador-sublotes-row">
                         <span class="cotizador-sublote-title">Comprar Fracción / Sublote:</span>
                         <div class="cotizador-sublote-pills" id="cotizador-pills-sublotes">
-                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(5)">5 tn</button>
+                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(1)">1 tn (Pick-up)</button>
+                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(2.5)">2.5 tn (Acoplado)</button>
+                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(5)">5 tn (Chasis)</button>
                             <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(10)">10 tn</button>
-                            <button type="button" class="sublote-calc-pill" onclick="fijarToneladasCotizador(15)">15 tn</button>
                             <button type="button" class="sublote-calc-pill active" id="btn-sublote-total" onclick="fijarToneladasCotizador('total')">Lote Completo</button>
                         </div>
                     </div>
 
+                    <!-- Modo de Transporte: Flete Calzado vs Retiro con Vehículo Propio (Pymes / Pequeños Productores) -->
                     <div class="form-group">
+                        <label for="calc-modo-transporte">
+                            <strong>Modo de Transporte y Retiro:</strong>
+                        </label>
+                        <select id="calc-modo-transporte" class="form-control" onchange="alCambiarModoTransporte(this.value)">
+                            <option value="VUELTA" selected>🚛 Flete Calzado en Retorno (-45% tarifa FADEEAC)</option>
+                            <option value="VEHICULO_PROPIO">🛻 Retiro con Vehículo Propio / Flete Particular ($0 flete tercerizado)</option>
+                            <option value="IDA">🚚 Flete Contratado Tradicional (Tarifa Plena)</option>
+                            <option value="IDA_Y_VUELTA">🔄 Ida y Vuelta Combinado (Viaje Compartido)</option>
+                        </select>
+                    </div>
+
+                    <!-- Selector de Vehículo Propio (Visible cuando se elige VEHICULO_PROPIO) -->
+                    <div id="contenedor-vehiculo-propio" class="vehiculo-propio-box" style="display: none;">
+                        <div class="vehiculo-propio-badge">
+                            <span>🌱 RETIRO EN PLANTA · PRODUCTORES Y PYMES</span>
+                        </div>
+                        <div class="form-group" style="margin-top:0.4rem; margin-bottom:0.4rem;">
+                            <label for="calc-tipo-vehiculo-propio">Tipo de Vehículo Propio / Particular:</label>
+                            <select id="calc-tipo-vehiculo-propio" class="form-control" onchange="recalcularCotizacionEnVivo()">
+                                <option value="CAMIONETA">🛻 Camioneta Pick-up (hasta 1.0 tn · 3.5 m³ · Huerta / Granja)</option>
+                                <option value="CAMIONETA_CON_ACOPLADO">🛻 Camioneta + Acoplado Rural (hasta 2.5 tn · 9.0 m³)</option>
+                                <option value="FURGON">🚐 Furgón Utilitario (hasta 3.5 tn · 15.0 m³)</option>
+                                <option value="CAMION_CHASIS" selected>🚛 Camión Chasis / Balancín (hasta 8.0 tn · 30.0 m³)</option>
+                                <option value="CAMION_CON_ACOPLADO">🚛 Camión con Acoplado Propio (hasta 25.0 tn · 70.0 m³)</option>
+                                <option value="SEMIRREMOLQUE">🚛 Semirremolque Propio (hasta 30.0 tn · 85.0 m³)</option>
+                            </select>
+                        </div>
+                        <div class="vehiculo-propio-notice">
+                            <span>💡 <strong>Flete tercerizado: $0 ARS</strong>. Retirás directamente con tu vehículo en planta en el turno acordado. Solo abonás el valor del subproducto y la custodia oficial del remito.</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="contenedor-camion-retorno">
                         <label for="calc-camion-id">Camión con retorno vacío calzado</label>
                         <select id="calc-camion-id" class="form-control" onchange="recalcularCotizacionEnVivo()">
                             {% for cam in camiones %}
@@ -900,13 +949,17 @@
                     <!-- Selector Rápido de Comprador y Ventana de Carga (Sin Estadía FADEEAC) -->
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="calc-preset-comprador">Autocompletar Comprador del NEA</label>
+                            <label for="calc-preset-comprador">Autocompletar Productor / Establecimiento</label>
                             <select id="calc-preset-comprador" class="form-control" onchange="aplicarPresetComprador(this.value)">
-                                <option value="Granja Avícola San Isidro SRL|Goya, Corrientes|155">Granja Avícola San Isidro (Goya · 155 km)</option>
-                                <option value="Establecimiento Ganadero El Ceibo|San Roque, Corrientes|95">Ganadera El Ceibo (San Roque · 95 km)</option>
-                                <option value="Feedlot Las Tres Marías SA|Mercedes, Corrientes|140">Feedlot Las Tres Marías (Mercedes · 140 km)</option>
-                                <option value="Secadero Yerbales del Sur SRL|Santo Tomé, Corrientes|75">Secadero Yerbales del Sur (Santo Tomé · 75 km)</option>
-                                <option value="Vivero Forestal Iberá|Bella Vista, Corrientes|65">Vivero Forestal Iberá (Bella Vista · 65 km)</option>
+                                <option value="Granja Avícola San Isidro SRL|Goya, Corrientes|155|VUELTA">Granja Avícola San Isidro (Goya · 155 km · Flete Calzado)</option>
+                                <option value="Don Roberto (Huerta & Granja Familiar)|Bella Vista, Corrientes|25|VEHICULO_PROPIO|CAMIONETA">Don Roberto · Huerta Familiar (Pick-up Particular · 25 km)</option>
+                                <option value="Establecimiento Ganadero El Ceibo|San Roque, Corrientes|95|VUELTA">Ganadera El Ceibo (San Roque · 95 km)</option>
+                                <option value="Tambo Pyme Los Robles|Rafaela, Santa Fe|110|VEHICULO_PROPIO|CAMION_CHASIS">Tambo Pyme Los Robles (Rafaela, Sta Fe · Chasis Propio · 110 km)</option>
+                                <option value="Feedlot Las Tres Marías SA|Mercedes, Corrientes|140|VUELTA">Feedlot Las Tres Marías (Mercedes · 140 km)</option>
+                                <option value="Cabaña Bovina La Querencia|Río Cuarto, Córdoba|140|VUELTA">Cabaña Bovina La Querencia (Río Cuarto, Cba · 140 km)</option>
+                                <option value="Bodega Artesanal Viñas del Sol|San Martín, Mendoza|35|VEHICULO_PROPIO|CAMIONETA_CON_ACOPLADO">Bodega Artesanal (San Martín, Cuyo · Acoplado Propio · 35 km)</option>
+                                <option value="Vivero Forestal Iberá|Bella Vista, Corrientes|65|VEHICULO_PROPIO|FURGON">Vivero Forestal Iberá (Furgón Propio · 65 km)</option>
+                                <option value="Secadero Yerbales del Sur SRL|Santo Tomé, Corrientes|75|VUELTA">Secadero Yerbales del Sur (Santo Tomé · 75 km)</option>
                                 <option value="CUSTOM">✏️ Escribir otro establecimiento...</option>
                             </select>
                         </div>
