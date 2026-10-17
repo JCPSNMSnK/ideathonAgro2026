@@ -456,38 +456,39 @@
                     </p>
                 </div>
 
-                <!-- Selector Rápido de Establecimiento Comprador (Regla de Negocio: Solo ve/firma sus compras) -->
-                <div class="role-identity-switcher-card">
-                    <div class="identity-switcher-label">
-                        <span class="identity-dot-live"></span>
-                        <span>Operando como Comprador:</span>
-                        <span class="ownership-rule-tag">Firma exclusiva titular</span>
-                    </div>
-                    <select id="switcher-actor-comprador" class="form-control form-control-sm" onchange="cambiarActorDemoRol('comprador', this.value)">
-                        <option value="Don Aníbal Gómez|Granja Avícola San Isidro SRL|Goya, Corrientes">Granja Avícola San Isidro SRL (Goya)</option>
-                        <option value="Ing. Marcos Pereyra|Feedlot Las Tres Marías SA|Curuzú Cuatiá, Corrientes">Feedlot Las Tres Marías SA (Curuzú Cuatiá)</option>
-                        <option value="Esteban Maidana|Establecimiento Ganadero El Ceibo|San Roque, Corrientes">Establecimiento Ganadero El Ceibo (San Roque)</option>
-                        <option value="Lucía Ferreyra|Secadero Yerbales del Sur SRL|Santo Tomé, Corrientes">Secadero Yerbales del Sur SRL (Santo Tomé)</option>
-                    </select>
-                    <div class="role-kpi-mini-row">
-                        <div class="role-kpi-chip">
-                            <span class="font-mono" id="kpi-comp-lotes-count">{{ lotes|length }}</span>
-                            <small>Lotes activos</small>
-                        </div>
-                        <div class="role-kpi-chip">
-                            <span class="font-mono">-45%</span>
-                            <small>Flete retorno</small>
-                        </div>
-                        <div class="role-kpi-chip role-kpi-highlight">
-                            <span class="font-mono" id="kpi-comp-mis-compras">2</span>
-                            <small>Mis compras</small>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- NIVEL 2 DE JERARQUÍA: Barra de Sub-Pestañas del Comprador (Paso 1 / Paso 2 / Mis Compras) -->
-            <div class="role-subtabs-nav" role="tablist" aria-label="Etapas del Portal Comprador">
+            <!-- NIVEL 1B: Selector de Ventana Principal del Comprador (Nueva Compra vs Mis Compras y Certificados) -->
+            <div class="comprador-main-windows-bar" role="tablist" aria-label="Ventanas del Portal Comprador">
+                <button type="button"
+                        id="btn-ventana-comp-nueva"
+                        class="comprador-window-btn active"
+                        role="tab"
+                        aria-selected="true"
+                        onclick="cambiarVentanaPrincipalComprador('nueva')">
+                    <div class="window-btn-text">
+                        <strong class="window-btn-title">Nueva Compra</strong>
+                        <span class="window-btn-desc">Catálogo, mapa interactivo y cotizador</span>
+                    </div>
+                    <span class="subtab-counter-pill font-mono" id="kpi-comp-lotes-count">{{ lotes|length }} lotes</span>
+                </button>
+
+                <button type="button"
+                        id="btn-ventana-comp-compras"
+                        class="comprador-window-btn"
+                        role="tab"
+                        aria-selected="false"
+                        onclick="cambiarVentanaPrincipalComprador('compras')">
+                    <div class="window-btn-text">
+                        <strong class="window-btn-title">Mis Compras y Certificados</strong>
+                        <span class="window-btn-desc">Firmar recepción en tranquera y certificados</span>
+                    </div>
+                    <span class="subtab-counter-pill subtab-pill-warning font-mono" id="badge-compras-pendientes">1 por firmar</span>
+                </button>
+            </div>
+
+            <!-- NIVEL 2: Barra Concisa de Pasos de Nueva Compra (Solo visible en la ventana "Nueva Compra") -->
+            <div id="barra-pasos-nueva-compra" class="role-subtabs-nav comprador-two-steps-nav" role="tablist" aria-label="Pasos de Nueva Compra">
                 <button type="button"
                         id="btn-subtab-comp-paso1"
                         class="role-subtab-btn active"
@@ -495,10 +496,7 @@
                         aria-selected="true"
                         onclick="cambiarSubTabComprador('paso1')">
                     <span class="subtab-step-circle">1</span>
-                    <div class="subtab-btn-text">
-                        <strong>Paso 1 · Explorar Catálogo y Mapa</strong>
-                        <small>Subproductos, lotes futuros y alertas 48 hs</small>
-                    </div>
+                    <strong>Catálogo y Mapa</strong>
                     <span class="subtab-counter-pill font-mono" id="badge-count-paso1">{{ lotes|length }}</span>
                 </button>
 
@@ -509,25 +507,8 @@
                         aria-selected="false"
                         onclick="cambiarSubTabComprador('paso2')">
                     <span class="subtab-step-circle">2</span>
-                    <div class="subtab-btn-text">
-                        <strong>Paso 2 · Cotizador en Tranquera y Reserva</strong>
-                        <small>Cubicaje peso/volumen, flete o retiro propio</small>
-                    </div>
+                    <strong>Cotizar y Reservar</strong>
                     <span class="subtab-counter-pill subtab-pill-accent" id="badge-lote-activo-paso2">Cotizar</span>
-                </button>
-
-                <button type="button"
-                        id="btn-subtab-comp-compras"
-                        class="role-subtab-btn"
-                        role="tab"
-                        aria-selected="false"
-                        onclick="cambiarSubTabComprador('compras')">
-                    <span class="subtab-step-circle">3</span>
-                    <div class="subtab-btn-text">
-                        <strong>Mis Compras y Certificados</strong>
-                        <small>Firmar recepción en campo y liberar Escrow</small>
-                    </div>
-                    <span class="subtab-counter-pill subtab-pill-warning font-mono" id="badge-compras-pendientes">1 por firmar</span>
                 </button>
             </div>
 
@@ -1221,34 +1202,6 @@
                         </p>
                     </div>
 
-                    <!-- Selector Rápido de Planta Vendedora (Demostración de Ownership) -->
-                    <div class="role-identity-switcher-card">
-                        <div class="identity-switcher-label">
-                            <span>Planta Vendedora Activa:</span>
-                            <span class="ownership-rule-tag">Regla: Solo edita/borra lo propio</span>
-                        </div>
-                        <select id="switcher-actor-vendedor" class="form-control form-control-sm" onchange="cambiarActorDemoRol('vendedor', this.value)">
-                            <option value="Ing. Carlos Romero|Molino Arrocero San Lorenzo SRL|Saladas, Corrientes">Molino Arrocero San Lorenzo SRL (Saladas)</option>
-                            <option value="Ing. Valeria Soto|Jugos del Litoral SA|Bella Vista, Corrientes">Jugos del Litoral SA (Bella Vista)</option>
-                            <option value="Roberto Kriger|Aserradero Río Paraná SRL|Saladas, Corrientes">Aserradero Río Paraná SRL (Saladas)</option>
-                            <option value="Ing. Martín Alarcón|Arrocera del Paiubre SA|Mercedes, Corrientes">Arrocera del Paiubre SA (Mercedes)</option>
-                            <option value="Clara Benítez|Foresto Industrial Santo Tomé|Gobernador Virasoro, Corrientes">Foresto Industrial Santo Tomé (Virasoro)</option>
-                        </select>
-                        <div class="role-kpi-mini-row">
-                            <div class="role-kpi-chip role-kpi-highlight">
-                                <span class="font-mono" id="kpi-vend-mis-lotes">1</span>
-                                <small>Mis lotes</small>
-                            </div>
-                            <div class="role-kpi-chip">
-                                <span class="font-mono" id="kpi-vend-total-lotes">{{ todos_los_lotes|length }}</span>
-                                <small>Mercado total</small>
-                            </div>
-                            <div class="role-kpi-chip">
-                                <span class="font-mono" id="kpi-vend-mis-certs">2</span>
-                                <small>Mis certificados</small>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- NIVEL 2 DE JERARQUÍA: Barra de Sub-Pestañas del Vendedor -->
@@ -1260,10 +1213,7 @@
                             aria-selected="true"
                             onclick="cambiarSubTabVendedor('lotes')">
                         <span class="subtab-step-circle">1</span>
-                        <div class="subtab-btn-text">
-                            <strong>Mis Lotes en Planta</strong>
-                            <small>Control de stock propio y precios</small>
-                        </div>
+                        <strong>Mis Lotes</strong>
                         <span class="subtab-counter-pill font-mono" id="badge-vend-lotes-count">{{ todos_los_lotes|length }}</span>
                     </button>
 
@@ -1274,11 +1224,7 @@
                             aria-selected="false"
                             onclick="cambiarSubTabVendedor('publicar')">
                         <span class="subtab-step-circle">2</span>
-                        <div class="subtab-btn-text">
-                            <strong id="subtab-vend-form-label">Publicar / Editar Excedente</strong>
-                            <small>Cubicaje, lote futuro y urgencia 48 hs</small>
-                        </div>
-                        <span class="subtab-counter-pill subtab-pill-accent">Alta / ABM</span>
+                        <strong id="subtab-vend-form-label">Publicar Lote</strong>
                     </button>
 
                     <button type="button"
@@ -1288,11 +1234,8 @@
                             aria-selected="false"
                             onclick="cambiarSubTabVendedor('certificados')">
                         <span class="subtab-step-circle">3</span>
-                        <div class="subtab-btn-text">
-                            <strong>Mis Certificados Ambientales</strong>
-                            <small>Auditoría Hedera HCS y estado Escrow</small>
-                        </div>
-                        <span class="subtab-counter-pill font-mono" id="badge-vend-certs-count">Certificados</span>
+                        <strong>Mis Certificados</strong>
+                        <span class="subtab-counter-pill font-mono" id="badge-vend-certs-count">HCS</span>
                     </button>
                 </div>
 
@@ -1785,34 +1728,6 @@
                         </p>
                     </div>
 
-                    <!-- Selector Rápido de Empresa Transportista (Demostración de Ownership) -->
-                    <div class="role-identity-switcher-card">
-                        <div class="identity-switcher-label">
-                            <span>Empresa de Logística Activa:</span>
-                            <span class="ownership-rule-tag">Regla: Solo gestiona su flota</span>
-                        </div>
-                        <select id="switcher-actor-logistica" class="form-control form-control-sm" onchange="cambiarActorDemoRol('logistica', this.value)">
-                            <option value="Horacio Giménez|Transportes Don Horacio|Corrientes Capital">Transportes Don Horacio (RN 11 / RN 12)</option>
-                            <option value="Darío Benítez|Transporte Litoral Express|Corrientes Capital">Transporte Litoral Express (Unidad #14)</option>
-                            <option value="Jorge Quintana|Logística Guaraní SRL|Resistencia, Chaco">Logística Guaraní SRL (Flota Puerto)</option>
-                            <option value="Miguel Almirón|Expreso Río Uruguay|Posadas, Misiones">Expreso Río Uruguay (RN 14)</option>
-                            <option value="Héctor Villalba|Fletes del Iberá SRL|Ituzaingó, Corrientes">Fletes del Iberá SRL (RP 5 / RN 12)</option>
-                        </select>
-                        <div class="role-kpi-mini-row">
-                            <div class="role-kpi-chip role-kpi-highlight">
-                                <span class="font-mono" id="kpi-log-mi-flota">1</span>
-                                <small>Mis unidades</small>
-                            </div>
-                            <div class="role-kpi-chip">
-                                <span class="font-mono" id="kpi-log-total-flota">{{ camiones|length }}</span>
-                                <small>Bolsa activa</small>
-                            </div>
-                            <div class="role-kpi-chip">
-                                <span class="font-mono" id="kpi-log-mis-viajes">2</span>
-                                <small>Mis viajes</small>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- NIVEL 2 DE JERARQUÍA: Barra de Sub-Pestañas de Logística -->
@@ -1824,10 +1739,7 @@
                             aria-selected="true"
                             onclick="cambiarSubTabLogistica('flota')">
                         <span class="subtab-step-circle">1</span>
-                        <div class="subtab-btn-text">
-                            <strong>Flota y Retornos en Ruta</strong>
-                            <small>Mis unidades y cargas compatibles</small>
-                        </div>
+                        <strong>Flota en Ruta</strong>
                         <span class="subtab-counter-pill font-mono" id="badge-log-flota-count">{{ camiones|length }}</span>
                     </button>
 
@@ -1838,11 +1750,7 @@
                             aria-selected="false"
                             onclick="cambiarSubTabLogistica('publicar')">
                         <span class="subtab-step-circle">2</span>
-                        <div class="subtab-btn-text">
-                            <strong id="subtab-log-form-label">Registrar / Editar Unidad Vacía</strong>
-                            <small>Publicar viaje de regreso con descuento</small>
-                        </div>
-                        <span class="subtab-counter-pill subtab-pill-accent">Alta / ABM</span>
+                        <strong id="subtab-log-form-label">Publicar Unidad</strong>
                     </button>
 
                     <button type="button"
@@ -1852,11 +1760,8 @@
                             aria-selected="false"
                             onclick="cambiarSubTabLogistica('viajes')">
                         <span class="subtab-step-circle">3</span>
-                        <div class="subtab-btn-text">
-                            <strong>Viajes Calzados y Liquidaciones</strong>
-                            <small>Estado de cobro Escrow de mis fletes</small>
-                        </div>
-                        <span class="subtab-counter-pill font-mono" id="badge-log-viajes-count">Viajes</span>
+                        <strong>Viajes y Cobros</strong>
+                        <span class="subtab-counter-pill font-mono" id="badge-log-viajes-count">Escrow</span>
                     </button>
                 </div>
 

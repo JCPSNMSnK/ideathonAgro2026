@@ -3776,6 +3776,7 @@ h4 {
 .chip-btn:active,
 .role-tab-btn:active,
 .role-subtab-btn:active,
+.comprador-window-btn:active,
 .ownership-toggle-btn:active,
 .pagination-nav-btn:not(:disabled):active,
 .pagination-page-btn:active,
@@ -3784,6 +3785,75 @@ h4 {
 .demo-preset-btn:active {
     transform: scale(0.98);
     transition: transform 80ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =============================================================================
+   18. BARRA DE DOS VENTANAS PRINCIPALES DEL COMPRADOR
+   ============================================================================= */
+.comprador-main-windows-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--borde-color);
+    border-radius: var(--radio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.comprador-window-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: var(--radio-sm);
+    border: 1.5px solid transparent;
+    background: var(--bg-bloque-suave);
+    color: var(--texto-secundario);
+    font-family: var(--fuente-sans);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1),
+                color 180ms ease;
+}
+
+.comprador-window-btn:hover {
+    border-color: var(--color-exito-borde);
+    color: var(--texto-principal);
+}
+
+.comprador-window-btn.active {
+    background: var(--bg-tarjeta);
+    border-color: var(--color-primario);
+    color: var(--texto-principal);
+    box-shadow: var(--sombra-suave);
+}
+
+.window-btn-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.window-btn-title {
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: inherit;
+}
+
+.window-btn-desc {
+    font-size: 0.78rem;
+    color: var(--texto-secundario);
+}
+
+@media (max-width: 720px) {
+    .comprador-main-windows-bar {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Accesibilidad: Respeto estricto a prefers-reduced-motion y prefers-reduced-transparency */
@@ -3805,3 +3875,4 @@ h4 {
         -webkit-backdrop-filter: none !important;
     }
 }
+

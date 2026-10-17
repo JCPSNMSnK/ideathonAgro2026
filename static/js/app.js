@@ -283,7 +283,7 @@ function aplicarDatosSesionEnUI() {
     const orgNombre = usuarioActivo.organizacion || usuarioActivo.nombre || "Mi Cuenta";
     const nombreCorto = orgNombre.split(" ").slice(0, 2).join(" ");
     if (tabLabel) {
-        tabLabel.textContent = `${nombreCorto} (${rolTexto})`;
+        tabLabel.textContent = nombreCorto;
     }
     if (sessionRolePill) {
         sessionRolePill.style.display = "inline-block";
@@ -1290,7 +1290,50 @@ function actualizarLabelMutuoAcuerdo(val) {
 /* =============================================================================
    6.4. ARQUITECTURA DE SUB-PESTAÑAS JERÁRQUICAS POR ROL (COMPRADOR, VENDEDOR, LOGÍSTICA)
    ============================================================================= */
+function cambiarVentanaPrincipalComprador(ventana) {
+    const esCompras = ventana === "compras";
+    const btnNueva = document.getElementById("btn-ventana-comp-nueva");
+    const btnCompras = document.getElementById("btn-ventana-comp-compras");
+    const barraPasos = document.getElementById("barra-pasos-nueva-compra");
+
+    if (btnNueva) {
+        btnNueva.classList.toggle("active", !esCompras);
+        btnNueva.setAttribute("aria-selected", !esCompras ? "true" : "false");
+    }
+    if (btnCompras) {
+        btnCompras.classList.toggle("active", esCompras);
+        btnCompras.setAttribute("aria-selected", esCompras ? "true" : "false");
+    }
+    if (barraPasos) {
+        barraPasos.style.display = esCompras ? "none" : "";
+    }
+
+    if (esCompras) {
+        cambiarSubTabComprador("compras");
+    } else {
+        const paso2Activo = document.getElementById("btn-subtab-comp-paso2")?.classList.contains("active");
+        cambiarSubTabComprador(paso2Activo ? "paso2" : "paso1");
+    }
+}
+
 function cambiarSubTabComprador(subtab) {
+    const esCompras = subtab === "compras";
+    const btnNueva = document.getElementById("btn-ventana-comp-nueva");
+    const btnCompras = document.getElementById("btn-ventana-comp-compras");
+    const barraPasos = document.getElementById("barra-pasos-nueva-compra");
+
+    if (btnNueva) {
+        btnNueva.classList.toggle("active", !esCompras);
+        btnNueva.setAttribute("aria-selected", !esCompras ? "true" : "false");
+    }
+    if (btnCompras) {
+        btnCompras.classList.toggle("active", esCompras);
+        btnCompras.setAttribute("aria-selected", esCompras ? "true" : "false");
+    }
+    if (barraPasos) {
+        barraPasos.style.display = esCompras ? "none" : "";
+    }
+
     const tabs = ["paso1", "paso2", "compras"];
     tabs.forEach((t) => {
         const panel = document.getElementById(`subtab-comprador-${t}`);
@@ -1304,7 +1347,7 @@ function cambiarSubTabComprador(subtab) {
     if (subtab === "compras") {
         renderizarComprasComprador();
     }
-    const header = document.querySelector("#vista-comprador .role-subtabs-nav");
+    const header = document.querySelector("#vista-comprador .comprador-main-windows-bar");
     if (header && subtab !== "paso1") {
         header.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
@@ -1357,7 +1400,7 @@ function irANuevoCamionLogistica() {
 function irAMisComprasComprador() {
     cerrarModalReserva();
     cambiarVistaRol("vista-comprador");
-    cambiarSubTabComprador("compras");
+    cambiarVentanaPrincipalComprador("compras");
 }
 
 /* =============================================================================
@@ -1395,25 +1438,22 @@ function esRecursoPropio(propietarioRecurso, identidadActor) {
 
 function obtenerIdentidadRol(rol) {
     if (rol === "comprador") {
-        const sw = document.getElementById("switcher-actor-comprador");
         if (usuarioActivo && usuarioActivo.rol === "comprador" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
             return usuarioActivo.organizacion || usuarioActivo.nombre;
         }
-        return sw ? sw.value : "Granja Avícola San Isidro SRL";
+        return "Granja Avícola San Isidro SRL";
     }
     if (rol === "vendedor") {
-        const sw = document.getElementById("switcher-actor-vendedor");
         if (usuarioActivo && usuarioActivo.rol === "vendedor" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
             return usuarioActivo.organizacion || usuarioActivo.nombre;
         }
-        return sw ? sw.value : "Molino Arrocero San Lorenzo";
+        return "Molino Arrocero San Lorenzo";
     }
     if (rol === "logistica") {
-        const sw = document.getElementById("switcher-actor-logistica");
         if (usuarioActivo && usuarioActivo.rol === "logistica" && (usuarioActivo.organizacion || usuarioActivo.nombre)) {
             return usuarioActivo.organizacion || usuarioActivo.nombre;
         }
-        return sw ? sw.value : "Transportes Don Horacio";
+        return "Transportes Don Horacio";
     }
     return "";
 }
